@@ -19,7 +19,7 @@ import { useSelector, useDispatch } from '@/store/hooks';
 import { starEmail, importantEmail, deleteEmail } from '@/store/apps/email/EmailSlice';
 import emailIcon from '/public/images/breadcrumb/emailSv.png';
 import dynamic from "next/dynamic";
-import "react-quill/dist/quill.snow.css";
+// import "react-quill/dist/quill.snow.css";
 const ReactQuill: any = dynamic(
   async () => {
     const { default: RQ } = await import("react-quill");

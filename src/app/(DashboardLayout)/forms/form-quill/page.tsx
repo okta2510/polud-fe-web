@@ -5,7 +5,7 @@ import "./Quill.css";
 import { useTheme } from '@mui/material/styles';
 
 import dynamic from "next/dynamic";
-import "react-quill/dist/quill.snow.css";
+// import "react-quill/dist/quill.snow.css";
 
 
 const ReactQuill: any = dynamic(

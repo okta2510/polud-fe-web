@@ -31,6 +31,10 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import { useEffect, useState } from "react";
 
 
+const SHOW_NOTIFICATION =  process.env.NEXT_PUBLIC_SHOW_NOTIFICATION === 'true'
+const SHOW_MESSAGE =  process.env.NEXT_PUBLIC_SHOW_MESSAGE === 'true'
+const SHOW_CART =  process.env.NEXT_PUBLIC_SHOW_CART === 'true'
+const SHOW_QUICK_APP =  process.env.NEXT_PUBLIC_SHOW_QUICK_APP === 'true'
 const Header = () => {
   const [height, setHeight] = useState('0px');
 
@@ -139,7 +143,7 @@ useEffect(()=>{
           </>
         ) : null}
 
-        {lgUp ? (
+        {lgUp && SHOW_QUICK_APP ? (
           <>
             <AppDD/>
           </>
@@ -157,16 +161,16 @@ useEffect(()=>{
               <DarkLightMode />
               {/* ------------------------------------------- */}
               {/* Ecommerce Dropdown */}
-              {/* ------------------------------------------- */}
-              <Cart />
+            {/* ------------------------------------------- */}
+              {SHOW_CART && <Cart />}
               {/* ------------------------------------------- */}
               {/* Notification Dropdown */}
               {/* ------------------------------------------- */}
-              <Notifications />
+              {  SHOW_NOTIFICATION && <Notifications/>}
               {/* ------------------------------------------- */}
               {/* Messages Dropdown */}
               {/* ------------------------------------------- */}
-              <Messages />
+              {  SHOW_MESSAGE && <Messages/>}
 
               {/* ------------------------------------------- */}
               {/* Toggle Right Sidebar for mobile */}
@@ -222,11 +226,12 @@ useEffect(()=>{
               {/* ------------------------------------------- */}
               {/* Notification Dropdown */}
               {/* ------------------------------------------- */}
-              <Notifications />
+              {  SHOW_NOTIFICATION && <Notifications/>}
               {/* ------------------------------------------- */}
               {/* Messages Dropdown */}
               {/* ------------------------------------------- */}
-              <Messages />
+              {SHOW_MESSAGE}
+              {  SHOW_MESSAGE && <Messages/>}
 
               {/* ------------------------------------------- */}
               {/* Toggle Right Sidebar for mobile */}

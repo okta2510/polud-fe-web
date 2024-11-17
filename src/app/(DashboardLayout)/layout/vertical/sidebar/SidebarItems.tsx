@@ -17,6 +17,9 @@ const SidebarItems = () => {
   const lgUp = useMediaQuery((theme: any) => theme.breakpoints.up('lg'));
   const hideMenu: any = lgUp ? customizer.isCollapse && !customizer.isSidebarHover : '';
   const dispatch = useDispatch();
+
+
+
   return (
     <Box sx={{ px: 2 }} borderRadius={0}>
       <List sx={{ pt: 0 }} className="sidebarNav">
@@ -27,7 +30,11 @@ const SidebarItems = () => {
 
             // {/********If Sub Menu**********/}
             
-          } else if (item.children) {
+          } else if(item.separator){
+            return (
+              <hr className='' style={{marginBlock: '40px', marginBottom:'10px'}}></hr>
+            )
+          }else if (item.children) {
             return (
               <NavCollapse
                 menu={item}

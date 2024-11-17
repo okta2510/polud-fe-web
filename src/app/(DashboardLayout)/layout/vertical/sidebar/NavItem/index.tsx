@@ -22,6 +22,7 @@ type NavGroup = {
   [x: string]: any;
   id?: string;
   navlabel?: boolean;
+  seperator?: boolean;
   subheader?: string;
   title?: string;
   icon?: any;

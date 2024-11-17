@@ -71,14 +71,31 @@ import {
   IconPhoto,
   IconChartBar,
   IconLockAccess,
+  IconPlane,
 } from "@tabler/icons-react";
 
-const Menuitems: MenuitemsType[] = [
+
+const MainItems:MenuitemsType[] = [
+  {
+    navlabel: true,
+    subheader: "System Support & Setting",
+  },
+  {
+    id: uniqueId(),
+    title: "Aircraft Series",
+    icon: IconPlane,
+    href: "/system-support/air-craft-series",
+  },
+  {
+    separator: true,
+  },
+]
+const InitialItems: MenuitemsType[] = [
   {
     navlabel: true,
     subheader: "Home",
   },
-
+  
   {
     id: uniqueId(),
     title: "Analytical",
@@ -738,5 +755,10 @@ const Menuitems: MenuitemsType[] = [
     ],
   },
 ];
-
+let Menuitems: MenuitemsType[] = []
+if(process.env.NODE_ENV === "production"){
+  Menuitems = [...MainItems]
+}else{
+  Menuitems = [...MainItems, ...InitialItems]
+}
 export default Menuitems;
