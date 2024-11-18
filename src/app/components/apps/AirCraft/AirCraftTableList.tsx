@@ -1,8 +1,11 @@
 import * as React from 'react';
-import { alpha, useTheme } from '@mui/material/styles';
+import { alpha, useTheme, styled } from '@mui/material/styles';
 import { format } from 'date-fns';
 import {
   Box,
+  Grid,
+  Stack,
+  Divider,
   Table,
   TableBody,
   TableCell,
@@ -20,14 +23,26 @@ import {
   TextField,
   InputAdornment,
   Paper,
+  Button
 } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
 import { useSelector, useDispatch } from '@/store/hooks';
 import { fetchAirCraft } from '@/store/apps/AirCraft/AirCraftSeriesSlice';
 import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
 import CustomSwitch from '@/app/components/forms/theme-elements/CustomSwitch';
-import { IconDotsVertical, IconFilter, IconSearch, IconTrash } from '@tabler/icons-react';
+import { IconDotsVertical, IconFilter, IconSearch, IconTrash, IconEdit, IconReload, IconEye } from '@tabler/icons-react';
 import { ProductType } from '@/app/(DashboardLayout)/types/apps/eCommerce';
+
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: '#fff',
+  ...theme.typography.body2,
+  padding: theme.spacing(5),
+  textAlign: 'center',
+  color: theme.palette.text.secondary,
+  ...theme.applyStyles('dark', {
+    backgroundColor: '#1A2027',
+  }),
+}));
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -172,6 +187,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   return (
     <Toolbar
       sx={{
+        // px: {sm:0},
         pl: { sm: 2 },
         pr: { xs: 1, sm: 1 },
         ...(numSelected > 0 && {
@@ -181,7 +197,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
       }}
     >
       {numSelected > 0 ? (
-        <Typography sx={{ flex: '1 1 100%' }} color="inherit" variant="subtitle2" component="div">
+        <Typography sx={{ flex: '1 1 100%', paddingInline: 2 }} color="inherit" variant="subtitle2" component="div">
           {numSelected} selected
         </Typography>
       ) : (
@@ -201,8 +217,33 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
           />
         </Box>
       )}
-
-      {numSelected > 0 ? (
+      
+      <Box padding={2}>
+        <Box 
+        sx={{
+          display: 'flex',
+          gap: 1
+        }}>
+          <Button sx={{
+            width: '120px'
+          }}
+          startIcon={<IconReload width={18} />}>
+              Reset
+            </Button>
+          <Button  sx={{
+            width: '120px'
+          }}
+          startIcon={<IconEdit width={18} />}>
+              Edit
+            </Button>
+          <Button  sx={{
+            width: '120px'
+          }} variant="contained" color="primary">
+              New
+            </Button>
+        </Box>
+      </Box>
+      {/* {numSelected > 0 ? (
         <Tooltip title="Delete">
           <IconButton>
             <IconTrash width="18" />
@@ -214,7 +255,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
             <IconFilter size="1.2rem" />
           </IconButton>
         </Tooltip>
-      )}
+      )} */}
     </Toolbar>
   );
 };
@@ -270,6 +311,7 @@ const AirCraftTableList = () => {
 
   // This is for the single row sleect
   const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
+    event.stopPropagation();
     const selectedIndex = selected.indexOf(name);
     let newSelected: readonly string[] = [];
 
@@ -309,11 +351,13 @@ const AirCraftTableList = () => {
   return (
     <Box>
       <Box>
-        <EnhancedTableToolbar
-          numSelected={selected.length}
-          search={search}
-          handleSearch={(event: any) => handleSearch(event)}
-        />
+        <Box>
+          <EnhancedTableToolbar
+              numSelected={selected.length}
+              search={search}
+              handleSearch={(event: any) => handleSearch(event)}
+            />
+        </Box>
         <Paper variant="outlined" sx={{ mx: 2, my:1, border: `1px solid ${borderColor}` }}>
           <TableContainer>
             <Table
@@ -338,7 +382,6 @@ const AirCraftTableList = () => {
                     return (
                       <TableRow
                         hover
-                        onClick={(event) => handleClick(event, row.title)}
                         role="checkbox"
                         aria-checked={isItemSelected}
                         tabIndex={-1}
@@ -347,6 +390,7 @@ const AirCraftTableList = () => {
                       >
                         <TableCell padding="checkbox">
                           <CustomCheckbox
+                            onClick={(event) => handleClick(event, row.title)}
                             color="primary"
                             checked={isItemSelected}
                             inputProps={{
@@ -396,16 +440,18 @@ const AirCraftTableList = () => {
                           </Typography>
                         </TableCell>
                         <TableCell>
-                          <Tooltip title="Edit">
-                            <IconButton size="small">
-                              <IconDotsVertical size="1.1rem" />
-                            </IconButton>
-                          </Tooltip>
-                          <Tooltip title="Edit">
-                            <IconButton size="small">
-                              <IconDotsVertical size="1.1rem" />
-                            </IconButton>
-                          </Tooltip>
+                          <Stack
+                            direction="row"
+                            // divider={<Divider orientation="vertical" flexItem />}
+                            spacing={1}
+                          >
+                              <IconButton  color="primary">
+                                <IconEye width={25} height={25}  />
+                              </IconButton>
+                              <IconButton  color="error">
+                                <IconTrash width={25} height={25}  />
+                              </IconButton>
+                          </Stack>
                         </TableCell>
                       </TableRow>
                     );
