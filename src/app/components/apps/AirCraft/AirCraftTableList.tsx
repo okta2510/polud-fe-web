@@ -23,7 +23,7 @@ import {
 } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
 import { useSelector, useDispatch } from '@/store/hooks';
-import { fetchProducts } from '@/store/apps/eCommerce/ECommerceSlice';
+import { fetchAirCraft } from '@/store/apps/AirCraft/AirCraftSeriesSlice';
 import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
 import CustomSwitch from '@/app/components/forms/theme-elements/CustomSwitch';
 import { IconDotsVertical, IconFilter, IconSearch, IconTrash } from '@tabler/icons-react';
@@ -74,35 +74,35 @@ interface HeadCell {
 
 const headCells: readonly HeadCell[] = [
   {
-    id: 'name',
+    id: 'id',
     numeric: false,
     disablePadding: false,
-    label: 'Products',
+    label: 'ID',
   },
   {
-    id: 'pname',
+    id: 'aircraft_type',
     numeric: false,
     disablePadding: false,
-    label: 'Date',
+    label: 'Aircraft Type',
   },
 
   {
-    id: 'status',
+    id: 'series',
     numeric: false,
     disablePadding: false,
-    label: 'Status',
+    label: 'Series',
   },
   {
-    id: 'price',
+    id: 'description',
     numeric: false,
     disablePadding: false,
-    label: 'Price',
+    label: 'Description',
   },
   {
-    id: 'action',
+    id: 'actions',
     numeric: false,
     disablePadding: false,
-    label: 'Action',
+    label: 'Actions',
   },
 ];
 
@@ -219,7 +219,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   );
 };
 
-const ProductTableList = () => {
+const AirCraftTableList = () => {
   const [order, setOrder] = React.useState<Order>('asc');
   const [orderBy, setOrderBy] = React.useState<any>('calories');
   const [selected, setSelected] = React.useState<readonly string[]>([]);
@@ -230,7 +230,7 @@ const ProductTableList = () => {
 
   //Fetch Products
   React.useEffect(() => {
-    dispatch(fetchProducts());
+    dispatch(fetchAirCraft());
   }, [dispatch]);
 
   const getProducts: ProductType[] = useSelector((state) => state.ecommerceReducer.products);
@@ -354,7 +354,9 @@ const ProductTableList = () => {
                             }}
                           />
                         </TableCell>
-
+                        <TableCell>
+                          <Typography>{++index}</Typography>
+                        </TableCell>
                         <TableCell>
                           <Box display="flex" alignItems="center">
                             <Avatar src={row.photo} alt="product" sx={{ width: 56, height: 56 }} />
@@ -372,22 +374,10 @@ const ProductTableList = () => {
                             </Box>
                           </Box>
                         </TableCell>
-                        <TableCell>
-                          <Typography>{format(new Date(row.created), 'E, MMM d yyyy')}</Typography>
-                        </TableCell>
-
+                        
+                        {/* series */}
                         <TableCell>
                           <Box display="flex" alignItems="center">
-                            <Box
-                              sx={{
-                                backgroundColor: row.stock
-                                  ? (theme) => theme.palette.success.main
-                                  : (theme) => theme.palette.error.main,
-                                borderRadius: '100%',
-                                height: '10px',
-                                width: '10px',
-                              }}
-                            />
                             <Typography
                               color="textSecondary"
                               variant="subtitle2"
@@ -395,17 +385,22 @@ const ProductTableList = () => {
                                 ml: 1,
                               }}
                             >
-                              {row.stock ? 'InStock' : 'Out of Stock'}
+                              214
                             </Typography>
                           </Box>
                         </TableCell>
 
                         <TableCell>
-                          <Typography fontWeight={600} variant="h6">
-                            ${row.price}
+                          <Typography fontWeight={400} variant="subtitle2">
+                            ${row.description}
                           </Typography>
                         </TableCell>
                         <TableCell>
+                          <Tooltip title="Edit">
+                            <IconButton size="small">
+                              <IconDotsVertical size="1.1rem" />
+                            </IconButton>
+                          </Tooltip>
                           <Tooltip title="Edit">
                             <IconButton size="small">
                               <IconDotsVertical size="1.1rem" />
@@ -439,4 +434,4 @@ const ProductTableList = () => {
   );
 };
 
-export default ProductTableList;
+export default AirCraftTableList;

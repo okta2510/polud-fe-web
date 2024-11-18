@@ -8,5 +8,6 @@ import './eCommerce/ProductsData';
 import './email/EmailData';
 import './userprofile/PostData';
 import './userprofile/UsersData';
+import './aircraft/AirCraftData';
 
 mock.onAny().passThrough();
