@@ -18,11 +18,12 @@ const AirCraftData = [
     qty: 1,
     colors: ['#1890FF'],
     photo: "/images/products/p1.jpg",
-    id: 1,
     created: sub(new Date(), { days: 8, hours: 6, minutes: 20 }),
-    description: chance.paragraph({ sentences: 2 }),
+    id: 1,
+    // description: chance.paragraph({ sentences: 2 }),
+    description: 'GENERAL - TECHNICAL INFORMATIONAL WEIGHT AND CG',
     type: 'A320',
-    series: '214'
+    series: '214',
   },
   {
     title: 'Psalms Book for Growth',
