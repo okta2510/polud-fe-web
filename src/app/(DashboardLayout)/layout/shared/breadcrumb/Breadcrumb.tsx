@@ -40,8 +40,8 @@ const Breadcrumb = ({ subtitle, items, title, children }: BreadCrumbType) => (
         {subtitle}
       </Typography>
       <Breadcrumbs
-        separator={<IconChevronRight size="16" style={{ margin: "0 5px" }} />}
-        sx={{ alignItems: "center", mt: items ? "10px" : "" }}
+        separator={<IconChevronRight size="16" style={{ margin: "0 0px" }} />}
+        sx={{ alignItems: "center", mt: items ? "10px" : "", mx: '0',px: '0' }}
         aria-label="breadcrumb"
       >
         {items

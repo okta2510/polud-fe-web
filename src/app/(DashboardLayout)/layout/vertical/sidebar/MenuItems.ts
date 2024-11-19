@@ -392,12 +392,12 @@ const InitialItems: MenuitemsType[] = [
     icon: IconFiles,
     href: "/forms/form-validation",
   },
-  {
-    id: uniqueId(),
-    title: "Quill Editor",
-    icon: IconEdit,
-    href: "/forms/form-quill",
-  },
+  // {
+  //   id: uniqueId(),
+  //   title: "Quill Editor",
+  //   icon: IconEdit,
+  //   href: "/forms/form-quill",
+  // },
   {
     navlabel: true,
     subheader: "Widgets",

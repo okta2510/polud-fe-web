@@ -1,3 +1,4 @@
+import { useRouter } from 'next/navigation';
 import * as React from 'react';
 import { alpha, useTheme, styled } from '@mui/material/styles';
 import { format } from 'date-fns';
@@ -183,7 +184,12 @@ interface EnhancedTableToolbarProps {
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const { numSelected, handleSearch, search } = props;
+  const router = useRouter();
 
+  const handleRedirect = () => {
+    // Redirect to the desired route
+    router.push('/system-support/add-new-air-craft');
+  };
   return (
     <Toolbar
       sx={{
@@ -236,7 +242,9 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
           startIcon={<IconEdit width={18} />}>
               Edit
             </Button>
-          <Button  sx={{
+          <Button
+          onClick={(event) => handleRedirect(event)}
+          sx={{
             width: '120px'
           }} variant="contained" color="primary">
               New
