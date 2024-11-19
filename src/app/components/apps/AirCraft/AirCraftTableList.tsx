@@ -186,7 +186,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const { numSelected, handleSearch, search } = props;
   const router = useRouter();
 
-  const handleRedirect = () => {
+  const handleRedirect = (event:any) => {
     // Redirect to the desired route
     router.push('/system-support/add-new-air-craft');
   };
