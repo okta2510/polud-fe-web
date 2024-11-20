@@ -24,12 +24,11 @@ import {
   TextField,
   InputAdornment,
   Paper,
-  Button,
-  Chip
+  Button
 } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
 import { useSelector, useDispatch } from '@/store/hooks';
-import { fetchAirCraft } from '@/store/apps/AirCraft/AirCraftSlice';
+import { fetchAirCraft } from '@/store/apps/AirCraft/AirCraftSeriesSlice';
 import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
 import CustomSwitch from '@/app/components/forms/theme-elements/CustomSwitch';
 import { IconDotsVertical, IconFilter, IconSearch, IconTrash, IconEdit, IconReload, IconEye } from '@tabler/icons-react';
@@ -102,7 +101,6 @@ const headCells: readonly HeadCell[] = [
     disablePadding: false,
     label: 'Aircraft Type',
   },
-
   {
     id: 'series',
     numeric: false,
@@ -110,16 +108,10 @@ const headCells: readonly HeadCell[] = [
     label: 'Series',
   },
   {
-    id: 'aircraftname',
+    id: 'description',
     numeric: false,
     disablePadding: false,
-    label: 'Air Craft Name',
-  },
-  {
-    id: 'flightstatus',
-    numeric: false,
-    disablePadding: false,
-    label: 'Flight Status',
+    label: 'Description',
   },
   {
     id: 'actions',
@@ -189,30 +181,13 @@ interface EnhancedTableToolbarProps {
   search: string;
 }
 
-type AirCraftStatus = 'active' | 'inactive';
-interface ChipStatusProps {
-  status: 'active' | 'inactive';
-}
-
-const ChipStatus = ({status}:ChipStatusProps) => {
-  let color:'primary'|'success'|'incactive' = status === 'active' ? 'success' : status === 'inactive' ? 'incactive' : 'primary'
-  if (status === 'active') {
-    color = 'success'
-  }  else if (status === 'inactive') {
-    color = 'error'
-  } else {
-    color= 'primary'
-  }
-  return <Chip sx={{textTransform: 'capitalize'}} label={status} color={color} />
-}
-
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const { numSelected, handleSearch, search } = props;
   const router = useRouter();
 
   const handleRedirect = (event:any) => {
     // Redirect to the desired route
-    router.push('/system-support/new-air-craft');
+    router.push('/system-support/new-air-craft-series');
   };
   return (
     <Toolbar
@@ -342,26 +317,26 @@ const AirCraftSeriesTableList = () => {
   };
 
   // This is for the single row sleect
-  // const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
-  //   event.stopPropagation();
-  //   const selectedIndex = selected.indexOf(name);
-  //   let newSelected: readonly string[] = [];
+  const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
+    event.stopPropagation();
+    const selectedIndex = selected.indexOf(name);
+    let newSelected: readonly string[] = [];
 
-  //   if (selectedIndex === -1) {
-  //     newSelected = newSelected.concat(selected, name);
-  //   } else if (selectedIndex === 0) {
-  //     newSelected = newSelected.concat(selected.slice(1));
-  //   } else if (selectedIndex === selected.length - 1) {
-  //     newSelected = newSelected.concat(selected.slice(0, -1));
-  //   } else if (selectedIndex > 0) {
-  //     newSelected = newSelected.concat(
-  //       selected.slice(0, selectedIndex),
-  //       selected.slice(selectedIndex + 1),
-  //     );
-  //   }
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selected, name);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selected.slice(1));
+    } else if (selectedIndex === selected.length - 1) {
+      newSelected = newSelected.concat(selected.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(
+        selected.slice(0, selectedIndex),
+        selected.slice(selectedIndex + 1),
+      );
+    }
 
-  //   setSelected(newSelected);
-  // };
+    setSelected(newSelected);
+  };
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -465,18 +440,10 @@ const AirCraftSeriesTableList = () => {
                             </Typography>
                           </Box>
                         </TableCell>
-                        {/* aircraft name  */}
+
                         <TableCell>
                           <Typography fontWeight={400} variant="subtitle2">
                             ${row.description}
-                          </Typography>
-                        </TableCell>
-                        {/* flight status */}
-                        <TableCell>
-                          <Typography fontWeight={400} variant="subtitle2">
-                            <ChipStatus status={row.status}></ChipStatus>
-                            {/* <Chip label="Inactive" color="error" />
-                            <Chip label="Active" color="success" /> */}
                           </Typography>
                         </TableCell>
                         <TableCell>

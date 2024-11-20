@@ -82,6 +82,12 @@ const MainItems:MenuitemsType[] = [
   },
   {
     id: uniqueId(),
+    title: "Aircraft",
+    icon: IconPlane,
+    href: "/system-support/air-craft",
+  },
+  {
+    id: uniqueId(),
     title: "Aircraft Series",
     icon: IconPlane,
     href: "/system-support/air-craft-series",

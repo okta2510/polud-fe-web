@@ -41,7 +41,7 @@ const countries = [
   },
 ];
 
-const AirCraftAddNewForm = () => {
+const AirCraftSeriesNew = () => {
   const [currency, setCurrency] = React.useState('');
   const [value, setValue] = React.useState("1");
 
@@ -326,4 +326,4 @@ const AirCraftAddNewForm = () => {
   );
 };
 
-export default AirCraftAddNewForm;
+export default AirCraftSeriesNew;

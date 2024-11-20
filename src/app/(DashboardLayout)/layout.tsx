@@ -19,6 +19,7 @@ const PageWrapper = styled("div")(() => ({
   flexDirection: "column",
   zIndex: 1,
   backgroundColor: "transparent",
+  // background: 'red'
 }));
 
 interface Props {
@@ -71,7 +72,12 @@ export default function RootLayout({
         {customizer.isHorizontal ? <Navigation /> : ""}
         <Container
           sx={{
-            maxWidth: customizer.isLayout === "boxed" ? "lg" : "100%!important",
+            // maxWidth: customizer.isLayout === "boxed" ? "lg" : "100%!important",
+            maxWidth: {
+              xs: '100%!important',
+              md: '90%!important'
+            },
+            // background: 'yellow'
           }}
         >
           {/* ------------------------------------------- */}
