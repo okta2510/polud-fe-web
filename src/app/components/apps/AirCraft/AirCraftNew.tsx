@@ -1,10 +1,11 @@
 import React from 'react';
-                  <Divider />
-import { Box, FormControlLabel, Button, Grid, MenuItem, FormControl, Alert, Divider } from '@mui/material';
+import { Box, FormControlLabel, Button, Grid, MenuItem, FormControl, Alert, RadioGroup, Typography} from '@mui/material';
+import Divider from '@mui/material/Divider';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField'
 import CustomSelect from '@/app/components/forms/theme-elements/CustomSelect';
 import CustomRadio from '@/app/components/forms/theme-elements/CustomRadio';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
+import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
 import ParentCard from '@/app/components/shared/ParentCard';
 import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
@@ -112,110 +113,55 @@ const AirCraftAddNew = () => {
               <form>
                 <Grid container spacing={3} mb={3}>
                   <Grid item lg={4} md={12} sm={12}>
-                    <CustomFormLabel htmlFor="fname-text">Type</CustomFormLabel>
+                    <CustomFormLabel htmlFor="fname-text">status</CustomFormLabel>
+                      <CustomSelect
+                        id="standard-select-currency"
+                        value={currency}
+                        onChange={handleChange2}
+                        fullWidth
+                        variant="outlined"
+                      >
+                        {currencies.map((option) => (
+                          <MenuItem key={option.value} value={option.value}>
+                            {option.label}
+                          </MenuItem>
+                        ))}
+                    </CustomSelect>
+                  </Grid>
+                  
+
+                </Grid>
+
+                <Grid container spacing={3} mb={3}>
+                  <Grid item lg={4} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">Aircraft Name</CustomFormLabel>
                     <CustomTextField id="fname-text" variant="outlined" fullWidth />
                   </Grid>
                   
                   <Grid item lg={4} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">Serial Number</CustomFormLabel>
+                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                  </Grid>
+                </Grid>
+
+                <Grid container spacing={3} mb={3}>
+                  <Grid item lg={4} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">Aircraft Type </CustomFormLabel>
+                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                  </Grid>
+                  
+
+                  <Grid item lg={4} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Series</CustomFormLabel>
                     <CustomTextField id="fname-text" variant="outlined" fullWidth />
                   </Grid>
-
-                  <Grid item lg={8} md={12} sm={12}>
-                    <CustomFormLabel htmlFor="fname-text">Description</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
-                  </Grid>
-                  <Divider />
+                  
 
                   <Grid item lg={4} md={12} sm={12}>
-                    <CustomFormLabel htmlFor="fname-text">No. of enngines*</CustomFormLabel>
+                    <CustomFormLabel htmlFor="fname-text">Effectivity</CustomFormLabel>
                     <CustomTextField id="fname-text" variant="outlined" fullWidth />
                   </Grid>
-                  <Divider />
-
-                  <Grid item lg={4} md={12} sm={12}>
-                    <CustomFormLabel htmlFor="fname-text">Effectivity Designator Provider</CustomFormLabel>
-                    <CustomSelect
-                      id="standard-select-currency"
-                      value={currency}
-                      onChange={handleChange2}
-                      fullWidth
-                      variant="outlined"
-                    >
-                      {currencies.map((option) => (
-                        <MenuItem key={option.value} value={option.value}>
-                          {option.label}
-                        </MenuItem>
-                      ))}
-                    </CustomSelect>
-                  </Grid>
-                  <Divider />
-
-                  <Grid item lg={12} md={12} sm={12}>
-                    <CustomFormLabel htmlFor="fname-text">Aircraft Sub-Type*</CustomFormLabel>
-                    <CustomSelect
-                      id="standard-select-currency"
-                      value={currency}
-                      onChange={handleChange2}
-                      fullWidth
-                      variant="outlined"
-                    >
-                      {currencies.map((option) => (
-                        <MenuItem key={option.value} value={option.value}>
-                          {option.label}
-                        </MenuItem>
-                      ))}
-                    </CustomSelect>
-                  </Grid>
-                  <Divider />
-
-                  <Grid item lg={6} md={12} sm={12}>
-                    <CustomFormLabel htmlFor="fname-text">Equipment ID</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
-                  </Grid>
-                  <Divider />
-
-                  <Grid item lg={6} md={12} sm={12}>
-                    <CustomFormLabel htmlFor="fname-text">ETOPS</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
-                  </Grid>
-                  <Divider />
-                </Grid>
-
-                <Grid container spacing={3} mb={3}>
-                  <Grid item lg={4} md={12} sm={12}>
-                    <CustomFormLabel htmlFor="fname-text">Aircraft Maintenance Manual</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
-                  </Grid>
-                  <Divider />
-                </Grid>
-
-                <Grid container spacing={3} mb={3}>
-                  <Grid item lg={4} md={12} sm={12}>
-                    <CustomFormLabel htmlFor="fname-text">Aircraft Maintenance Program</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
-                  </Grid>
-                  <Divider />
-
-                  <Grid item lg={4} md={12} sm={12}>
-                    <CustomFormLabel htmlFor="fname-text">Revision</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
-                  </Grid>
-                  <Divider />
-
-                  <Grid item lg={4} md={12} sm={12}>
-                    <CustomFormLabel htmlFor="fname-text">Date</CustomFormLabel>
-                    <CustomTextField
-                      id="date"
-                      type="date"
-                      variant="outlined"
-                      fullWidth
-                      InputLabelProps={{
-                        shrink: true,
-                      }}
-                    />
-                  </Grid>
-                  <Divider />
+                  
                   
 
                   {/* <Grid item lg={6} md={12} sm={12}>
@@ -280,20 +226,361 @@ const AirCraftAddNew = () => {
                     />
                   </Grid> */}
                 </Grid>
+                <Grid container spacing={3} mb={3}>
+                  <Grid item lg={12} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">Description</CustomFormLabel>
+                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                  </Grid>
+                </Grid>
+
+                <Grid container spacing={3} mb={3}>
+                  <Grid item lg={4} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">Service Date</CustomFormLabel>
+                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                  </Grid>
+                  <Grid item lg={4} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">Authority NO</CustomFormLabel>
+                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                  </Grid>
+                </Grid>
               </form>
             </TabPanel>
+
+            {/* ### tab Optional ###*/}
             <TabPanel value="2">
               <form>
                 <Grid container spacing={3} mb={3}>
                   <Grid item lg={4} md={12} sm={12}>
-                    <CustomFormLabel htmlFor="fname-text">Created By</CustomFormLabel>
+                    <CustomFormLabel htmlFor="fname-text">Aircraft</CustomFormLabel>
                     <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                  </Grid>
+                  <Grid item lg={4} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">Aircraft Flight Hours</CustomFormLabel>
+                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                  </Grid>
+                  <Grid item lg={4} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">Min</CustomFormLabel>
+                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                  </Grid>
+                </Grid>
+
+                <Grid container spacing={3} mb={3}>
+                  <Grid item lg={4} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">Block Hours</CustomFormLabel>
+                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                  </Grid>
+                  <Grid item lg={4} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">Min</CustomFormLabel>
+                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                  </Grid>
+                  <Grid item lg={4} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">Aircraft Cycles</CustomFormLabel>
+                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                  </Grid>
+                </Grid>
+
+                <Grid container spacing={3} mb={3}>
+                  <Grid item lg={4} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">Aircraft Brake Cyles</CustomFormLabel>
+                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                  </Grid>
+                  <Grid item lg={4} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">RIN</CustomFormLabel>
+                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                  </Grid>
+                  <Grid item lg={4} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">Time As Of</CustomFormLabel>
+                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                  </Grid>
+                </Grid>
+
+                <Grid container spacing={3} mb={3}>
+                  <Grid item lg={4} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">ETOPS</CustomFormLabel>
+                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                  </Grid>
+                  <Grid item lg={6} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">&nbsp;</CustomFormLabel>
+                    <RadioGroup aria-label="gender" defaultValue="radio1" name="radio-buttons-group">
+                      <Grid container>
+                        <Grid item xs={12} sm={4} lg={2}>
+                          <FormControlLabel
+                            control={<CustomCheckbox />}
+                            label="RVSM"
+                          />
+                        </Grid>
+                        <Grid item xs={12} sm={4} lg={2}>
+                          <FormControlLabel
+                          control={<CustomCheckbox />}
+                          label="RNP" />
+                        </Grid>
+                        <Grid item xs={12} sm={4} lg={6}>
+                          <FormControlLabel
+                            control={<CustomCheckbox />}
+                            label="ETOPS DOWNGRADED"
+                          />
+                        </Grid>
+                      </Grid>
+                    </RadioGroup>
+                  </Grid>
+                </Grid>
+
+                    
+               
+                
+                <Grid container spacing={3} mb={3}>
+                  <Grid item lg={12} md={12} sm={12} sx={{
+                    marginTop: '16px'
+                  }}>
+                    <Divider  variant="fullWidth" component="hr" />
+                  </Grid>
+
+                  <Grid item lg={12} md={12} sm={12}>
+                    <FormControlLabel
+                      control={<CustomCheckbox />}
+                      label="AIRCRAFT UNDER INSURANCE"
+                    />
+                      <Typography sx={{ fontWeight: '700', mt:'20px' }}>
+                      AIRCRAFT INSURANCE
+                      </Typography>
+                  </Grid>
+                  <Grid item lg={4} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">Insurance Name</CustomFormLabel>
+                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                  </Grid>
+                  <Grid item lg={4} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">Expired Date</CustomFormLabel>
+                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                  </Grid>
+                </Grid>
+                
+                <Grid container spacing={3} mb={3} lg={12} md={12} sm={12}>
+                  <Grid item lg={12} md={12} sm={12} sx={{
+                    marginTop: '16px'
+                  }}>
+                    <Divider  variant="fullWidth" component="hr" />
+                  </Grid>
+                  <Grid item lg={12} md={12} sm={12}>
+                    <FormControlLabel
+                      control={<CustomCheckbox />}
+                      label="AIRCRAFT UNDER WARRANTY"
+                    />
+                      <Typography sx={{ fontWeight: '700', mt:'20px' }}>
+                      AIRCRAFT WARRANTY
+                      </Typography>
+                  </Grid>
+                  <Grid item lg={4} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">Vendor</CustomFormLabel>
+                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                  </Grid>
+                </Grid>
+
+                  
+                <Grid container spacing={3} mb={3} lg={12} md={12} sm={12}>
+                  <Grid item lg={4} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">Hours</CustomFormLabel>
+                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                  </Grid>
+                  <Grid item lg={4} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">Cycles</CustomFormLabel>
+                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                  </Grid>
+                  <Grid item lg={4} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">Days</CustomFormLabel>
+                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                  </Grid>
+                </Grid>
+              </form>
+            </TabPanel>
+
+            {/* ### Aircraft Flight Status ###*/}
+            <TabPanel value="3">
+              <Grid container spacing={3} mb={3}>
+                <Grid item lg={4} md={12} sm={12}>
+                  <CustomFormLabel htmlFor="fname-text">Time As Of</CustomFormLabel>
+                  <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                </Grid>
+              </Grid>
+              
+              <Grid container spacing={3} mb={3}>
+                <Grid item lg={4} md={12} sm={12}>
+                  <CustomFormLabel htmlFor="fname-text">Aircraft Flight Hours</CustomFormLabel>
+                  <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                </Grid>
+                <Grid item lg={4} md={12} sm={12}>
+                  <CustomFormLabel htmlFor="fname-text">Min</CustomFormLabel>
+                  <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                </Grid>
+                <Grid item lg={4} md={12} sm={12}>
+                  <CustomFormLabel htmlFor="fname-text">Block Hours</CustomFormLabel>
+                  <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                </Grid>
+              </Grid>
+
+              <Grid container spacing={3} mb={3}>
+                <Grid item lg={4} md={12} sm={12}>
+                  <CustomFormLabel htmlFor="fname-text">Min</CustomFormLabel>
+                  <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                </Grid>
+                <Grid item lg={4} md={12} sm={12}>
+                  <CustomFormLabel htmlFor="fname-text">Aircraft Cycles</CustomFormLabel>
+                  <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                </Grid>
+                <Grid item lg={4} md={12} sm={12}>
+                  <CustomFormLabel htmlFor="fname-text">Aircraft Brake Cycles</CustomFormLabel>
+                  <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                </Grid>
+              </Grid>
+
+              <Grid container spacing={3} mb={3}>
+                <Grid item lg={4} md={12} sm={12}>
+                  <CustomFormLabel htmlFor="fname-text">Flight Status</CustomFormLabel>
+                  <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                </Grid>
+              </Grid>
+
+              <Grid container spacing={3} mb={3}>
+                <Grid item lg={6} md={12} sm={12}>
+                  <CustomFormLabel htmlFor="fname-text">Flight Status</CustomFormLabel>
+                  <RadioGroup aria-label="gender" defaultValue="radio1" name="radio-buttons-group">
+                    <Grid container>
+                      <Grid item xs={12} sm={4} lg={3}>
+                        <FormControl component="fieldset">
+                          <FormControlLabel value="radio1" control={<CustomRadio />} label="Serviceable" />
+                        </FormControl>
+                      </Grid>
+                      <Grid item xs={12} sm={6} lg={6}>
+                        <FormControl component="fieldset">
+                          <FormControlLabel value="radio2" control={<CustomRadio />} label="Unserviceable (AOG/Maintenance)" />
+                        </FormControl>
+                      </Grid>
+                    </Grid>
+                  </RadioGroup>
+                </Grid>
+              </Grid>
+            </TabPanel>
+
+            {/* ### other ###*/}
+            <TabPanel value="4">
+              <Grid container spacing={3} mb={3}>
+                <Grid item lg={4} md={12} sm={12}>
+                  <CustomFormLabel htmlFor="fname-text">Owner</CustomFormLabel>
+                  <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                </Grid>
+                <Grid item lg={4} md={12} sm={12}>
+                  <CustomFormLabel htmlFor="fname-text">Date</CustomFormLabel>
+                  <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                </Grid>
+                <Grid item lg={4} md={12} sm={12}>
+                  <CustomFormLabel htmlFor="fname-text">Delivery Date</CustomFormLabel>
+                  <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                </Grid>
+              </Grid>
+
+              <Grid container spacing={3} mb={3}>
+                <Grid item lg={4} md={12} sm={12}>
+                  <CustomFormLabel htmlFor="fname-text">Operator</CustomFormLabel>
+                  <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                </Grid>
+                <Grid item lg={4} md={12} sm={12}>
+                  <CustomFormLabel htmlFor="fname-text">Date</CustomFormLabel>
+                  <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                </Grid>
+                <Grid item lg={4} md={12} sm={12}>
+                  <CustomFormLabel htmlFor="fname-text">Certificate of Airwothiness Date</CustomFormLabel>
+                  <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                </Grid>
+              </Grid>
+
+              <Grid container spacing={3} mb={3}>
+                <Grid item lg={4} md={12} sm={12}>
+                  <CustomFormLabel htmlFor="fname-text">Prev Aircraft</CustomFormLabel>
+                  <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                </Grid>
+                <Grid item lg={4} md={12} sm={12}>
+                  <CustomFormLabel htmlFor="fname-text">Ownership Status</CustomFormLabel>
+                  <CustomSelect
+                      id="standard-select-currency"
+                      value={currency}
+                      onChange={handleChange2}
+                      fullWidth
+                      variant="outlined"
+                    >
+                      {currencies.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.label}
+                        </MenuItem>
+                      ))}
+                  </CustomSelect>
+                </Grid>
+                <Grid item lg={4} md={12} sm={12}>
+                  <CustomFormLabel htmlFor="fname-text">Date Manufactured</CustomFormLabel>
+                  <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                </Grid>
+              </Grid>
+
+              <Grid container spacing={3} mb={3}>
+                <Grid item lg={4} md={12} sm={12}>
+                  <CustomFormLabel htmlFor="fname-text">Engine Model</CustomFormLabel>
+                  <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                </Grid>
+                <Grid item lg={4} md={12} sm={12}>
+                  <CustomFormLabel htmlFor="fname-text">Delivered Engine No.1</CustomFormLabel>
+                  <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                </Grid>
+                <Grid item lg={4} md={12} sm={12}>
+                  <CustomFormLabel htmlFor="fname-text">Delivered Engine No.2</CustomFormLabel>
+                  <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                </Grid>
+              </Grid>
+            </TabPanel>
+
+            {/* ### concession */}
+            <TabPanel value="5">
+              <Grid container spacing={3} mb={3}>
+                <Grid item lg={4} md={12} sm={12}>
+                  <CustomFormLabel htmlFor="fname-text">Concession Limit</CustomFormLabel>
+                  <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                </Grid>
+
+                <Grid item lg={12} md={12} sm={12} sx={{
+                  marginTop: '16px'
+                }}>
+                  <Divider  variant="fullWidth" component="hr" />
+                </Grid>
+
+                <Grid item lg={4} md={12} sm={12}>
+                  <CustomFormLabel htmlFor="fname-text">Hours</CustomFormLabel>
+                  <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                </Grid>
+                <Grid item lg={4} md={12} sm={12}>
+                  <CustomFormLabel htmlFor="fname-text">Cycles</CustomFormLabel>
+                  <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                </Grid>
+                <Grid item lg={4} md={12} sm={12}>
+                  <CustomFormLabel htmlFor="fname-text">Days</CustomFormLabel>
+                  <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                </Grid>
+                <Grid item lg={4} md={12} sm={12}>
+                  <CustomFormLabel htmlFor="fname-text">Rin</CustomFormLabel>
+                  <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                </Grid>
+                
+              </Grid>
+            </TabPanel>
+            
+            <TabPanel value="6">
+            <Grid container spacing={3} mb={3}>
+                  <Grid item lg={4} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">Created By</CustomFormLabel>
+                    <CustomTextField disabled id="fname-text" variant="outlined" fullWidth />
                   </Grid>
                   <Grid item lg={4} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Created Date</CustomFormLabel>
                     <CustomTextField
                       id="date"
                       type="date"
+                      disabled
                       variant="outlined"
                       fullWidth
                       InputLabelProps={{
@@ -305,12 +592,13 @@ const AirCraftAddNew = () => {
                 <Grid container spacing={3} mb={3}>
                   <Grid item lg={4} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Last Edited By</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    <CustomTextField disabled id="fname-text" variant="outlined" fullWidth />
                   </Grid>
                   <Grid item lg={4} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Last Edited Date</CustomFormLabel>
                     <CustomTextField
                       id="date"
+                      disabled
                       type="date"
                       variant="outlined"
                       fullWidth
@@ -320,12 +608,7 @@ const AirCraftAddNew = () => {
                     />
                   </Grid>
                 </Grid>
-              </form>
             </TabPanel>
-            <TabPanel value="3"></TabPanel>
-            <TabPanel value="4"></TabPanel>
-            <TabPanel value="5"></TabPanel>
-            <TabPanel value="6"></TabPanel>
 
           </TabContext>
         </>

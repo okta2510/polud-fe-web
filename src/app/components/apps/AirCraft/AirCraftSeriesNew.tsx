@@ -283,7 +283,7 @@ const AirCraftSeriesNew = () => {
                 <Grid container spacing={3} mb={3}>
                   <Grid item lg={4} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Created By</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    <CustomTextField id="fname-text" disabled variant="outlined" fullWidth />
                   </Grid>
                   <Grid item lg={4} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Created Date</CustomFormLabel>
@@ -292,6 +292,7 @@ const AirCraftSeriesNew = () => {
                       type="date"
                       variant="outlined"
                       fullWidth
+                      disabled
                       InputLabelProps={{
                         shrink: true,
                       }}
@@ -301,13 +302,14 @@ const AirCraftSeriesNew = () => {
                 <Grid container spacing={3} mb={3}>
                   <Grid item lg={4} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Last Edited By</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    <CustomTextField id="fname-text" disabled variant="outlined" fullWidth />
                   </Grid>
                   <Grid item lg={4} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Last Edited Date</CustomFormLabel>
                     <CustomTextField
                       id="date"
                       type="date"
+                      disabled
                       variant="outlined"
                       fullWidth
                       InputLabelProps={{
