@@ -9,5 +9,6 @@ import './email/EmailData';
 import './userprofile/PostData';
 import './userprofile/UsersData';
 import './aircraft/AirCraftData';
+import './task/TaskData';
 
 mock.onAny().passThrough();
