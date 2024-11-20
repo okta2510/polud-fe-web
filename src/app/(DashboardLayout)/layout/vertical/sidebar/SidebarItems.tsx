@@ -26,13 +26,13 @@ const SidebarItems = () => {
         {Menuitems.map((item, index) => {
           // {/********SubHeader**********/}
           if (item.subheader) {
-            return <NavGroup item={item} hideMenu={hideMenu} key={item.subheader+index} />;
+            return <NavGroup item={item} hideMenu={hideMenu} key={`nav-group-${index ?? item.subheader}`} />;
 
             // {/********If Sub Menu**********/}
             
           } else if(item.separator){
             return (
-              <hr className='' style={{marginBlock: '40px', marginBottom:'10px'}}></hr>
+              <hr className='' key={`hr-${item?.id  ?? index}`} style={{marginBlock: '40px', marginBottom:'10px'}}></hr>
             )
           }else if (item.children) {
             return (
@@ -42,7 +42,7 @@ const SidebarItems = () => {
                 hideMenu={hideMenu}
                 pathWithoutLastPart={pathWithoutLastPart}
                 level={1}
-                key={index+(item.id ?? 'nav-col-'+index)}
+                key={`nav-collapse-${item?.id ?? index}`}
                 onClick={() => dispatch(toggleMobileSidebar())}
               />
             );
@@ -50,7 +50,7 @@ const SidebarItems = () => {
             // {/********If Sub No Menu**********/}
           } else {
             return (
-              <NavItem item={item} key={index+(item.id ?? 'nav-item-')} pathDirect={pathDirect} hideMenu={hideMenu} onClick={() => dispatch(toggleMobileSidebar())} />
+              <NavItem item={item} key={`nav-item-${item?.id ?? index}`} pathDirect={pathDirect} hideMenu={hideMenu} onClick={() => dispatch(toggleMobileSidebar())} />
             );
           }
         })}
