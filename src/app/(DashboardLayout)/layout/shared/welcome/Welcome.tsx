@@ -37,8 +37,8 @@ const Welcome = () => {
           variant="filled"
           sx={{ width: '100%', color: 'white' }}
         >
-          <AlertTitle>Welcome To MaterialPro</AlertTitle>
-          Easy to customize the Template!!!
+          <AlertTitle>Welcome To Polisi Udara Dashboard</AlertTitle>
+          Easy to maintain aircrafts to the next level!
         </Alert>
       </Snackbar>
     </React.Fragment>

@@ -79,7 +79,7 @@ const Profile = () => {
               color="textPrimary"
               fontWeight={600}
             >
-              Julia Roberts
+              Rahayu Saraswati
             </Typography>
             <Typography variant="subtitle2" color="textSecondary">
               Designer

@@ -97,29 +97,28 @@ const headCells: readonly HeadCell[] = [
     label: 'ID',
   },
   {
-    id: 'aircraft_type',
+    id: 'aircraft',
     numeric: false,
     disablePadding: false,
-    label: 'Aircraft Type',
-  },
-
-  {
-    id: 'series',
-    numeric: false,
-    disablePadding: false,
-    label: 'Series',
+    label: 'Aircraft',
   },
   {
-    id: 'aircraftname',
+    id: 'date',
     numeric: false,
     disablePadding: false,
-    label: 'Air Craft Name',
+    label: 'Date',
   },
   {
-    id: 'flightstatus',
+    id: 'aircraft_type_series',
     numeric: false,
     disablePadding: false,
-    label: 'Flight Status',
+    label: 'Aircraft Type/Series',
+  },
+  {
+    id: 'description',
+    numeric: false,
+    disablePadding: false,
+    label: 'Description',
   },
   {
     id: 'actions',
@@ -212,7 +211,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
 
   const handleRedirect = (event:any) => {
     // Redirect to the desired route
-    router.push('/system-support/new-air-craft');
+    router.push('/maintenance/new-aircraft-mean');
   };
   return (
     <Toolbar
@@ -433,52 +432,50 @@ const AirCraftSeriesTableList = () => {
                         <TableCell>
                           <Typography>{row.id}</Typography>
                         </TableCell>
-                        <TableCell>
+                        
+                        <TableCell sx={{
+                          width: '10%'
+                        }}>
                           <Box display="flex" alignItems="center">
                             {/* <Avatar src={row.photo} alt="product" sx={{ width: 56, height: 56 }} /> */}
-                            <Box
-                              sx={{
-                                ml: 2,
-                              }}
-                            >
-                              <Typography variant="subtitle2">
+                            <Typography variant="subtitle2">
                                 {row.title}
                               </Typography>
-                              {/* <Typography color="textSecondary" variant="subtitle2">
-                                {row.category}
-                              </Typography> */}
-                            </Box>
                           </Box>
                         </TableCell>
                         
-                        {/* series */}
-                        <TableCell>
+                        {/* date */}
+                        <TableCell sx={{
+                          width: '10%'
+                        }}>
                           <Box display="flex" alignItems="center">
                             <Typography
                               color="textSecondary"
                               variant="subtitle2"
                               sx={{
                                 ml: 1,
+                                textTransform: 'uppercase'
                               }}
                             >
-                              214
+                              Main Schedule
                             </Typography>
                           </Box>
+                        </TableCell >
+                        {/* aircraft type / series  */}
+                        <TableCell  sx={{
+                          width: '10%'
+                        }}>
+                          <Typography fontWeight={400} variant="subtitle2">
+                          A319/114
+                          </Typography>
                         </TableCell>
-                        {/* aircraft name  */}
+                        {/* description cell */}
                         <TableCell>
                           <Typography fontWeight={400} variant="subtitle2">
                             ${row.description}
                           </Typography>
                         </TableCell>
-                        {/* flight status */}
-                        <TableCell>
-                          <Typography fontWeight={400} variant="subtitle2">
-                            <ChipStatus status={row.status}></ChipStatus>
-                            {/* <Chip label="Inactive" color="error" />
-                            <Chip label="Active" color="success" /> */}
-                          </Typography>
-                        </TableCell>
+                        {/* action cell  */}
                         <TableCell>
                           <Stack
                             direction="row"

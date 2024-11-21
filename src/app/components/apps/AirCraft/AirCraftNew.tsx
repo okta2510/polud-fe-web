@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, FormControlLabel, Button, Grid, MenuItem, FormControl, Alert, RadioGroup, Typography} from '@mui/material';
+import { Box, FormControlLabel, Button, Grid, MenuItem, FormControl, Alert,Stack, RadioGroup, Typography} from '@mui/material';
 import Divider from '@mui/material/Divider';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField'
 import CustomSelect from '@/app/components/forms/theme-elements/CustomSelect';
@@ -11,6 +11,7 @@ import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
+import {IconFilePlus, IconFileExport, IconFileSearch} from "@tabler/icons-react";
 
 const currencies = [
   {
@@ -111,6 +112,28 @@ const AirCraftAddNew = () => {
             
             <TabPanel value="1">
               <form>
+              <Grid container spacing={3} mb={3}>
+                <Grid item>
+                  <img src="/images/aircraft/no-image.png" width={346} height={200} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }}/>
+                </Grid>
+                <Grid item lg={'auto'} md={12} sm={12}>
+                  <Stack spacing={2} sx={{
+                    justifyContent: "center",
+                    alignItems: "start",
+                  }}>
+                    <Button sx={{ width: 'auto', textAlign:'left'}} variant="outlined" color="primary" startIcon={<IconFilePlus/>}>
+                      Import
+                    </Button>
+                    <Button sx={{ width: 'auto', textAlign:'left'}} variant="outlined" color="primary" startIcon={<IconFileExport/>}>
+                      Export
+                    </Button>
+                    <Button sx={{ width: 'auto', textAlign:'left'}} variant="outlined" color="primary"  startIcon={<IconFileSearch/>}>
+                      Plane Document
+                    </Button>
+                  </Stack>
+                </Grid>
+              </Grid>
+
                 <Grid container spacing={3} mb={3}>
                   <Grid item lg={4} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">status</CustomFormLabel>
@@ -161,8 +184,7 @@ const AirCraftAddNew = () => {
                     <CustomFormLabel htmlFor="fname-text">Effectivity</CustomFormLabel>
                     <CustomTextField id="fname-text" variant="outlined" fullWidth />
                   </Grid>
-                  
-                  
+
 
                   {/* <Grid item lg={6} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">First Name</CustomFormLabel>

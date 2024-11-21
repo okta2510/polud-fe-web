@@ -72,6 +72,8 @@ import {
   IconChartBar,
   IconLockAccess,
   IconPlane,
+  IconPlaneTilt,
+  IconHelicopter,
 } from "@tabler/icons-react";
 
 
@@ -93,19 +95,25 @@ const MainItems:MenuitemsType[] = [
     href: "/maintenance/task-card",
   },
   {
+    id: uniqueId(),
+    title: "Aircraft Mean",
+    icon: IconSettings,
+    href: "/maintenance/aircraft-mean",
+  },
+  {
     navlabel: true,
     subheader: "System Support & Setting",
   },
   {
     id: uniqueId(),
     title: "Aircraft",
-    icon: IconPlane,
+    icon: IconPlaneTilt,
     href: "/system-support/air-craft",
   },
   {
     id: uniqueId(),
     title: "Aircraft Series",
-    icon: IconPlane,
+    icon: IconHelicopter,
     href: "/system-support/air-craft-series",
   },
   {

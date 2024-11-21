@@ -9,7 +9,7 @@ const IntroCard = () => (
       Introduction
     </Typography>
     <Typography color="textSecondary" variant="subtitle2" mb={2}>
-      Hello, I am Julia Roberts. I love making websites and graphics. Lorem ipsum dolor sit amet,
+      Hello, I am Rahayu Saraswati. I love making websites and graphics. Lorem ipsum dolor sit amet,
       consectetur adipiscing elit.
     </Typography>
     <Stack direction="row" gap={2} alignItems="center" mb={3}>
