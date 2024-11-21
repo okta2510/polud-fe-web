@@ -15,6 +15,7 @@ import ContactsReducer from "./apps/contacts/ContactSlice";
 import UserProfileReducer from "./apps/userProfile/UserProfileSlice";
 import BlogReducer from "./apps/blog/BlogSlice";
 import TaskReducer from "./apps/Task/TaskSlice";
+import TaskCardReducer from "./apps/Task/TaskCardSlice";
 
 const persistConfig = {
   key: "root",
@@ -34,10 +35,11 @@ export const store = configureStore({
     userpostsReducer: UserProfileReducer,
     blogReducer: BlogReducer,
     taskReducer: TaskReducer,
+    taskCardReducer: TaskCardReducer,
   },
   devTools: process.env.NODE_ENV !== "production",
   middleware: (getDefaultMiddleware) =>
-  getDefaultMiddleware({ serializableCheck: false, immutableCheck: false }),
+    getDefaultMiddleware({ serializableCheck: false, immutableCheck: false }),
 });
 
 const rootReducer = combineReducers({
@@ -51,6 +53,8 @@ const rootReducer = combineReducers({
   ticketReducer: TicketReducer,
   userpostsReducer: UserProfileReducer,
   blogReducer: BlogReducer,
+  taskReducer: TaskReducer,
+  taskCardReducer: TaskCardReducer,
 });
 
 export const persistor = persistStore(store);

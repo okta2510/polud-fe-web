@@ -28,11 +28,11 @@ import {
 } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
 import { useSelector, useDispatch } from '@/store/hooks';
-import { fetchTasks } from '@/store/apps/Task/TaskSlice';
+import { fetchTaskCards } from '@/store/apps/Task/TaskCardSlice';
 import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
 import CustomSwitch from '@/app/components/forms/theme-elements/CustomSwitch';
-import { IconDotsVertical, IconFilter, IconSearch, IconTrash, IconEdit, IconReload, IconEye } from '@tabler/icons-react';
-import { TaskType } from '@/app/(DashboardLayout)/types/apps/task';
+import { IconDotsVertical, IconFilter, IconSearch, IconTrash, IconEdit, IconReload, IconEye, IconPrinter } from '@tabler/icons-react';
+import { TaskCardType } from '@/app/(DashboardLayout)/types/apps/task';
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
     if (b[orderBy] < a[orderBy]) {
@@ -79,10 +79,22 @@ interface HeadCell {
 
 const headCells: readonly HeadCell[] = [
     {
-        id: 'taskId',
+        id: 'id',
         align: 'center',
         disablePadding: false,
-        label: 'Task ID',
+        label: 'ID',
+    },
+    {
+        id: 'taskCard',
+        align: 'left',
+        disablePadding: false,
+        label: 'Task Card',
+    },
+    {
+        id: 'type',
+        align: 'left',
+        disablePadding: false,
+        label: 'Type',
     },
     {
         id: 'category',
@@ -90,18 +102,11 @@ const headCells: readonly HeadCell[] = [
         disablePadding: false,
         label: 'Category',
     },
-
-    {
-        id: 'classification',
-        align: 'left',
-        disablePadding: false,
-        label: 'Classification',
-    },
     {
         id: 'description',
         align: 'left',
         disablePadding: false,
-        label: 'Description',
+        label: 'Task Description',
     },
     {
         id: 'status',
@@ -151,7 +156,6 @@ function EnhancedTableHead(props: EnhancedTableProps) {
                         align={headCell.align}
                         padding={headCell.disablePadding ? 'none' : 'normal'}
                         sortDirection={orderBy === headCell.id ? order : false}
-                        sx={{ minWidth: '110px' }}
                     >
                         <TableSortLabel
                             active={orderBy === headCell.id}
@@ -212,7 +216,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
     const router = useRouter();
 
     const handleRedirect = (_: any) => {
-        router.push('/maintenance/new-task');
+        router.push('/maintenance/new-task-card');
     };
     return (
         <Toolbar
@@ -292,7 +296,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
     );
 };
 
-const TaskTableList = () => {
+const TaskCardTableList = (data: any) => {
     const [order, setOrder] = React.useState<Order>('asc');
     const [orderBy, setOrderBy] = React.useState<any>('');
     const [selected, setSelected] = React.useState<readonly string[]>([]);
@@ -302,21 +306,21 @@ const TaskTableList = () => {
     const dispatch = useDispatch();
 
     React.useEffect(() => {
-        dispatch(fetchTasks());
+        dispatch(fetchTaskCards());
     }, [dispatch]);
 
-    const getTasks: TaskType[] = useSelector((state) => state.taskReducer.tasks);
+    const getTaskCards: TaskCardType[] = useSelector((state) => state.taskCardReducer.taskCards);
 
-    const [rows, setRows] = React.useState<any>(getTasks);
+    const [rows, setRows] = React.useState<any>(getTaskCards);
     const [search, setSearch] = React.useState('');
 
     React.useEffect(() => {
-        setRows(getTasks);
-    }, [getTasks]);
+        setRows(getTaskCards);
+    }, [getTaskCards]);
 
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const filteredRows: TaskType[] = getTasks.filter((row) => {
-            return row.category.toLowerCase().includes(event.target.value);
+        const filteredRows: TaskCardType[] = getTaskCards.filter((row) => {
+            return row.taskCard.toLowerCase().includes(event.target.value);
         });
         setSearch(event.target.value);
         setRows(filteredRows);
@@ -379,16 +383,10 @@ const TaskTableList = () => {
     const theme = useTheme();
     const borderColor = theme.palette.divider;
 
-    return (
-        <Box>
-            <Box>
-                <EnhancedTableToolbar
-                    numSelected={selected.length}
-                    search={search}
-                    handleSearch={(event: any) => handleSearch(event)}
-                />
-            </Box>
-            <Paper variant="outlined" sx={{ mx: 2, my: 1, border: `1px solid ${borderColor}` }}>
+
+    const contentTable = () => {
+        return (
+            <>
                 <TableContainer>
                     <Table
                         sx={{ minWidth: 750 }}
@@ -415,22 +413,41 @@ const TaskTableList = () => {
                                             role="checkbox"
                                             aria-checked={isItemSelected}
                                             tabIndex={-1}
-                                            key={row.taskId}
+                                            key={row.id}
                                             selected={isItemSelected}
                                         >
                                             {/* <TableCell padding="checkbox">
-                                                    <CustomCheckbox
-                                                        onClick={(event) => handleClick(event, row.title)}
-                                                        color="primary"
-                                                        checked={isItemSelected}
-                                                        inputProps={{
-                                                            'aria-labelledby': labelId,
-                                                        }}
-                                                    />
-                                                </TableCell> */}
+                                                        <CustomCheckbox
+                                                            onClick={(event) => handleClick(event, row.title)}
+                                                            color="primary"
+                                                            checked={isItemSelected}
+                                                            inputProps={{
+                                                                'aria-labelledby': labelId,
+                                                            }}
+                                                        />
+                                                    </TableCell> */}
                                             <TableCell>
-                                                <Box sx={{ pl: 2 }}>
-                                                    <Typography >{row.taskId}</Typography>
+                                                <Box>
+                                                    <Typography >{row.id}</Typography>
+                                                </Box>
+                                            </TableCell>
+                                            {/* task card */}
+                                            <TableCell>
+                                                <Box display="flex" alignItems="center">
+                                                    <Typography variant="subtitle2">
+                                                        {row.taskCard}
+                                                    </Typography>
+                                                </Box>
+                                            </TableCell>
+                                            {/* type */}
+                                            <TableCell>
+                                                <Box display="flex" alignItems="center">
+                                                    <Typography
+                                                        color="textSecondary"
+                                                        variant="subtitle2"
+                                                    >
+                                                        {row.type}
+                                                    </Typography>
                                                 </Box>
                                             </TableCell>
                                             {/* category */}
@@ -441,18 +458,7 @@ const TaskTableList = () => {
                                                     </Typography>
                                                 </Box>
                                             </TableCell>
-                                            {/* classification */}
-                                            <TableCell>
-                                                <Box display="flex" alignItems="center">
-                                                    <Typography
-                                                        color="textSecondary"
-                                                        variant="subtitle2"
-                                                    >
-                                                        {row.classification}
-                                                    </Typography>
-                                                </Box>
-                                            </TableCell>
-                                            {/* description  */}
+                                            {/* task description */}
                                             <TableCell>
                                                 <Typography fontWeight={400} variant="subtitle2">
                                                     ${row.description}
@@ -470,12 +476,16 @@ const TaskTableList = () => {
                                                     direction="row"
                                                     spacing={1}
                                                 >
-                                                    <IconButton color="primary">
+                                                    {data.from === 'task-card' && <IconButton color="primary">
                                                         <IconEye width={25} height={25} />
-                                                    </IconButton>
+                                                    </IconButton>}
                                                     <IconButton color="error">
                                                         <IconTrash width={25} height={25} />
                                                     </IconButton>
+                                                    {data.from === 'task-card' && <IconButton color="primary">
+                                                        <IconPrinter width={25} height={25} />
+                                                    </IconButton>}
+
                                                 </Stack>
                                             </TableCell>
                                         </TableRow>
@@ -499,9 +509,28 @@ const TaskTableList = () => {
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
-            </Paper>
-        </Box>
-    );
-};
+            </>
+        );
+    }
 
-export default TaskTableList;
+
+    return (
+        <>
+            {data.from === 'task-card' ? <Box>
+                <Box>
+                    <EnhancedTableToolbar
+                        numSelected={selected.length}
+                        search={search}
+                        handleSearch={(event: any) => handleSearch(event)}
+                    />
+                </Box>
+                <Paper variant="outlined" sx={{ mx: 2, my: 1, border: `1px solid ${borderColor}` }}>
+                    <>{contentTable()}</>
+                </Paper>
+            </Box> : <>{contentTable()}</>}
+        </>
+
+    );
+}
+
+export default TaskCardTableList;

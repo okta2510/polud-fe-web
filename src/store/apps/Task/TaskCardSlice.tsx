@@ -3,17 +3,18 @@ import { filter, map } from 'lodash';
 import { createSlice } from '@reduxjs/toolkit';
 import { AppDispatch } from '../../store';
 
-const API_URL = '/api/data/task';
+const API_URL = '/api/data/task/card';
 
 interface StateType {
-    tasks: any[];
-    taskSearch: string;
+    taskCards: any[];
+    taskCardSearch: string;
     sortBy: string;
     total: number;
     filters: {
-        taskId: string;
+        id: string;
+        taskCard: string;
+        type: string;
         category: string;
-        classification: string;
         description: string;
         status: string;
     };
@@ -21,41 +22,46 @@ interface StateType {
 }
 
 const initialState = {
-    tasks: [],
-    taskSearch: '',
-    sortBy: 'taskId',
+    taskCards: [],
+    taskCardSearch: '',
+    sortBy: 'id',
     total: 0,
     filters: {
-        taskId: 'All',
+        id: 'All',
+        taskCard: 'All',
+        type: 'All',
         category: 'All',
-        classification: 'All',
         description: 'All',
         status: 'All',
     },
     error: '',
 };
 
-export const TaskSlice = createSlice({
-    name: 'task',
+export const TaskCardSlice = createSlice({
+    name: 'taskCards',
     initialState,
     reducers: {
         hasError(state: StateType, action) {
             state.error = action.payload;
         },
 
-        getTasks: (state, action) => {
-            state.tasks = action.payload;
+        getTaskCards: (state, action) => {
+            state.taskCards = action.payload;
         },
-        SearchTask: (state, action) => {
-            state.taskSearch = action.payload;
+        SearchTaskCard: (state, action) => {
+            state.taskCardSearch = action.payload;
         },
 
         sortBy(state, action) {
             state.sortBy = action.payload;
         },
 
-        filterByTaskId(state, action) {
-            state.filters.taskId = action.payload.taskId;
+        filterById(state, action) {
+            state.filters.id = action.payload.id;
+        },
+
+        filterByTaskCard(state, action) {
+            state.filters.taskCard = action.payload.taskCard;
         },
 
         filterByCategory(state, action) {
@@ -66,8 +72,8 @@ export const TaskSlice = createSlice({
             state.filters.description = action.payload.description;
         },
 
-        filterByClassification(state, action) {
-            state.filters.classification = action.payload.classification;
+        filterByType(state, action) {
+            state.filters.type = action.payload.type;
         },
 
         filterByStatus(state, action) {
@@ -75,35 +81,37 @@ export const TaskSlice = createSlice({
         },
 
         filterReset(state) {
-            state.filters.taskId = 'All';
+            state.filters.id = 'All';
+            state.filters.taskCard = 'All';
             state.filters.category = 'All';
             state.filters.description = 'All';
             state.filters.status = 'All';
-            state.filters.classification = 'All';
+            state.filters.type = 'All';
             state.sortBy = 'taskId';
         },
     },
 });
 export const {
     hasError,
-    getTasks,
-    SearchTask,
+    getTaskCards,
+    SearchTaskCard,
     sortBy,
-    filterByTaskId,
+    filterById,
+    filterByTaskCard,
     filterByCategory,
     filterByDescription,
-    filterByClassification,
+    filterByType,
     filterByStatus,
     filterReset,
-} = TaskSlice.actions;
+} = TaskCardSlice.actions;
 
-export const fetchTasks = () => async (dispatch: AppDispatch) => {
+export const fetchTaskCards = () => async (dispatch: AppDispatch) => {
     try {
         const response = await axios.get(`${API_URL}`);
-        dispatch(getTasks(response.data));
+        dispatch(getTaskCards(response.data));
     } catch (error) {
         dispatch(hasError(error));
     }
 };
 
-export default TaskSlice.reducer;
+export default TaskCardSlice.reducer;

@@ -9,3 +9,14 @@ export interface TaskType {
     actions: string;
     created: Date;
   }
+
+  export interface TaskCardType {
+    id: number | string;
+    description: string;
+    taskCard: string;
+    type: string;
+    status: string;
+    category: string;
+    actions: string;
+    created: Date;
+  }
