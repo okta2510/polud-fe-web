@@ -195,7 +195,7 @@ interface ChipStatusProps {
 }
 
 const ChipStatus = ({status}:ChipStatusProps) => {
-  let color:'primary'|'success'|'incactive' = status === 'active' ? 'success' : status === 'inactive' ? 'incactive' : 'primary'
+  let color:'primary'|'success'|'error' = status === 'active' ? 'success' : status === 'inactive' ? 'error' : 'primary'
   if (status === 'active') {
     color = 'success'
   }  else if (status === 'inactive') {
