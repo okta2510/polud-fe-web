@@ -3,7 +3,7 @@
 import { Box } from '@mui/material';
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
 import PageContainer from '@/app/components/container/PageContainer';
-import AirCraftMeanTableList from '@/app/components/apps/AirCraft/AirCraftMeanTableList';
+import AirCraftMeanNew from '@/app/components/apps/AirCraft/AirCraftMeanNew';
 import BlankCard from '@/app/components/shared/BlankCard';
 const BCrumb = [
   {
@@ -11,21 +11,25 @@ const BCrumb = [
     title: 'Home',
   },
   {
+    to: '/maintenance/aircraft-mean',
     title: 'Aircraft Mean',
+  },
+  {
+    title: 'Add New',
   },
 ];
 
-const AirCraft = () => {
+const AirCraftSeriesAddNew = () => {
   return (
-    <PageContainer title="Aircraft mean" description="this is Aircraft Mean">
+    <PageContainer title="Aircraft Series" description="this is Aircraft Series">
       {/* breadcrumb */}
-      <Breadcrumb title="Aircraft" items={BCrumb} />
+      <Breadcrumb title="Aircraft Series" items={BCrumb} />
       {/* end breadcrumb */}
       <BlankCard>
-        <AirCraftMeanTableList />
+        <AirCraftMeanNew />
       </BlankCard>
     </PageContainer>
   );
 };
 
-export default AirCraft;
+export default AirCraftSeriesAddNew;
