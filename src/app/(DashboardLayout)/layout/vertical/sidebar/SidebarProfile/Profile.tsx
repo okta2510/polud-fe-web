@@ -76,7 +76,7 @@ export const Profile = () => {
   return (
     <Box
       sx={{
-        backgroundImage: `url('/images/backgrounds/sidebar-profile-bg.jpg')`,
+        backgroundImage: `url('/images/backgrounds/sidebar-profile-bg2.jpg')`,
         borderRadius: "0 !important",
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",

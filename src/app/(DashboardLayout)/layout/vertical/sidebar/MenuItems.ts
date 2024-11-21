@@ -72,6 +72,8 @@ import {
   IconChartBar,
   IconLockAccess,
   IconPlane,
+  IconPlaneTilt,
+  IconHelicopter,
 } from "@tabler/icons-react";
 
 
@@ -83,13 +85,13 @@ const MainItems:MenuitemsType[] = [
   {
     id: uniqueId(),
     title: "Aircraft",
-    icon: IconPlane,
+    icon: IconPlaneTilt,
     href: "/system-support/air-craft",
   },
   {
     id: uniqueId(),
     title: "Aircraft Series",
-    icon: IconPlane,
+    icon: IconHelicopter,
     href: "/system-support/air-craft-series",
   },
   {
