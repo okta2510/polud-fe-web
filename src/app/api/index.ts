@@ -10,5 +10,6 @@ import './userprofile/PostData';
 import './userprofile/UsersData';
 import './aircraft/AirCraftData';
 import './task/TaskData';
+import './task/TaskCardData';
 
 mock.onAny().passThrough();

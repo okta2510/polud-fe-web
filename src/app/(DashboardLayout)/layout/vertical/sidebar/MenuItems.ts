@@ -90,6 +90,12 @@ const MainItems:MenuitemsType[] = [
   },
   {
     id: uniqueId(),
+    title: "Task Card",
+    icon: IconSettings,
+    href: "/maintenance/task-card",
+  },
+  {
+    id: uniqueId(),
     title: "Aircraft Mean",
     icon: IconSettings,
     href: "/maintenance/aircraft-mean",
