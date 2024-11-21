@@ -87,6 +87,12 @@ const MainItems:MenuitemsType[] = [
     href: "/maintenance/task",
   },
   {
+    id: uniqueId(),
+    title: "Task Card",
+    icon: IconSettings,
+    href: "/maintenance/task-card",
+  },
+  {
     navlabel: true,
     subheader: "System Support & Setting",
   },

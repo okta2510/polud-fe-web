@@ -3,60 +3,67 @@ import { Chance } from 'chance';
 
 const chance = new Chance();
 
-const TaskData = [
+const TaskCardData = [
     {
-        taskId: 1,
+        id: 1,
+        taskCard: 'B789-70-818-02-01-IDN',
+        type: 'Repair',
         category: 'Battery',
-        classification: 'Repair',
         description: chance.paragraph({ sentences: 2 }),
         status: 'open',
     },
     {
-        taskId: 2,
+        id: 2,
+        taskCard: 'B789-70-818-02-02-IDN',
+        type: 'Repair',
         category: 'Battery',
-        classification: 'Repair',
         description: chance.paragraph({ sentences: 2 }),
         status: 'cancel',
     },
     {
-        taskId: 3,
+        id: 3,
+        taskCard: 'B789-70-818-02-03-IDN',
+        type: 'Repair',
         category: 'Battery',
-        classification: 'Repair',
         description: chance.paragraph({ sentences: 2 }),
         status: 'applicable',
     },
     {
-        taskId: 4,
+        id: 4,
+        taskCard: 'B789-70-818-02-04-IDN',
+        type: 'Repair',
         category: 'Battery',
-        classification: 'Repair',
         description: chance.paragraph({ sentences: 2 }),
         status: 'not effective',
     },
     {
-        taskId: 5,
+        id: 5,
+        taskCard: 'B789-70-818-02-05-IDN',
+        type: 'Repair',
         category: 'Battery',
-        classification: 'Repair',
         description: chance.paragraph({ sentences: 2 }),
         status: 'pending',
     },
     {
-        taskId: 6,
+        id: 6,
+        taskCard: 'B789-70-818-02-06-IDN',
+        type: 'Repair',
         category: 'Battery',
-        classification: 'Repair',
         description: chance.paragraph({ sentences: 2 }),
         status: 'rejected',
     },
     {
-        taskId: 7,
+        id: 7,
+        taskCard: 'B789-70-818-02-06-IDN',
+        type: 'Repair',
         category: 'Battery',
-        classification: 'Repair',
         description: chance.paragraph({ sentences: 2 }),
         status: 'terminated',
-    }
+    },
 ];
 
-mock.onGet('/api/data/task').reply(() => {
-    return [200, TaskData];
+mock.onGet('/api/data/task/card').reply(() => {
+    return [200, TaskCardData];
 });
 
-export default TaskData;
+export default TaskCardData;

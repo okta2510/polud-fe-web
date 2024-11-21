@@ -3,28 +3,28 @@
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
 import PageContainer from '@/app/components/container/PageContainer';
 import BlankCard from '@/app/components/shared/BlankCard';
-import TaskTableList from '@/app/components/apps/Task/TaskTableList';
+import TaskCardTableList from '@/app/components/apps/Task/TaskCardTableList';
 const BCrumb = [
     {
         to: '/',
         title: 'Home',
     },
     {
-        title: 'Task',
+        title: 'Task Card',
     },
 ];
 
-const Task = () => {
+const TaskCard = () => {
     return (
-        <PageContainer title="Task" description="this is Task">
+        <PageContainer title="Task Card" description="this is Task Card">
             {/* breadcrumb */}
-            <Breadcrumb title="Task" items={BCrumb} />
+            <Breadcrumb title="Task Card" items={BCrumb} />
             {/* end breadcrumb */}
             <BlankCard>
-                <TaskTableList />
+                <TaskCardTableList from="task-card" />
             </BlankCard>
         </PageContainer>
     );
 };
 
-export default Task;
+export default TaskCard;
