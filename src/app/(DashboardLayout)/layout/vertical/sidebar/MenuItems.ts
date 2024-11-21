@@ -80,6 +80,22 @@ import {
 const MainItems:MenuitemsType[] = [
   {
     navlabel: true,
+    subheader: "Maintenance",
+  },
+  {
+    id: uniqueId(),
+    title: "Task",
+    icon: IconSettings,
+    href: "/maintenance/task",
+  },
+  {
+    id: uniqueId(),
+    title: "Aircraft Mean",
+    icon: IconSettings,
+    href: "/maintenance/aircraft-mean",
+  },
+  {
+    navlabel: true,
     subheader: "System Support & Setting",
   },
   {
