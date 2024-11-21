@@ -101,7 +101,7 @@ const ChatListing = () => {
         </Badge>
         <Box>
           <Typography variant="body1" fontWeight={600}>
-          Julia Roberts
+          Rahayu Saraswati
           </Typography>
           <Typography variant="body2">Designer</Typography>
         </Box>
