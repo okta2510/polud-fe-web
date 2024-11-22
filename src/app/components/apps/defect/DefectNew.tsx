@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, FormControlLabel, Button, Grid, MenuItem, FormControl, Alert,Stack, RadioGroup, Typography} from '@mui/material';
+import { Box, FormControlLabel, Button, Grid, MenuItem, FormControl, Alert,Stack, RadioGroup, Typography, FormGroup, Checkbox} from '@mui/material';
 import Divider from '@mui/material/Divider';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField'
 import CustomSelect from '@/app/components/forms/theme-elements/CustomSelect';
@@ -13,6 +13,8 @@ import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import {IconFilePlus, IconFileExport, IconFileSearch} from "@tabler/icons-react";
 import { format } from 'date-fns';
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
 
 const currencies = [
   {
@@ -445,15 +447,38 @@ const AirCraftAddNew = () => {
             <TabPanel value="2">
               <Grid container spacing={3} mb={3}>
                   <Grid item lg={4} md={12} sm={12}>
-                    <CustomFormLabel htmlFor="fname-text">Created By</CustomFormLabel>
-                    <CustomTextField value={formValues.createdBy} disabled id="fname-text" variant="outlined" fullWidth />
+                    <CustomFormLabel htmlFor="fname-text">Defect Type*</CustomFormLabel>
+                    <CustomSelect
+                        id="standard-select-currency"
+                        value={currency}
+                        onChange={handleChange2}
+                        fullWidth
+                        variant="outlined"
+                        >
+                        {currencies.map((option) => (
+                          <MenuItem key={option.value} value={option.value}>
+                            {option.label}
+                          </MenuItem>
+                        ))}
+                      </CustomSelect>
                   </Grid>
+                  
+                    <Grid item lg={4} md={12} sm={12}>
+                      <CustomFormLabel htmlFor="fname-text">Status*</CustomFormLabel>
+                      <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    </Grid>
+                    <Grid item lg={4} md={12} sm={12}>
+                      <CustomFormLabel htmlFor="fname-text">Status*</CustomFormLabel>
+                      <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    </Grid>
+              </Grid>
+
+              <Grid container spacing={3} mb={3}>
                   <Grid item lg={4} md={12} sm={12}>
-                    <CustomFormLabel htmlFor="fname-text">Created Date</CustomFormLabel>
+                    <CustomFormLabel htmlFor="fname-text">Defer Date*</CustomFormLabel>
                     <CustomTextField
                       id="date"
-                      type="datetime-local"
-                      disabled
+                      type="date"
                       variant="outlined"
                       fullWidth
                       value={formValues.createdDate}
@@ -463,31 +488,159 @@ const AirCraftAddNew = () => {
                       }}
                     />
                   </Grid>
-                </Grid>
-                <Grid container spacing={3} mb={3}>
-                  <Grid item lg={4} md={12} sm={12}>
-                    <CustomFormLabel htmlFor="fname-text">Last Edited By</CustomFormLabel>
-                    <CustomTextField disabled id="fname-text" value={formValues.lastEditedBy} variant="outlined" fullWidth />
+                  <Grid item lg={2} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">Hour*</CustomFormLabel>
+                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                  </Grid>
+                  <Grid item lg={2} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">Minutes*</CustomFormLabel>
+                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
                   </Grid>
                   <Grid item lg={4} md={12} sm={12}>
-                    <CustomFormLabel htmlFor="fname-text">Last Edited Date</CustomFormLabel>
+                    <CustomFormLabel htmlFor="fname-text">MDDR*</CustomFormLabel>
+                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                  </Grid>
+                </Grid>
+
+                <Grid container spacing={3} mb={3}>
+                  <Grid item lg={4} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">&nbsp;</CustomFormLabel>
                     <CustomTextField
                       id="date"
-                      type="datetime-local"
+                      type="date"
                       variant="outlined"
                       fullWidth
-                      disabled
-                      value={formValues.lastEditedDate}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        const dateValue = new Date(e.target.value);
-                        const hourMinute = format(dateValue, 'dd-mm-yyyy | hh:mm:ss');
-                        setFormValues({ ...formValues, lastEditedDate: e.target.value });
-                      }}
+                      value={formValues.createdDate}
+                      onChange={(e:React.ChangeEvent<HTMLInputElement>) => setFormValues({ ...formValues, createdDate: e.target.value })}
                       InputLabelProps={{
                         shrink: true,
                       }}
                     />
                   </Grid>
+                  <Grid item lg={4} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">GMM CTL*</CustomFormLabel>
+                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                  </Grid>
+                  <Grid item lg={4} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">GMM Category*</CustomFormLabel>
+                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                  </Grid>
+                </Grid>
+                <Grid container spacing={3} mb={3}>
+                <Grid item lg={4} md={12} sm={12}>
+                    <FormGroup
+                      row
+                      sx={{
+                          display: 'flex',
+                          justifyContent: 'start',
+                      }}
+                  >
+                      <FormControlLabel
+                        control={
+                          <Checkbox color="primary"
+                              icon={<CheckBoxOutlineBlankIcon />}
+                              checkedIcon={<CheckBoxIcon />}
+                              name="checkednormal"
+                          />
+                        }
+                        label="PLAN DEFECT"
+                      />
+                      <FormControlLabel
+                        control={
+                          <Checkbox color="primary"
+                              icon={<CheckBoxOutlineBlankIcon />}
+                              checkedIcon={<CheckBoxIcon />}
+                              name="checkednormal"
+                          />
+                        }
+                        label="CALENDAR DAYS"
+                      />
+                      </FormGroup>
+                  </Grid>
+                </Grid>
+
+                <Grid container spacing={3} mb={3}>
+                    <Grid item lg={12} md={12} sm={12} sx={{
+                      marginTop: '16px'
+                    }}>
+                      <Divider  variant="fullWidth" component="hr" />
+                    </Grid>
+
+                    <Grid item lg={12} md={12} sm={12}>
+                        <Typography sx={{ fontWeight: '700', mt:'20px' }}>
+                        Defer To Schedule
+                        </Typography>
+                    </Grid>
+                    <Grid item lg={12} md={12} sm={12}>
+                        <Typography sx={{ fontWeight: '400', mt:'0px' }}>
+                        First
+                        </Typography>
+                    </Grid>
+                    <Grid item lg={4} md={12} sm={12}>
+                      <CustomFormLabel htmlFor="fname-text">Hours</CustomFormLabel>
+                      <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    </Grid>
+                    <Grid item lg={4} md={12} sm={12}>
+                      <CustomFormLabel htmlFor="fname-text">Cycles</CustomFormLabel>
+                      <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    </Grid>
+                    <Grid item lg={4} md={12} sm={12}>
+                      <CustomFormLabel htmlFor="fname-text">Days</CustomFormLabel>
+                      <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    </Grid>
+                </Grid>
+                <Grid container spacing={3} mb={3}>
+                  <Grid item lg={4} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">Defer Due Date</CustomFormLabel>
+                    <CustomTextField
+                      id="date"
+                      type="date"
+                      variant="outlined"
+                      fullWidth
+                      value={formValues.createdDate}
+                      onChange={(e:React.ChangeEvent<HTMLInputElement>) => setFormValues({ ...formValues, createdDate: e.target.value })}
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                    />
+                  </Grid>
+                  <Grid item lg={2} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">Hour</CustomFormLabel>
+                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                  </Grid>
+                  <Grid item lg={2} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">Minutes</CustomFormLabel>
+                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                  </Grid>
+                </Grid>
+                <Grid container spacing={3} mb={3}>
+                    <Grid item lg={12} md={12} sm={12} sx={{
+                      marginTop: '16px'
+                    }}>
+                      <Divider  variant="fullWidth" component="hr" />
+                    </Grid>
+                    <Grid item lg={4} md={12} sm={12}>
+                      <CustomFormLabel htmlFor="fname-text">Capability Area*</CustomFormLabel>
+                      <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    </Grid>
+                    <Grid item lg={8} md={12} sm={12}>
+                      <CustomFormLabel htmlFor="fname-text">Defer Note</CustomFormLabel>
+                      <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    </Grid>
+                </Grid>
+                <Grid container spacing={3} mb={3}>
+                    <Grid item lg={12} md={12} sm={12} sx={{
+                      marginTop: '16px'
+                    }}>
+                      <Divider  variant="fullWidth" component="hr" />
+                    </Grid>
+                    <Grid item lg={12} md={12} sm={12}>
+                      <RadioGroup row aria-label="position" name="position" defaultValue="top">
+                        <FormControlLabel value="1" control={<CustomRadio />} label="Do Not Allow Extensions" />
+                        <FormControlLabel value="2" control={<CustomRadio />} label="Allow Extensions with QA Approval Only" />
+                        <FormControlLabel value="3" control={<CustomRadio />} label="Allow Extensions" />
+                      </RadioGroup>
+                    </Grid>
                 </Grid>
             </TabPanel>
 
