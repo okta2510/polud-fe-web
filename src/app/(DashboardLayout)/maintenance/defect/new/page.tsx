@@ -1,0 +1,35 @@
+'use client'
+
+import { Box } from '@mui/material';
+import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
+import PageContainer from '@/app/components/container/PageContainer';
+import DefectNew from '@/app/components/apps/defect/DefectNew';
+import BlankCard from '@/app/components/shared/BlankCard';
+const BCrumb = [
+  {
+    to: '/',
+    title: 'Home',
+  },
+  {
+    to: '/maintenance/aircraft-mean',
+    title: 'Aircraft Mean',
+  },
+  {
+    title: 'Add New',
+  },
+];
+
+const AirCraftSeriesAddNew = () => {
+  return (
+    <PageContainer title="Aircraft Series" description="this is Aircraft Series">
+      {/* breadcrumb */}
+      <Breadcrumb title="Aircraft Series" items={BCrumb} />
+      {/* end breadcrumb */}
+      <BlankCard>
+        <DefectNew />
+      </BlankCard>
+    </PageContainer>
+  );
+};
+
+export default AirCraftSeriesAddNew;
