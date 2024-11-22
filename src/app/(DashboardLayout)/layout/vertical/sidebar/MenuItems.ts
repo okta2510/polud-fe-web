@@ -15,7 +15,7 @@ interface MenuitemsType {
   external?: boolean;
 }
 import {
-  IconAward,
+  // IconAward,
   IconBoxMultiple,
   IconPoint,
   IconAlertCircle,
@@ -23,16 +23,16 @@ import {
   IconCalendar,
   IconMail,
   IconTicket,
-  IconEdit,
+  // IconEdit,
   IconGitMerge,
   IconCurrencyDollar,
   IconApps,
   IconFileDescription,
   IconFileDots,
   IconFiles,
-  IconBan,
-  IconStar,
-  IconMoodSmile,
+  // IconBan,
+  // IconStar,
+  // IconMoodSmile,
   IconBorderAll,
   IconBorderHorizontal,
   IconBorderInner,
@@ -55,7 +55,7 @@ import {
   IconBox,
   IconShoppingCart,
   IconAperture,
-  IconLayout,
+  // IconLayout,
   IconSettings,
   IconHelp,
   IconZoomCode,
@@ -71,45 +71,72 @@ import {
   IconPhoto,
   IconChartBar,
   IconLockAccess,
-  IconPlane,
-  IconPlaneTilt,
-  IconHelicopter,
+  // IconPlane,
+  // IconPlaneTilt,
+  // IconHelicopter,
+  IconTools
 } from "@tabler/icons-react";
 
 
 const MainItems:MenuitemsType[] = [
   {
-    navlabel: true,
-    subheader: "Maintenance",
+    id: uniqueId(),
+    title: "Maintenance",
+    icon: IconTools,
+    href: "/maintenance/",
+    children: [
+      {
+        id: uniqueId(),
+        title: "Defect",
+        icon: IconPoint,
+        href: "/maintenance/defect",
+      },
+      {
+        id: uniqueId(),
+        title: "Task",
+        icon: IconPoint,
+        href: "/maintenance/task",
+      },
+      {
+        id: uniqueId(),
+        title: "Task Card",
+        icon: IconPoint,
+        href: "/maintenance/task-card",
+      },
+      {
+        id: uniqueId(),
+        title: "Aircraft Mean",
+        icon: IconPoint,
+        href: "/maintenance/aircraft-mean",
+      },
+    ],
   },
   {
     id: uniqueId(),
-    title: "Task",
+    title: "Support & Setting",
     icon: IconSettings,
-    href: "/maintenance/task",
+    href: "/system-support/",
+    children: [
+      {
+        id: uniqueId(),
+        title: "Aircraft",
+        icon: IconPoint,
+        href: "/system-support/air-craft",
+      },
+      {
+        id: uniqueId(),
+        title: "Aircraft Series",
+        icon: IconPoint,
+        href: "/system-support/air-craft-series",
+      },
+    ],
   },
-  {
-    id: uniqueId(),
-    title: "Aircraft Mean",
-    icon: IconSettings,
-    href: "/maintenance/aircraft-mean",
-  },
-  {
-    navlabel: true,
-    subheader: "System Support & Setting",
-  },
-  {
-    id: uniqueId(),
-    title: "Aircraft",
-    icon: IconPlaneTilt,
-    href: "/system-support/air-craft",
-  },
-  {
-    id: uniqueId(),
-    title: "Aircraft Series",
-    icon: IconHelicopter,
-    href: "/system-support/air-craft-series",
-  },
+  
+  // {
+  //   navlabel: true,
+  //   subheader: "System Support & Setting",
+  // },
+  
   {
     separator: true,
   },
