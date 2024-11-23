@@ -645,8 +645,249 @@ const AirCraftAddNew = () => {
             </TabPanel>
 
             <TabPanel value="3">
-              asdas 3
+            <Grid container spacing={3} mb={3}>
+              <Grid item lg={4} md={12} sm={12}>
+                <CustomFormLabel htmlFor="fname-text">Defect Type*</CustomFormLabel>
+                <CustomSelect
+                    id="standard-select-currency"
+                    value={currency}
+                    onChange={handleChange2}
+                    fullWidth
+                    variant="outlined"
+                    >
+                    {currencies.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </CustomSelect>
+              </Grid>
+              <Grid item lg={4} md={12} sm={12}>
+                <CustomFormLabel htmlFor="fname-text">Defect Type*</CustomFormLabel>
+                <CustomSelect
+                    id="standard-select-currency"
+                    value={currency}
+                    onChange={handleChange2}
+                    fullWidth
+                    variant="outlined"
+                    >
+                    {currencies.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </CustomSelect>
+              </Grid>
+            </Grid>
+            <Grid container spacing={3} mb={3}>
+              <Grid item lg={4} md={12} sm={12}>
+                <CustomFormLabel htmlFor="fname-text">Defer Date*</CustomFormLabel>
+                <CustomTextField
+                  id="date"
+                  type="date"
+                  variant="outlined"
+                  fullWidth
+                  value={formValues.createdDate}
+                  onChange={(e:React.ChangeEvent<HTMLInputElement>) => setFormValues({ ...formValues, createdDate: e.target.value })}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </Grid>
+              <Grid item lg={2} md={12} sm={12}>
+                <CustomFormLabel htmlFor="fname-text">Chapter*</CustomFormLabel>
+                <CustomTextField id="fname-text" variant="outlined" fullWidth />
+              </Grid>
+              <Grid item lg={2} md={12} sm={12}>
+                <CustomFormLabel htmlFor="fname-text">Chapter*</CustomFormLabel>
+                <CustomTextField id="fname-text" variant="outlined" fullWidth />
+              </Grid>
+              <Grid item lg={4} md={12} sm={12}>
+                <CustomFormLabel htmlFor="fname-text">Resolved Station*</CustomFormLabel>
+                <CustomSelect
+                  id="standard-select-currency"
+                  value={currency}
+                  onChange={handleChange2}
+                  fullWidth
+                  variant="outlined"
+                  >
+                  {currencies.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </CustomSelect>
+                </Grid>
+              </Grid>
+              <Grid container spacing={3} mb={3}>
+                <Grid item lg={4} md={12} sm={12}>
+                  <RadioGroup aria-label="gender" defaultValue="radio1" name="radio-buttons-group">
+                  </RadioGroup>
+                  <FormControlLabel
+                          control={<CustomCheckbox />}
+                          label="Ongoing Trouble Shooting"
+                        />
+                  
+                </Grid>
+                </Grid>
+
+                <Grid container spacing={3} mb={3}>
+                  <Grid item lg={12} md={12} sm={12} sx={{mb: '0', pb: '0'}}>
+                    <Typography sx={{ fontWeight: '400', mt:'20px' }}>Fault</Typography>
+                  </Grid>
+                  <Grid item lg={4} md={12} sm={12}>
+                      <FormControl
+                        sx={{
+                          width: '100%',
+                        }}
+                      >
+                        <Box>
+                          <FormControlLabel
+                            checked={group1Value === 'a'}
+                            onChange={handleGroup1Change}
+                            value="a"
+                            label="Confirm"
+                            name="radio-button-demo2"
+                            control={<CustomRadio />}
+                          
+                          />
+                          <FormControlLabel
+                            checked={group1Value === 'b'}
+                            onChange={handleGroup1Change}
+                            value="b"
+                            label="Not Confirm"
+                            control={<CustomRadio />}
+                            name="radio-button-demo2"
+                          />
+                          <FormControlLabel
+                            checked={group1Value === 'b'}
+                            onChange={handleGroup1Change}
+                            value="c"
+                            label="Pending"
+                            control={<CustomRadio />}
+                            name="radio-button-demo2"
+                          />
+                        </Box>
+                      </FormControl>
+                  </Grid>
+                  <Grid item lg={12} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">Resolution Description</CustomFormLabel>
+                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                  </Grid>
+                </Grid>
+
+                <Grid container spacing={3} mb={3}>
+                  <Grid item lg={4} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">Work Order</CustomFormLabel>
+                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                  </Grid>
+                  <Grid item lg={4} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">Task Card</CustomFormLabel>
+                    <CustomSelect
+                      id="standard-select-currency"
+                      value={currency}
+                      onChange={handleChange2}
+                      fullWidth
+                      variant="outlined"
+                      >
+                      {currencies.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.label}
+                        </MenuItem>
+                      ))}
+                    </CustomSelect>
+                  </Grid>
+                  <Grid item lg={4} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">Item</CustomFormLabel>
+                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                  </Grid>
+                </Grid>
+
+                <Grid container spacing={3} mb={3}>
+                  <Grid item lg={4} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">Root Cause*</CustomFormLabel>
+                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                  </Grid>
+                  <Grid item lg={4} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">Inspected By*</CustomFormLabel>
+                    <CustomSelect
+                      id="standard-select-currency"
+                      value={currency}
+                      onChange={handleChange2}
+                      fullWidth
+                      variant="outlined"
+                      >
+                      {currencies.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.label}
+                        </MenuItem>
+                      ))}
+                    </CustomSelect>
+                  </Grid>
+                </Grid>
+
+                <Grid container spacing={3} mb={3}>
+                  <Grid item lg={4} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">REL to SRV By*</CustomFormLabel>
+                    <CustomSelect
+                      id="standard-select-currency"
+                      value={currency}
+                      onChange={handleChange2}
+                      fullWidth
+                      variant="outlined"
+                      >
+                      {currencies.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.label}
+                        </MenuItem>
+                      ))}
+                    </CustomSelect>
+                  </Grid>
+                  <Grid item lg={4} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">REL To SRV Date</CustomFormLabel>
+                    <CustomTextField
+                      id="date"
+                      type="date"
+                      variant="outlined"
+                      fullWidth
+                      value={formValues.createdDate}
+                      onChange={(e:React.ChangeEvent<HTMLInputElement>) => setFormValues({ ...formValues, createdDate: e.target.value })}
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                    />
+                  </Grid>
+                  <Grid item lg={4} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">Reference</CustomFormLabel>
+                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                  </Grid>
+                </Grid>
+
+                <Grid container spacing={3} mb={3}>
+                  <Grid item lg={12} md={12} sm={12} sx={{
+                    marginTop: '16px'
+                  }}>
+                    <Divider  variant="fullWidth" component="hr" />
+                  </Grid>
+
+                  <Grid item lg={12} md={12} sm={12}>
+                      <Typography sx={{ fontWeight: '700', mt:'20px' }}>
+                      Fault Code
+                      </Typography>
+                  </Grid>
+                  <Grid item lg={4} md={12} sm={12}>
+                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                  </Grid>
+                  <Grid item lg={4} md={12} sm={12}>
+                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                  </Grid>
+                  <Grid item lg={4} md={12} sm={12}>
+                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                  </Grid>
+                </Grid>
             </TabPanel>
+
+
             <TabPanel value="4">
             <Grid container spacing={3} mb={3}>
                   <Grid item lg={4} md={12} sm={12}>
