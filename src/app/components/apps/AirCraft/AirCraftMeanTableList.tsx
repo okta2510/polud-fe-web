@@ -211,7 +211,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
 
   const handleRedirect = (event:any) => {
     // Redirect to the desired route
-    router.push('/maintenance/new-aircraft-mean');
+    router.push('/maintenance/aircraft-mean/new');
   };
   return (
     <Toolbar

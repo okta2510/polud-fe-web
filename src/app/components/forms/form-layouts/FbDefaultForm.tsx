@@ -154,6 +154,27 @@ const FbDefaultForm = () => {
               </RadioGroup>
             </FormControl>
           </Grid>
+          <Grid item lg={4} md={6} sm={12}>
+            <FormControl component="fieldset">
+              <RadioGroup aria-label="gender" name="gender1" value={value} onChange={handleChange2}>
+                <FormControlLabel
+                  value="radio1"
+                  control={<CustomRadio />}
+                  label="Toggle this custom radio"
+                />
+                <FormControlLabel
+                  value="radio2"
+                  control={<CustomRadio />}
+                  label="Toggle this custom radio"
+                />
+                <FormControlLabel
+                  value="radio3"
+                  control={<CustomRadio />}
+                  label="Toggle this custom radio"
+                />
+              </RadioGroup>
+            </FormControl>
+          </Grid>
         </Grid>
         <CustomFormLabel htmlFor="standard-select-number">Select</CustomFormLabel>
         <CustomSelect
