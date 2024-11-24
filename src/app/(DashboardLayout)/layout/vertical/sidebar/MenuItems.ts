@@ -115,6 +115,12 @@ const MainItems:MenuitemsType[] = [
         icon: IconPoint,
         href: "/maintenance/aircraft-mean",
       },
+      {
+        id: uniqueId(),
+        title: "Work Order",
+        icon: IconPoint,
+        href: "/maintenance/work-order",
+      },
     ],
   },
   {

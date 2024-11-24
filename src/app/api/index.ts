@@ -11,5 +11,6 @@ import './userprofile/UsersData';
 import './aircraft/AirCraftData';
 import './task/TaskData';
 import './task/TaskCardData';
+import './WorkOrder/WorkOrderData';
 
 mock.onAny().passThrough();
