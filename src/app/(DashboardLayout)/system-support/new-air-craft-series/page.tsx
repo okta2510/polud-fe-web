@@ -11,7 +11,7 @@ const BCrumb = [
     title: 'Home',
   },
   {
-    to: '/system-support/air-craft-series',
+    to: '/system-support/aircraft-series',
     title: 'Aircraft Series',
   },
   {

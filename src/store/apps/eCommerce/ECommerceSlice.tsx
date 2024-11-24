@@ -131,6 +131,7 @@ export const EcommerceSlice = createSlice({
 
     // delete Cart
     deleteCart(state: StateType, action) {
+      console.log(action)
       const updateCart = filter(state.cart, (item) => item.id !== action.payload);
       state.cart = updateCart;
     },
