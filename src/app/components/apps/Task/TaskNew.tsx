@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, FormControlLabel, Button, Grid, MenuItem, FormControl, Alert, RadioGroup, Typography } from '@mui/material';
+import { Box, FormControlLabel, Button, Grid, MenuItem, FormControl, Alert, RadioGroup, Typography, InputAdornment } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField'
 import CustomSelect from '@/app/components/forms/theme-elements/CustomSelect';
@@ -13,7 +13,7 @@ import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import Autocomplete from '@mui/material/Autocomplete';
-import { IconPlus } from '@tabler/icons-react';
+import { IconPlus, IconSearch } from '@tabler/icons-react';
 import TaskCardTableList from './TaskCardTableList';
 
 const taskStatus = [
@@ -30,7 +30,7 @@ const taskStatus = [
         label: 'APPLICABLE',
     },
     {
-        value: 'not-effective',
+        value: 'not effective',
         label: 'NOT EFFECTIVE',
     },
     {
@@ -450,87 +450,98 @@ const TaskAddNew = () => {
                         {/* ### tab Task Card Control ###*/}
                         <TabPanel value="4">
                             <form>
-                                <Grid item lg={12} md={12} sm={12}>
-                                    <ChildCard title=''>
-                                        <Grid container spacing={3} mb={3}>
-                                            <Grid item lg={12} md={12} sm={12}>
-                                                <CustomFormLabel htmlFor="fname-text">Task Card</CustomFormLabel>
-                                                <Autocomplete
-                                                    disablePortal
-                                                    id="combo-box-search-task"
-                                                    options={top100Films}
-                                                    fullWidth
-                                                    sx={{
-                                                        "& .MuiInputBase-root": { padding: "6px" },
-                                                    }}
-                                                    renderInput={(params) => (
-                                                        <CustomTextField {...params} placeholder="Search or Select Task Card" aria-label="Search or Select Task Card" />
-                                                    )}
-                                                />
-                                            </Grid>
+                                <ChildCard title=''>
+                                    <Grid container spacing={3} mb={3}>
+                                        <Grid item lg={12} md={12} sm={12}>
+                                            <CustomFormLabel htmlFor="fname-text">Task Card</CustomFormLabel>
+                                            <Autocomplete
+                                                disablePortal
+                                                id="combo-box-search-task"
+                                                options={top100Films}
+                                                fullWidth
+                                                sx={{
+                                                    "& .MuiInputBase-root": { paddingTop: "6px", paddingBottom: "6px", paddingLeft: "16px" },
+                                                }}
+                                                renderInput={(params) => (
+                                                    <CustomTextField
+                                                        {...params}
+                                                        placeholder="Search or Select Task Card"
+                                                        aria-label="Search or Select Task Card"
+                                                        InputProps={{
+                                                            ...params.InputProps,
+                                                            startAdornment: (
+                                                                <InputAdornment position="start">
+                                                                    <IconSearch size="1.1rem" />
+                                                                </InputAdornment>
+                                                            ),
+                                                        }}
+                                                    />
+                                                )}
+                                            />
                                         </Grid>
-                                        <Grid container spacing={3} mb={3}>
-                                            <Grid item lg={6} md={12} sm={12}>
-                                                <CustomFormLabel htmlFor="fname-text">Type</CustomFormLabel>
-                                                <CustomTextField disabled id="fname-text" variant="outlined" fullWidth />
-                                            </Grid>
-                                            <Grid item lg={6} md={12} sm={12}>
-                                                <CustomFormLabel htmlFor="fname-text">Category</CustomFormLabel>
-                                                <CustomTextField disabled id="fname-text" variant="outlined" fullWidth />
-                                            </Grid>
+                                    </Grid>
+                                    <Grid container spacing={3} mb={3}>
+                                        <Grid item lg={6} md={12} sm={12}>
+                                            <CustomFormLabel htmlFor="fname-text">Type</CustomFormLabel>
+                                            <CustomTextField disabled id="fname-text" variant="outlined" fullWidth />
                                         </Grid>
-                                        <Grid container spacing={3} mb={3}>
-                                            <Grid item lg={6} md={12} sm={12}>
-                                                <CustomFormLabel htmlFor="fname-text">Task Description</CustomFormLabel>
-                                                <Autocomplete
-                                                    id="combo-box-search-task"
-                                                    options={top100Films}
-                                                    fullWidth
-                                                    sx={{
-                                                        "& .MuiInputBase-root": { padding: "6px" },
-                                                    }}
-                                                    renderInput={(params) => (
-                                                        <CustomTextField {...params} placeholder="Search or Select Task Card" aria-label="Search or Select Task Card" />
-                                                    )}
-                                                />
-                                            </Grid>
-                                            <Grid item lg={6} md={12} sm={12}>
-                                                <CustomFormLabel htmlFor="fname-text">Status</CustomFormLabel>
-                                                <CustomSelect
-                                                    id="standard-select-status1"
-                                                    value={status}
-                                                    onChange={handleChangeStatus}
-                                                    fullWidth
-                                                    variant="outlined"
-                                                >
-                                                    {taskStatus.map((option) => (
-                                                        <MenuItem key={option.value} value={option.value}>
-                                                            {option.label}
-                                                        </MenuItem>
-                                                    ))}
-                                                </CustomSelect>
-                                            </Grid>
+                                        <Grid item lg={6} md={12} sm={12}>
+                                            <CustomFormLabel htmlFor="fname-text">Category</CustomFormLabel>
+                                            <CustomTextField disabled id="fname-text" variant="outlined" fullWidth />
                                         </Grid>
-                                        <>
-                                            <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                                <Button
-                                                    variant="contained"
-                                                    color="error"
-                                                    sx={{
-                                                        mr: 1,
-                                                    }}
-                                                >
-                                                    Delete
-                                                </Button>
-                                                <Button sx={{
-                                                    "& .MuiButton-startIcon": { marginRight: "1px" },
-                                                }} variant="contained" color="primary" startIcon={<IconPlus size={16} />}>
-                                                    Add
-                                                </Button>
-                                            </Box>
-                                        </>
-                                    </ChildCard>
-                                </Grid>
+                                    </Grid>
+                                    <Grid container spacing={3} mb={3}>
+                                        <Grid item lg={6} md={12} sm={12}>
+                                            <CustomFormLabel htmlFor="fname-text">Task Description</CustomFormLabel>
+                                            <Autocomplete
+                                                id="combo-box-search-task"
+                                                options={top100Films}
+                                                fullWidth
+                                                sx={{
+                                                    "& .MuiInputBase-root": { padding: "6px" },
+                                                }}
+                                                renderInput={(params) => (
+                                                    <CustomTextField {...params} placeholder="Select" aria-label="Select" />
+                                                )}
+                                            />
+                                        </Grid>
+                                        <Grid item lg={6} md={12} sm={12}>
+                                            <CustomFormLabel htmlFor="fname-text">Status</CustomFormLabel>
+                                            <CustomSelect
+                                                id="standard-select-status1"
+                                                placeholder="Select"
+                                                value={status}
+                                                onChange={handleChangeStatus}
+                                                fullWidth
+                                                variant="outlined"
+                                            >
+                                                {taskStatus.map((option) => (
+                                                    <MenuItem key={option.value} value={option.value}>
+                                                        {option.label}
+                                                    </MenuItem>
+                                                ))}
+                                            </CustomSelect>
+                                        </Grid>
+                                    </Grid>
+                                    <>
+                                        <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                            <Button
+                                                variant="contained"
+                                                color="error"
+                                                sx={{
+                                                    mr: 1,
+                                                }}
+                                            >
+                                                Delete
+                                            </Button>
+                                            <Button sx={{
+                                                "& .MuiButton-startIcon": { marginRight: "1px" },
+                                            }} variant="contained" color="primary" startIcon={<IconPlus size={16} />}>
+                                                Add
+                                            </Button>
+                                        </Box>
+                                    </>
+                                </ChildCard>
                                 <Box sx={{ marginTop: '24px' }}>
                                     <TaskCardTableList from="task" />
                                 </Box>

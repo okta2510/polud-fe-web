@@ -240,7 +240,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
                                 </InputAdornment>
                             ),
                         }}
-                        placeholder="Search Product"
+                        placeholder="Type here"
                         size="small"
                         onChange={handleSearch}
                         value={search}
@@ -455,7 +455,7 @@ const TaskTableList = () => {
                                             {/* description  */}
                                             <TableCell>
                                                 <Typography fontWeight={400} variant="subtitle2">
-                                                    ${row.description}
+                                                    {row.description}
                                                 </Typography>
                                             </TableCell>
                                             {/* status */}
