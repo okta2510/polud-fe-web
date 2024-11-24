@@ -212,7 +212,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
     const router = useRouter();
 
     const handleRedirect = (_: any) => {
-        router.push('/maintenance/new-task');
+        router.push('/maintenance/task/new');
     };
     return (
         <Toolbar

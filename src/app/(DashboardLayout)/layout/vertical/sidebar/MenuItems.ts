@@ -105,6 +105,12 @@ const MainItems:MenuitemsType[] = [
       },
       {
         id: uniqueId(),
+        title: "Defect & Task Expiration",
+        icon: IconPoint,
+        href: "/maintenance/defect-task-expiration",
+      },
+      {
+        id: uniqueId(),
         title: "Aircraft Mean",
         icon: IconPoint,
         href: "/maintenance/aircraft-mean",
