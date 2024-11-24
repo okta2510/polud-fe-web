@@ -187,7 +187,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
 
   const handleRedirect = (event:any) => {
     // Redirect to the desired route
-    router.push('/system-support/new-air-craft-series');
+    router.push('/system-support/new-aircraft-series');
   };
   return (
     <Toolbar

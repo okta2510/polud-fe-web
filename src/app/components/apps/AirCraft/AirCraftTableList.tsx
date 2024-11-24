@@ -4,9 +4,9 @@ import { alpha, useTheme, styled } from '@mui/material/styles';
 import { format } from 'date-fns';
 import {
   Box,
-  Grid,
+  // Grid,
   Stack,
-  Divider,
+  // Divider,
   Table,
   TableBody,
   TableCell,
@@ -17,10 +17,10 @@ import {
   TableSortLabel,
   Toolbar,
   IconButton,
-  Tooltip,
-  FormControlLabel,
+  // Tooltip,
+  // FormControlLabel,
   Typography,
-  Avatar,
+  // Avatar,
   TextField,
   InputAdornment,
   Paper,
@@ -30,21 +30,13 @@ import {
 import { visuallyHidden } from '@mui/utils';
 import { useSelector, useDispatch } from '@/store/hooks';
 import { fetchAirCraft } from '@/store/apps/AirCraft/AirCraftSlice';
-import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
-import CustomSwitch from '@/app/components/forms/theme-elements/CustomSwitch';
+// import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
+// import CustomSwitch from '@/app/components/forms/theme-elements/CustomSwitch';
 import { IconDotsVertical, IconFilter, IconSearch, IconTrash, IconEdit, IconReload, IconEye } from '@tabler/icons-react';
 import { ProductType } from '@/app/(DashboardLayout)/types/apps/eCommerce';
+import { number } from 'yup';
 
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: '#fff',
-  ...theme.typography.body2,
-  padding: theme.spacing(5),
-  textAlign: 'center',
-  color: theme.palette.text.secondary,
-  ...theme.applyStyles('dark', {
-    backgroundColor: '#1A2027',
-  }),
-}));
+
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -53,7 +45,6 @@ function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] > a[orderBy]) {
     return 1;
   }
-
   return 0;
 }
 
@@ -97,7 +88,7 @@ const headCells: readonly HeadCell[] = [
     label: 'ID',
   },
   {
-    id: 'aircraft_type',
+    id: 'aircraftType',
     numeric: false,
     disablePadding: false,
     label: 'Aircraft Type',
@@ -110,13 +101,13 @@ const headCells: readonly HeadCell[] = [
     label: 'Series',
   },
   {
-    id: 'aircraftname',
+    id: 'aircraftName',
     numeric: false,
     disablePadding: false,
-    label: 'Air Craft Name',
+    label: 'Aircraft Name',
   },
   {
-    id: 'flightstatus',
+    id: 'flightStatus',
     numeric: false,
     disablePadding: false,
     label: 'Flight Status',
@@ -212,7 +203,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
 
   const handleRedirect = (event:any) => {
     // Redirect to the desired route
-    router.push('/system-support/new-air-craft');
+    router.push('/system-support/new-aircraft');
   };
   return (
     <Toolbar
@@ -306,21 +297,32 @@ const AirCraftSeriesTableList = () => {
     dispatch(fetchAirCraft());
   }, [dispatch]);
 
-  const getProducts: ProductType[] = useSelector((state) => state.ecommerceReducer.products);
+  const getData: ProductType[] = useSelector((state) => state.aircraftReducer.aircraft);
 
-  const [rows, setRows] = React.useState<any>(getProducts);
+  const [rows, setRows] = React.useState<any>(getData);
   const [search, setSearch] = React.useState('');
 
   React.useEffect(() => {
-    setRows(getProducts);
-  }, [getProducts]);
+    setRows(getData);
+  }, [getData]);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const filteredRows: ProductType[] = getProducts.filter((row) => {
+    const filteredRows: ProductType[] = getData.filter((row) => {
       return row.title.toLowerCase().includes(event.target.value);
     });
     setSearch(event.target.value);
     setRows(filteredRows);
+  };
+  
+  interface dataTable  {
+    id: number;
+  }
+  const handleDeleteRow = async (id: number) => {
+    if (window.confirm('Are you sure you want to delete this item?')) {
+      const updatedItems = rows.filter((item:dataTable) => item.id !== id);
+      await localStorage.setItem('aircraftData', JSON.stringify(updatedItems));
+      await dispatch(fetchAirCraft());
+    }
   };
 
   // This is for the sorting
@@ -442,7 +444,7 @@ const AirCraftSeriesTableList = () => {
                               }}
                             >
                               <Typography variant="subtitle2">
-                                {row.title}
+                                {row.general.aircraft_type}
                               </Typography>
                               {/* <Typography color="textSecondary" variant="subtitle2">
                                 {row.category}
@@ -461,22 +463,20 @@ const AirCraftSeriesTableList = () => {
                                 ml: 1,
                               }}
                             >
-                              214
+                              {row.general.series}
                             </Typography>
                           </Box>
                         </TableCell>
                         {/* aircraft name  */}
                         <TableCell>
                           <Typography fontWeight={400} variant="subtitle2">
-                            ${row.description}
+                            {row.general.aircraft_name}
                           </Typography>
                         </TableCell>
                         {/* flight status */}
                         <TableCell>
                           <Typography fontWeight={400} variant="subtitle2">
-                            <ChipStatus status={row.status}></ChipStatus>
-                            {/* <Chip label="Inactive" color="error" />
-                            <Chip label="Active" color="success" /> */}
+                            <ChipStatus status={row.general.status}></ChipStatus>
                           </Typography>
                         </TableCell>
                         <TableCell>
@@ -489,7 +489,7 @@ const AirCraftSeriesTableList = () => {
                                 <IconEye width={25} height={25}  />
                               </IconButton>
                               <IconButton  color="error">
-                                <IconTrash width={25} height={25}  />
+                                <IconTrash width={25} height={25} onClick={() => handleDeleteRow(row.id)}  />
                               </IconButton>
                           </Stack>
                         </TableCell>

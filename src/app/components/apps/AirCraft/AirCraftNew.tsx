@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, FormControlLabel, Button, Grid, MenuItem, FormControl, Alert,Stack, RadioGroup, Typography} from '@mui/material';
 import Divider from '@mui/material/Divider';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField'
@@ -12,60 +12,116 @@ import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import {IconFilePlus, IconFileExport, IconFileSearch} from "@tabler/icons-react";
+import { sub } from 'date-fns';
 
 const currencies = [
   {
-    value: 'female',
-    label: 'Female',
+    value: 'active',
+    label: 'Active',
   },
   {
-    value: 'male',
-    label: 'Male',
+    value: 'inactive',
+    label: 'Inactive',
   },
   {
-    value: 'other',
-    label: 'Other',
+    value: 'maintenance',
+    label: 'Maintenance',
   },
 ];
 
-const countries = [
-  {
-    value: 'india',
-    label: 'India',
-  },
-  {
-    value: 'uk',
-    label: 'United Kingdom',
-  },
-  {
-    value: 'srilanka',
-    label: 'Srilanka',
-  },
-];
 
 const AirCraftAddNew = () => {
-  const [currency, setCurrency] = React.useState('');
+  const [error, setError] = useState(false);
   const [value, setValue] = React.useState("1");
+  const [other, setOther] = React.useState({
+    ownership_status: ''
+  })
 
+  const initialGeneral = {
+    image: null,
+    aircraft_type: '',
+    aircraft_name: '',
+    serial_number: '',
+    series: '',
+    status: '',
+    effectivity: '',
+    description: '',
+    authority_no: '',
+    service_date: '',
+    authoity: ''
+  }
+  const initialInformational = {
+    createdBy: '',
+    createdDate: '',
+    lastEditedBy: '',
+    lastEditedDate: '',
+  }
+  const [general, setGeneral] = React.useState({...initialGeneral})
+
+  const [flightStatus, setFlightStatus] = React.useState({})
+  const [optional, setOptional] = React.useState({})
+  const [concession, setConcession] = React.useState({})
+  const [informational, setInformational] = React.useState({
+    createdBy: 'ACTYPSERMS',
+    createdDate: '2024-11-15T01:23',
+    lastEditedBy: 'GEVERFOREVER',
+    lastEditedDate: '2024-11-15T01:23',
+  })
+
+  useEffect(() => {
+    console.log(informational.lastEditedDate);
+  }, [informational, general]);
+  
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
   };
-
-  const handleChange2 = (event: any) => {
-    setCurrency(event.target.value);
+  
+  const handleGeneralChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setGeneral((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
   };
 
-  const [selectedValue, setSelectedValue] = React.useState('');
+  const handleReset = () => {
+    setGeneral({...initialGeneral})
+    setInformational({...initialInformational})
+    setFlightStatus({})
+    setOptional({})
+    setConcession({})
+  }
 
-  const handleChange3 = (event: any) => {
-    setSelectedValue(event.target.value);
+  const handleSave = () => {
+    const cachedData = localStorage.getItem('aircraftData');
+    const parsedData = cachedData ? JSON.parse(cachedData) : [];
+    
+    try {
+      const payload = [...parsedData, ...[{ 
+        id: parsedData.length+1,
+        general,
+        other,
+        optional: {},
+        flight_status: {},
+        concession: {},
+        informational: {},
+        created: sub(new Date(), { days: 8, hours: 6, minutes: 20 }),
+      }]]
+      localStorage.setItem('aircraftData', JSON.stringify(payload)); // Save to localStorage
+      console.log('Saved payload:', payload);
+      handleReset()
+      alert('Aircraft data saved successfully!');
+    } catch (error) {
+      console.error('Error saving data to localStorage:', error);
+      alert('Failed to save aircraft data.');
+    }
   };
 
-  const [country, setCountry] = React.useState('');
-
-  const handleChange4 = (event: any) => {
-    setCountry(event.target.value);
-  };
+  // const handleStatus = (event: React.SyntheticEvent, newValue: string) => {
+  //   setGeneral({...general, ...{
+  //     status: newValue
+  //   }});
+  // };
 
   return (
     <div>
@@ -79,13 +135,14 @@ const AirCraftAddNew = () => {
             <Button
               variant="contained"
               color="error"
+              href="/aircraft"
               sx={{
                 mr: 1,
               }}
             >
               Cancel
             </Button>
-            <Button variant="contained" color="primary">
+            <Button variant="contained" color="primary" onClick={handleSave}>
               Save
             </Button>
           </>
@@ -136,12 +193,14 @@ const AirCraftAddNew = () => {
 
                 <Grid container spacing={3} mb={3}>
                   <Grid item lg={4} md={12} sm={12}>
-                    <CustomFormLabel htmlFor="fname-text">status</CustomFormLabel>
+                    <CustomFormLabel htmlFor="fname-text">Status*</CustomFormLabel>
                       <CustomSelect
-                        id="standard-select-currency"
-                        value={currency}
-                        onChange={handleChange2}
+                        id="general-status"
+                        value={general.status}
+                        name="status"
+                        onChange={handleGeneralChange}
                         fullWidth
+                        required
                         variant="outlined"
                       >
                         {currencies.map((option) => (
@@ -151,118 +210,77 @@ const AirCraftAddNew = () => {
                         ))}
                     </CustomSelect>
                   </Grid>
-                  
 
                 </Grid>
 
                 <Grid container spacing={3} mb={3}>
                   <Grid item lg={4} md={12} sm={12}>
-                    <CustomFormLabel htmlFor="fname-text">Aircraft Name</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
-                  </Grid>
-                  
-                  <Grid item lg={4} md={12} sm={12}>
-                    <CustomFormLabel htmlFor="fname-text">Serial Number</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
-                  </Grid>
-                </Grid>
-
-                <Grid container spacing={3} mb={3}>
-                  <Grid item lg={4} md={12} sm={12}>
-                    <CustomFormLabel htmlFor="fname-text">Aircraft Type </CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
-                  </Grid>
-                  
-
-                  <Grid item lg={4} md={12} sm={12}>
-                    <CustomFormLabel htmlFor="fname-text">Series</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
-                  </Grid>
-                  
-
-                  <Grid item lg={4} md={12} sm={12}>
-                    <CustomFormLabel htmlFor="fname-text">Effectivity</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
-                  </Grid>
-
-
-                  {/* <Grid item lg={6} md={12} sm={12}>
-                    <CustomFormLabel htmlFor="fname-text">First Name</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
-                    <CustomFormLabel htmlFor="standard-select-currency">Select Gender</CustomFormLabel>
-                    <CustomSelect
-                      id="standard-select-currency"
-                      value={currency}
-                      onChange={handleChange2}
-                      fullWidth
-                      variant="outlined"
-                    >
-                      {currencies.map((option) => (
-                        <MenuItem key={option.value} value={option.value}>
-                          {option.label}
-                        </MenuItem>
-                      ))}
-                    </CustomSelect>
-                    <CustomFormLabel>Membership</CustomFormLabel>
-
-                    <FormControl
-                      sx={{
-                        width: '100%',
-                      }}
-                    >
-                      <Box>
-                        <FormControlLabel
-                          checked={selectedValue === 'a'}
-                          onChange={handleChange3}
-                          value="a"
-                          label="Free"
-                          name="radio-button-demo"
-                          control={<CustomRadio />}
-                        
-                        />
-                        <FormControlLabel
-                          checked={selectedValue === 'b'}
-                          onChange={handleChange3}
-                          value="b"
-                          label="Paid"
-                          control={<CustomRadio />}
-                          name="radio-button-demo"
-                        />
-                      </Box>
+                    <CustomFormLabel htmlFor="fname-text">Aircraft Name*</CustomFormLabel>
+                    <FormControl required>
+                      <CustomTextField id="fname-text" required variant="outlined" value={general.aircraft_name}
+                      name="aircraft_name" onChange={handleGeneralChange} fullWidth />
                     </FormControl>
+                    
                   </Grid>
-                  <Grid item lg={6} md={12} sm={12}>
-                    <CustomFormLabel htmlFor="lname-text">Last Name</CustomFormLabel>
+                  
+                  <Grid item lg={4} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">Serial Number*</CustomFormLabel>
+                    <CustomTextField id="fname-text" variant="outlined"  value={general.serial_number}
+                      name="serial_number" onChange={handleGeneralChange} fullWidth />
+                  </Grid>
+                </Grid>
 
-                    <CustomTextField id="lname-text" variant="outlined" fullWidth />
-                    <CustomFormLabel htmlFor="date">Date of Birth</CustomFormLabel>
+                <Grid container spacing={3} mb={3}>
+                  <Grid item lg={4} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">Aircraft Type * </CustomFormLabel>
+                    <CustomTextField id="fname-text" variant="outlined" value={general.aircraft_type}
+                      name="aircraft_type" onChange={handleGeneralChange} fullWidth />
+                  </Grid>
+                  
 
+                  <Grid item lg={4} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">Series*</CustomFormLabel>
+                    <CustomTextField id="fname-text" variant="outlined" value={general.series}
+                      name="series" onChange={handleGeneralChange} fullWidth />
+                  </Grid>
+                  
+
+                  <Grid item lg={4} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">Effectivity*</CustomFormLabel>
+                    <CustomTextField id="fname-text" variant="outlined" value={general.effectivity}
+                      name="effectivity" onChange={handleGeneralChange} fullWidth />
+                  </Grid>
+
+
+                
+                </Grid>
+                <Grid container spacing={3} mb={3}>
+                  <Grid item lg={12} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">Description*</CustomFormLabel>
+                    <CustomTextField id="fname-text" variant="outlined" value={general.description}
+                      name="description" onChange={handleGeneralChange} fullWidth />
+                  </Grid>
+                </Grid>
+
+                <Grid container spacing={3} mb={3}>
+                  <Grid item lg={4} md={12} sm={12}>
+                    <CustomFormLabel htmlFor="fname-text">Service Date*</CustomFormLabel>
                     <CustomTextField
                       id="date"
-                      type="date"
+                      type="datetime-local"
                       variant="outlined"
                       fullWidth
+                      value={general.service_date}
+                      name="service_date"
+                      onChange={handleGeneralChange}
                       InputLabelProps={{
                         shrink: true,
                       }}
                     />
-                  </Grid> */}
-                </Grid>
-                <Grid container spacing={3} mb={3}>
-                  <Grid item lg={12} md={12} sm={12}>
-                    <CustomFormLabel htmlFor="fname-text">Description</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
-                  </Grid>
-                </Grid>
-
-                <Grid container spacing={3} mb={3}>
-                  <Grid item lg={4} md={12} sm={12}>
-                    <CustomFormLabel htmlFor="fname-text">Service Date</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
                   </Grid>
                   <Grid item lg={4} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Authority NO</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    <CustomTextField id="fname-text" variant="outlined" name="authoity" onChange={handleGeneralChange} fullWidth />
                   </Grid>
                 </Grid>
               </form>
@@ -522,9 +540,9 @@ const AirCraftAddNew = () => {
                 <Grid item lg={4} md={12} sm={12}>
                   <CustomFormLabel htmlFor="fname-text">Ownership Status</CustomFormLabel>
                   <CustomSelect
-                      id="standard-select-currency"
-                      value={currency}
-                      onChange={handleChange2}
+                      id="other-ownership-status"
+                      value={other.ownership_status}
+                      onChange={handleGeneralChange}
                       fullWidth
                       variant="outlined"
                     >
