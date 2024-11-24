@@ -14,6 +14,12 @@ import TicketReducer from "./apps/tickets/TicketSlice";
 import ContactsReducer from "./apps/contacts/ContactSlice";
 import UserProfileReducer from "./apps/userProfile/UserProfileSlice";
 import BlogReducer from "./apps/blog/BlogSlice";
+<<<<<<< Updated upstream
+=======
+import TaskReducer from "./apps/Task/TaskSlice";
+import TaskCardReducer from "./apps/Task/TaskCardSlice";
+import WorkOrderReducer from "./apps/WorkOrder/WorkOrderSlice";
+>>>>>>> Stashed changes
 
 const persistConfig = {
   key: "root",
@@ -32,6 +38,12 @@ export const store = configureStore({
     ticketReducer: TicketReducer,
     userpostsReducer: UserProfileReducer,
     blogReducer: BlogReducer,
+<<<<<<< Updated upstream
+=======
+    taskReducer: TaskReducer,
+    taskCardReducer: TaskCardReducer,
+    workOrderReducer: WorkOrderReducer,
+>>>>>>> Stashed changes
   },
   devTools: process.env.NODE_ENV !== "production",
   middleware: (getDefaultMiddleware) =>
@@ -49,6 +61,12 @@ const rootReducer = combineReducers({
   ticketReducer: TicketReducer,
   userpostsReducer: UserProfileReducer,
   blogReducer: BlogReducer,
+<<<<<<< Updated upstream
+=======
+  taskReducer: TaskReducer,
+  taskCardReducer: TaskCardReducer,
+  workOrderReducer: WorkOrderReducer,
+>>>>>>> Stashed changes
 });
 
 export const persistor = persistStore(store);
