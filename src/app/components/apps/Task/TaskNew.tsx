@@ -1,5 +1,5 @@
-import React from 'react';
-import { Box, FormControlLabel, Button, Grid, MenuItem, FormControl, Alert, RadioGroup, Typography, InputAdornment } from '@mui/material';
+import React, { useState } from 'react';
+import { Box, FormControlLabel, Button, Grid, MenuItem, FormControl, Alert, RadioGroup, Typography, InputAdornment, Paper, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, IconButton, Select, Radio, Collapse, TablePagination } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField'
 import CustomSelect from '@/app/components/forms/theme-elements/CustomSelect';
@@ -15,6 +15,8 @@ import TabPanel from "@mui/lab/TabPanel";
 import Autocomplete from '@mui/material/Autocomplete';
 import { IconPlus, IconSearch } from '@tabler/icons-react';
 import TaskCardTableList from './TaskCardTableList';
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 const taskStatus = [
     {
@@ -91,6 +93,244 @@ const top100Films = [
     { label: 'The Matrix', year: 1999 },
     { label: 'Seven Samurai', year: 1954 },
 ];
+
+const sampleData = [
+    {
+        id: 1,
+        type: "600",
+        series: "555",
+        aircraft: "QV-KKK",
+        status: "No AC Under Type",
+        options: { applicable: false, notApplicable: true },
+        children: [],
+    },
+    {
+        id: 2,
+        type: "800",
+        series: "737",
+        aircraft: "PK-CGK",
+        status: "No AC Under Type",
+        options: { applicable: true, notApplicable: false },
+        children: [
+            {
+                id: 21,
+                type: "800",
+                series: "738",
+                aircraft: "PK-DPS",
+                status: "No AC Under Type",
+                options: { applicable: true, notApplicable: false },
+            },
+            {
+                id: 22,
+                type: "800",
+                series: "739",
+                aircraft: "PK-BLJ",
+                status: "No AC Under Type",
+                options: { applicable: false, notApplicable: true },
+            },
+        ],
+    },
+    {
+        id: 3,
+        type: "550",
+        series: "668",
+        aircraft: "QM-DPS",
+        status: "No AC Under Type",
+        options: { applicable: false, notApplicable: true },
+    },
+];
+
+const AircraftTable = () => {
+    const [expandedRows, setExpandedRows] = useState<number[]>([]);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [page, setPage] = useState(0);
+
+    const handleRowClick = (id: number) => {
+        setExpandedRows((prev) =>
+            prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
+        );
+    };
+
+    const handlePageChange = (event: any, newPage: any) => {
+        setPage(newPage);
+    };
+
+    const handleRowsPerPageChange = (event: any) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0);
+    };
+
+    return (
+        <>
+            <TableContainer>
+                <Table>
+                    <TableHead
+                        sx={{
+                            "& .MuiTableCell-root": { padding: "4px" }
+                        }}>
+                        <TableRow sx={{
+                            "&:not(:last-child) td, &:not(:last-child) th": {
+                                borderBottom: "none",
+                            },
+                        }}>
+                            <TableCell padding="checkbox" />
+                            <TableCell>Aircraft Type</TableCell>
+                            <TableCell>Aircraft Series</TableCell>
+                            <TableCell>Aircraft</TableCell>
+                            <TableCell
+                                align="center"
+                                rowSpan={2}
+                            >
+                                Status
+                            </TableCell>
+                            <TableCell align="center">Option</TableCell>
+                        </TableRow>
+                        <TableRow sx={{
+                            "& .MuiTableCell-root": { padding: "4px" }
+                        }}>
+                            <TableCell padding="checkbox" />
+                            <TableCell>
+                                <Autocomplete
+                                    id="combo-box-search-task"
+                                    options={top100Films}
+                                    fullWidth
+                                    sx={{
+                                        "& .MuiInputBase-root": { padding: "2px" },
+                                    }}
+                                    renderInput={(params) => (
+                                        <CustomTextField {...params} placeholder="Select" aria-label="Select" />
+                                    )}
+                                />
+                            </TableCell>
+                            <TableCell>
+                                <Autocomplete
+                                    id="combo-box-search-task"
+                                    options={top100Films}
+                                    fullWidth
+                                    sx={{
+                                        "& .MuiInputBase-root": { padding: "2px" },
+                                    }}
+                                    renderInput={(params) => (
+                                        <CustomTextField {...params} placeholder="Select" aria-label="Select" />
+                                    )}
+                                />
+                            </TableCell>
+                            <TableCell>
+                                <Autocomplete
+                                    id="combo-box-search-task"
+                                    options={top100Films}
+                                    fullWidth
+                                    sx={{
+                                        "& .MuiInputBase-root": { padding: "2px" },
+                                    }}
+                                    renderInput={(params) => (
+                                        <CustomTextField {...params} placeholder="Select" aria-label="Select" />
+                                    )}
+                                />
+                            </TableCell>
+                            <TableCell align="center">
+                                <RadioGroup row name="radio-buttons-group" sx={{ display: "flex", justifyContent: "space-around" }}>
+                                    <FormControl component="fieldset" >
+                                        <FormControlLabel value="radio1" control={<CustomRadio />} label="" />
+                                    </FormControl>
+                                    <FormControl component="fieldset">
+                                        <FormControlLabel value="radio2" control={<CustomRadio />} label="" />
+                                    </FormControl>
+                                </RadioGroup>
+                            </TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {sampleData
+                            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                            .map((row) => (
+                                <React.Fragment key={row.id}>
+                                    <TableRow>
+                                        <TableCell>
+                                            {row.children && row.children?.length > 0 && (
+                                                <IconButton onClick={() => handleRowClick(row.id)}>
+                                                    {expandedRows.includes(row.id) ? (
+                                                        <KeyboardArrowDownIcon />
+                                                    ) : (
+                                                        <KeyboardArrowRightIcon />
+                                                    )}
+                                                </IconButton>
+                                            )}
+                                        </TableCell>
+                                        <TableCell>{row.type}</TableCell>
+                                        <TableCell>{row.series}</TableCell>
+                                        <TableCell>{row.aircraft}</TableCell>
+                                        <TableCell align="center">{row.status}</TableCell>
+                                        <TableCell align="center">
+                                            <RadioGroup row name="radio-buttons-group" sx={{ display: "flex", justifyContent: "space-around" }}>
+                                                <FormControl component="fieldset">
+                                                    <FormControlLabel value="radio1" control={<CustomRadio />} label="Applicable" checked={row.options.applicable} />
+                                                </FormControl>
+                                                <FormControl component="fieldset">
+                                                    <FormControlLabel value="radio2" control={<CustomRadio />} label="Not Applicable" checked={row.options.notApplicable} />
+                                                </FormControl>
+                                            </RadioGroup>
+                                        </TableCell>
+                                    </TableRow>
+                                    {row.children && row.children?.length > 0 && (
+                                        <TableRow>
+                                            <TableCell
+                                                colSpan={7}
+                                                style={{
+                                                    paddingBottom: 0,
+                                                    paddingTop: 0,
+                                                }}
+                                            >
+                                                <Collapse
+                                                    in={expandedRows.includes(row.id)}
+                                                    timeout="auto"
+                                                    unmountOnExit
+                                                >
+                                                    <Box>
+                                                        <Table>
+                                                            <TableBody>
+                                                                {row.children.map((child) => (
+                                                                    <TableRow key={child.id}>
+                                                                        <TableCell />
+                                                                        <TableCell>{child.type}</TableCell>
+                                                                        <TableCell>{child.series}</TableCell>
+                                                                        <TableCell>{child.aircraft}</TableCell>
+                                                                        <TableCell>{child.status}</TableCell>
+                                                                        <TableCell align="center">
+                                                                            <RadioGroup row name="radio-buttons-group" sx={{ display: "flex", justifyContent: "space-around" }}>
+                                                                                <FormControl component="fieldset">
+                                                                                    <FormControlLabel value="radio1" control={<CustomRadio />} label="Applicable" checked={child.options.applicable} />
+                                                                                </FormControl>
+                                                                                <FormControl component="fieldset">
+                                                                                    <FormControlLabel value="radio2" control={<CustomRadio />} label="Not Applicable" checked={child.options.notApplicable} />
+                                                                                </FormControl>
+                                                                            </RadioGroup>
+                                                                        </TableCell>
+                                                                    </TableRow>
+                                                                ))}
+                                                            </TableBody>
+                                                        </Table>
+                                                    </Box>
+                                                </Collapse>
+                                            </TableCell>
+                                        </TableRow>
+                                    )}
+                                </React.Fragment>
+                            ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+            <TablePagination
+                component="div"
+                count={sampleData.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handlePageChange}
+                onRowsPerPageChange={handleRowsPerPageChange}
+            />
+        </>
+    );
+}
 
 
 const TaskAddNew = () => {
@@ -443,7 +683,7 @@ const TaskAddNew = () => {
                         {/* ### tab Aircraft ###*/}
                         <TabPanel value="3">
                             <form>
-
+                                <AircraftTable />
                             </form>
                         </TabPanel>
 
