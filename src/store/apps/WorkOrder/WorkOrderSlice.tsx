@@ -154,7 +154,18 @@ export const {
 
 export const fetchWorkOrder = () => async (dispatch: AppDispatch) => {
   try {
+    const cachedData = localStorage.getItem('workOrderData');
+    if (cachedData) {
+      const parsedData = JSON.parse(cachedData);
+      if (parsedData && parsedData.length > 0) {
+        // If data exists, directly dispatch it
+        dispatch(getProducts(parsedData));
+        return;
+      }
+    }
+
     const response = await axios.get(`${API_URL}`);
+    localStorage.setItem('workOrderData', JSON.stringify(response.data)); // Cache data in localStorage
     dispatch(getProducts(response.data));
   } catch (error) {
     dispatch(hasError(error));

@@ -1,24 +1,19 @@
 
-export interface ProductType {
-  title: string;
-  price: number;
-  discount: number;
-  related: boolean;
-  salesPrice: number;
-  category: string[];
-  gender: string;
-  rating: number;
-  stock: boolean;
-  qty: number;
-  colors: string[];
-  photo: string;
-  id: number | string;
-  created: Date;
-  description: string;
-  taskId: string;
-  classification: string;
-  status: string;
-  actions: string;
+export interface AircraftType {
+  id: number;
+  general?: {
+    image: string;
+    aircraft_type: string;
+    aircraft_name: string;
+    serial_number: string;
+    series: string;
+    status: string;
+    effectivity: string;
+    description: string;
+    authority_no: string;
+    service_date: string;
+    authoity: string;
+  };
 }
 
 export interface ProductFiterType {
