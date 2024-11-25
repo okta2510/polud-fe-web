@@ -298,6 +298,17 @@ const AirCraftSeriesTableList = () => {
     setRows(filteredRows);
   };
 
+  interface dataTable  {
+    id: number;
+  }
+  const handleDeleteRow = async (id: number) => {
+    if (window.confirm('Are you sure you want to delete this item?')) {
+      const updatedItems = rows.filter((item:dataTable) => item.id !== id);
+      await localStorage.setItem('aircraftSeriesData', JSON.stringify(updatedItems));
+      await dispatch(fetchAirCraft());
+    }
+  };
+
   // This is for the sorting
   const handleRequestSort = (event: React.MouseEvent<unknown>, property: any) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -436,14 +447,14 @@ const AirCraftSeriesTableList = () => {
                                 ml: 1,
                               }}
                             >
-                              ${row.series}
+                              {row.series}
                             </Typography>
                           </Box>
                         </TableCell>
 
                         <TableCell>
                           <Typography fontWeight={400} variant="subtitle2">
-                            ${row.description}
+                            {row.description}
                           </Typography>
                         </TableCell>
                         <TableCell>
@@ -452,11 +463,11 @@ const AirCraftSeriesTableList = () => {
                             // divider={<Divider orientation="vertical" flexItem />}
                             spacing={1}
                           >
-                              <IconButton  color="primary">
-                                <IconEye width={25} height={25}  />
+                              <IconButton  color="primary" href={`/system-support/aircraft-series/${row.id}`}>
+                                <IconEye width={25} height={25} />
                               </IconButton>
                               <IconButton  color="error">
-                                <IconTrash width={25} height={25}  />
+                                <IconTrash width={25} height={25}  onClick={() => handleDeleteRow(row.id)}/>
                               </IconButton>
                           </Stack>
                         </TableCell>
