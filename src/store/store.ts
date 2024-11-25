@@ -42,7 +42,7 @@ export const store = configureStore({
     taskCardReducer: TaskCardReducer,
     workOrderReducer: WorkOrderReducer,
     aircraftReducer: AirCraftReducer,
-    airCraftSeriesReducer: AirCraftSeriesReducer
+    airCraftSeriesReducer: AirCraftSeriesReducer,
     defectTasksReducer: DefectTaskReducer
   },
   devTools: process.env.NODE_ENV !== "production",
@@ -65,7 +65,7 @@ const rootReducer = combineReducers({
   taskCardReducer: TaskCardReducer,
   workOrderReducer: WorkOrderReducer,
   aircraftReducer: AirCraftReducer,
-  airCraftSeriesReducer: AirCraftSeriesReducer
+  airCraftSeriesReducer: AirCraftSeriesReducer,
   defectTasksReducer: DefectTaskReducer
 });
 
