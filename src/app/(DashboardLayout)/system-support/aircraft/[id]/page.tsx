@@ -22,9 +22,9 @@ const BCrumb = [
 
 const AirCraftDetail = () => {
   return (
-    <PageContainer title="Aircraft Series" description="this is Aircraft Series">
+    <PageContainer title="Aircraft" description="this is Aircraft">
       {/* breadcrumb */}
-      <Breadcrumb title="Aircraft Series" items={BCrumb} />
+      <Breadcrumb title="Aircraft" items={BCrumb} />
       {/* end breadcrumb */}
       <BlankCard>
         <AirCraftNew/>

@@ -32,7 +32,7 @@ import { fetchAirCraft } from '@/store/apps/AirCraft/AirCraftSeriesSlice';
 import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
 import CustomSwitch from '@/app/components/forms/theme-elements/CustomSwitch';
 import { IconDotsVertical, IconFilter, IconSearch, IconTrash, IconEdit, IconReload, IconEye } from '@tabler/icons-react';
-import { ProductType } from '@/app/(DashboardLayout)/types/apps/eCommerce';
+import { ProductType } from '@/app/(DashboardLayout)/types/apps/aircraftSeries';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: '#fff',
@@ -281,7 +281,7 @@ const AirCraftSeriesTableList = () => {
     dispatch(fetchAirCraft());
   }, [dispatch]);
 
-  const getProducts: ProductType[] = useSelector((state) => state.ecommerceReducer.products);
+  const getProducts: ProductType[] = useSelector((state) => state.airCraftSeriesReducer.aircraft);
 
   const [rows, setRows] = React.useState<any>(getProducts);
   const [search, setSearch] = React.useState('');
@@ -392,7 +392,7 @@ const AirCraftSeriesTableList = () => {
                         role="checkbox"
                         aria-checked={isItemSelected}
                         tabIndex={-1}
-                        key={row.title}
+                        key={row.id}
                         selected={isItemSelected}
                       >
                         {/* <TableCell padding="checkbox">
@@ -417,7 +417,7 @@ const AirCraftSeriesTableList = () => {
                               }}
                             >
                               <Typography variant="subtitle2">
-                                {row.title}
+                                {row.type}
                               </Typography>
                               {/* <Typography color="textSecondary" variant="subtitle2">
                                 {row.category}
@@ -436,7 +436,7 @@ const AirCraftSeriesTableList = () => {
                                 ml: 1,
                               }}
                             >
-                              214
+                              ${row.series}
                             </Typography>
                           </Box>
                         </TableCell>

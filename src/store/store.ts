@@ -16,6 +16,7 @@ import UserProfileReducer from "./apps/userProfile/UserProfileSlice";
 import BlogReducer from "./apps/blog/BlogSlice";
 import WorkOrderReducer from "./apps/WorkOrder/WorkOrderSlice";
 import AirCraftReducer from "./apps/AirCraft/AirCraftSlice";
+import AirCraftSeriesReducer from "./apps/AirCraft/AirCraftSeriesSlice";
 
 const persistConfig = {
   key: "root",
@@ -35,7 +36,8 @@ export const store = configureStore({
     userpostsReducer: UserProfileReducer,
     blogReducer: BlogReducer,
     workOrderReducer: WorkOrderReducer,
-    aircraftReducer: AirCraftReducer
+    aircraftReducer: AirCraftReducer,
+    airCraftSeriesReducer: AirCraftSeriesReducer
   },
   devTools: process.env.NODE_ENV !== "production",
   middleware: (getDefaultMiddleware) =>
@@ -54,7 +56,8 @@ const rootReducer = combineReducers({
   userpostsReducer: UserProfileReducer,
   blogReducer: BlogReducer,
   workOrderReducer: WorkOrderReducer,
-  aircraftReducer: AirCraftReducer
+  aircraftReducer: AirCraftReducer,
+  airCraftSeriesReducer: AirCraftSeriesReducer
 });
 
 export const persistor = persistStore(store);

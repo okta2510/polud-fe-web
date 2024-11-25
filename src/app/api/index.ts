@@ -9,6 +9,7 @@ import './email/EmailData';
 import './userprofile/PostData';
 import './userprofile/UsersData';
 import './aircraft/AirCraftData';
+import './aircraft-series/AirCraftSeriesData';
 import './WorkOrder/WorkOrderData';
 
 mock.onAny().passThrough();
