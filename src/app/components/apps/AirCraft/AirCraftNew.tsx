@@ -48,7 +48,7 @@ const AirCraftAddNew = () => {
   }
 
   const initialGeneral = {
-    image: null,
+    image: '',
     aircraft_type: '',
     aircraft_name: '',
     serial_number: '',
@@ -62,7 +62,7 @@ const AirCraftAddNew = () => {
   }
   const [general, setGeneral] = React.useState({...initialGeneral})
 
-  const [optional, setOptional] = React.useState({
+  const initialOptional = {
     aircraft: '',
     aircraft_flight_hours: '',
     aircraft_flight_min: '',
@@ -84,9 +84,10 @@ const AirCraftAddNew = () => {
     warranty_hours: '',
     warranty_cycles: '',
     warranty_days: '',
-  })
+  }
+  const [optional, setOptional] = React.useState(initialOptional)
 
-  const [flightStatus, setFlightStatus] = React.useState({
+  const initialFlightStatus = {
     time_as_of: '',
     aircraft_flight_hours: '',
     flight_hours_min: '',
@@ -95,7 +96,8 @@ const AirCraftAddNew = () => {
     aircraft_cycle: '',
     aircraft_brake_cycle: '',
     flight_status: '',
-  })
+  }
+  const [flightStatus, setFlightStatus] = React.useState(initialFlightStatus)
 
   const [concession, setConcession] = React.useState({})
   const [informational, setInformational] = React.useState({
@@ -112,7 +114,7 @@ const AirCraftAddNew = () => {
   interface typeAircrafts {
     id: number;
     general?: {
-      image: null | string;
+      image: string;
       aircraft_type: string;
       aircraft_name: string;
       serial_number: string;
@@ -138,8 +140,7 @@ const AirCraftAddNew = () => {
       const parsedData:typeAircrafts[] = JSON.parse(cachedData);
       const obj = parsedData.find(x => x.id === id)
       if (obj && obj.general) {
-        const {general} = obj
-        setGeneral(general)
+        setGeneral(obj.general)
       }
     }
   }, []);
@@ -187,8 +188,8 @@ const AirCraftAddNew = () => {
   const handleReset = () => {
     setGeneral({...initialGeneral})
     setInformational({...initialInformational})
-    setFlightStatus({})
-    setOptional({})
+    setFlightStatus({...initialFlightStatus})
+    setOptional({...initialOptional})
     setConcession({})
   }
 
@@ -291,7 +292,7 @@ const AirCraftAddNew = () => {
             >
               Cancel
             </Button>
-            <Button variant="contained" color="primary" onClick={detailId ? handleSave : handleEdit}>
+            <Button variant="contained" color="primary" onClick={detailId < 1 ? handleSave : handleEdit}>
               Save
             </Button>
           </>
@@ -429,7 +430,7 @@ const AirCraftAddNew = () => {
                   </Grid>
                   <Grid item lg={4} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Authority NO</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" name="authoity" onChange={handleGeneralChange} fullWidth />
+                    <CustomTextField id="fname-text" variant="outlined" value={general.authority_no} name="authority_no" onChange={handleGeneralChange} fullWidth />
                   </Grid>
                 </Grid>
               </form>
