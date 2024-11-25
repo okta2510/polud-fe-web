@@ -5,6 +5,7 @@ import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcr
 import PageContainer from '@/app/components/container/PageContainer';
 import AirCraftNew from '@/app/components/apps/AirCraft/AirCraftNew';
 import BlankCard from '@/app/components/shared/BlankCard';
+
 const BCrumb = [
   {
     to: '/',
@@ -15,21 +16,21 @@ const BCrumb = [
     title: 'Aircraft',
   },
   {
-    title: 'Add New',
+    title: 'detail',
   },
 ];
 
-const AirCraftSeriesAddNew = () => {
+const AirCraftDetail = () => {
   return (
-    <PageContainer title="Aircraft" description="this is Aircraft">
+    <PageContainer title="Aircraft Series" description="this is Aircraft Series">
       {/* breadcrumb */}
-      <Breadcrumb title="Aircraft" items={BCrumb} />
+      <Breadcrumb title="Aircraft Series" items={BCrumb} />
       {/* end breadcrumb */}
       <BlankCard>
-        <AirCraftNew />
+        <AirCraftNew/>
       </BlankCard>
     </PageContainer>
   );
 };
 
-export default AirCraftSeriesAddNew;
+export default AirCraftDetail;

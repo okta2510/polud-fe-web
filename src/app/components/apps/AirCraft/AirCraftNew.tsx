@@ -13,6 +13,8 @@ import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import {IconFilePlus, IconFileExport, IconFileSearch} from "@tabler/icons-react";
 import { sub } from 'date-fns';
+import { fetchAirCraft } from '@/store/apps/AirCraft/AirCraftSlice';
+import { useSelector, useDispatch } from '@/store/hooks';
 
 const currencies = [
   {
@@ -32,10 +34,18 @@ const currencies = [
 
 const AirCraftAddNew = () => {
   const [error, setError] = useState(false);
+  const [detailId, setDetailId] = useState(0);
   const [value, setValue] = React.useState("1");
   const [other, setOther] = React.useState({
     ownership_status: ''
   })
+
+  const initialInformational = {
+    createdBy: '',
+    createdDate: '',
+    lastEditedBy: '',
+    lastEditedDate: '',
+  }
 
   const initialGeneral = {
     image: null,
@@ -49,12 +59,6 @@ const AirCraftAddNew = () => {
     authority_no: '',
     service_date: '',
     authoity: ''
-  }
-  const initialInformational = {
-    createdBy: '',
-    createdDate: '',
-    lastEditedBy: '',
-    lastEditedDate: '',
   }
   const [general, setGeneral] = React.useState({...initialGeneral})
 
@@ -101,9 +105,44 @@ const AirCraftAddNew = () => {
     lastEditedDate: '2024-11-15T01:23',
   })
 
-  useEffect(() => {
-    console.log(informational.lastEditedDate);
-  }, [informational, general]);
+  // useEffect(() => {
+  //   console.log(informational.lastEditedDate);
+  // }, [informational, general]);
+
+  interface typeAircrafts {
+    id: number;
+    general?: {
+      image: null | string;
+      aircraft_type: string;
+      aircraft_name: string;
+      serial_number: string;
+      series: string;
+      status: string;
+      effectivity: string;
+      description: string;
+      authority_no: string;
+      service_date: string;
+      authoity: string;
+    };
+  }
+
+
+  React.useEffect(() => {
+    const cachedData = localStorage.getItem('aircraftData');
+    const currentUrl = window.location.href;
+    const match = currentUrl.match(/\/aircraft\/(\d+)/);
+    const id = match ? parseInt(match[1], 10) : 0
+    setDetailId(id)
+
+    if (cachedData && match) {
+      const parsedData:typeAircrafts[] = JSON.parse(cachedData);
+      const obj = parsedData.find(x => x.id === id)
+      if (obj && obj.general) {
+        const {general} = obj
+        setGeneral(general)
+      }
+    }
+  }, []);
   
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
@@ -169,13 +208,62 @@ const AirCraftAddNew = () => {
         created: sub(new Date(), { days: 8, hours: 6, minutes: 20 }),
       }]]
       localStorage.setItem('aircraftData', JSON.stringify(payload)); // Save to localStorage
-      console.log('Saved payload:', payload);
+      // console.log('Saved payload:', payload);
       handleReset()
       alert('Aircraft data saved successfully!');
+      window.location.href = '/system-support/aircraft';
     } catch (error) {
       console.error('Error saving data to localStorage:', error);
       alert('Failed to save aircraft data.');
     }
+  };
+  const handleEdit = () => {
+    const cachedData = localStorage.getItem('aircraftData');
+    const parsedData = cachedData ? JSON.parse(cachedData) : [];
+    const index = parsedData.findIndex((item: { id: number }) => item.id === detailId);
+
+    if (index !== -1) {
+      // Replace the object at that index with the new 'general' object
+      parsedData[index] = {
+        id: parsedData.length+1,
+        general,
+        other,
+        optional,
+        flightStatus: {},
+        concession: {},
+        informational: {},
+        created: sub(new Date(), { days: 8, hours: 6, minutes: 20 }),
+      };
+
+      // Save the updated array back into localStorage
+      localStorage.setItem('aircraftData', JSON.stringify(parsedData));
+
+      console.log('Data updated successfully');
+    } else {
+      console.log('No matching data found');
+    }
+    // localStorage.setItem('aircraftData', JSON.stringify(payload));
+  //   try {
+  //     const payload = [...parsedData, ...[{ 
+        // id: parsedData.length+1,
+        // general,
+        // other,
+        // optional,
+        // flightStatus: {},
+        // concession: {},
+        // informational: {},
+        // created: sub(new Date(), { days: 8, hours: 6, minutes: 20 }),
+  //     }]]
+  //     localStorage.setItem('aircraftData', JSON.stringify(payload)); // Save to localStorage
+  //     // console.log('Saved payload:', payload);
+  //     handleReset()
+  //     alert('Aircraft data saved successfully!');
+  //     window.location.href = '/system-support/aircraft';
+  //   } catch (error) {
+  //     console.error('Error saving data to localStorage:', error);
+  //     alert('Failed to save aircraft data.');
+  //   // }
+
   };
 
   // const handleStatus = (event: React.SyntheticEvent, newValue: string) => {
@@ -203,7 +291,7 @@ const AirCraftAddNew = () => {
             >
               Cancel
             </Button>
-            <Button variant="contained" color="primary" onClick={handleSave}>
+            <Button variant="contained" color="primary" onClick={detailId ? handleSave : handleEdit}>
               Save
             </Button>
           </>
