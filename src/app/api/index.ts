@@ -11,6 +11,9 @@ import './userprofile/UsersData';
 import './aircraft/AirCraftData';
 import './task/TaskData';
 import './task/TaskCardData';
+import './aircraft-series/AirCraftSeriesData';
 import './WorkOrder/WorkOrderData';
+import './defect/defectData';
+import './aircraftMean/aircraftMean';
 
 mock.onAny().passThrough();

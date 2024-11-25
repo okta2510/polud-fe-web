@@ -3,34 +3,33 @@
 import { Box } from '@mui/material';
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
 import PageContainer from '@/app/components/container/PageContainer';
-import AirCraftNew from '@/app/components/apps/AirCraft/AirCraftNew';
+import AirCraftSeriesNew from '@/app/components/apps/AirCraft/AirCraftSeriesNew';
 import BlankCard from '@/app/components/shared/BlankCard';
-
 const BCrumb = [
   {
     to: '/',
     title: 'Home',
   },
   {
-    to: '/system-support/aircraft',
-    title: 'Aircraft',
+    to: '/system-support/aircraft-series',
+    title: 'Aircraft Series',
   },
   {
     title: 'detail',
   },
 ];
 
-const AirCraftDetail = () => {
+const AirCraftSeriesEdit = () => {
   return (
-    <PageContainer title="Aircraft" description="this is Aircraft">
+    <PageContainer title="Aircraft Series" description="this is Aircraft Series">
       {/* breadcrumb */}
-      <Breadcrumb title="Aircraft" items={BCrumb} />
+      <Breadcrumb title="Aircraft Series" items={BCrumb} />
       {/* end breadcrumb */}
       <BlankCard>
-        <AirCraftNew/>
+        <AirCraftSeriesNew />
       </BlankCard>
     </PageContainer>
   );
 };
 
-export default AirCraftDetail;
+export default AirCraftSeriesEdit;

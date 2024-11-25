@@ -32,7 +32,7 @@ import { fetchAirCraft } from '@/store/apps/AirCraft/AirCraftSeriesSlice';
 import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
 import CustomSwitch from '@/app/components/forms/theme-elements/CustomSwitch';
 import { IconDotsVertical, IconFilter, IconSearch, IconTrash, IconEdit, IconReload, IconEye } from '@tabler/icons-react';
-import { ProductType } from '@/app/(DashboardLayout)/types/apps/eCommerce';
+import { ProductType } from '@/app/(DashboardLayout)/types/apps/aircraftSeries';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: '#fff',
@@ -281,7 +281,7 @@ const AirCraftSeriesTableList = () => {
     dispatch(fetchAirCraft());
   }, [dispatch]);
 
-  const getProducts: ProductType[] = useSelector((state) => state.ecommerceReducer.products);
+  const getProducts: ProductType[] = useSelector((state) => state.airCraftSeriesReducer.aircraft);
 
   const [rows, setRows] = React.useState<any>(getProducts);
   const [search, setSearch] = React.useState('');
@@ -296,6 +296,17 @@ const AirCraftSeriesTableList = () => {
     });
     setSearch(event.target.value);
     setRows(filteredRows);
+  };
+
+  interface dataTable  {
+    id: number;
+  }
+  const handleDeleteRow = async (id: number) => {
+    if (window.confirm('Are you sure you want to delete this item?')) {
+      const updatedItems = rows.filter((item:dataTable) => item.id !== id);
+      await localStorage.setItem('aircraftSeriesData', JSON.stringify(updatedItems));
+      await dispatch(fetchAirCraft());
+    }
   };
 
   // This is for the sorting
@@ -392,7 +403,7 @@ const AirCraftSeriesTableList = () => {
                         role="checkbox"
                         aria-checked={isItemSelected}
                         tabIndex={-1}
-                        key={row.title}
+                        key={row.id}
                         selected={isItemSelected}
                       >
                         {/* <TableCell padding="checkbox">
@@ -417,7 +428,7 @@ const AirCraftSeriesTableList = () => {
                               }}
                             >
                               <Typography variant="subtitle2">
-                                {row.title}
+                                {row.type}
                               </Typography>
                               {/* <Typography color="textSecondary" variant="subtitle2">
                                 {row.category}
@@ -436,14 +447,14 @@ const AirCraftSeriesTableList = () => {
                                 ml: 1,
                               }}
                             >
-                              214
+                              {row.series}
                             </Typography>
                           </Box>
                         </TableCell>
 
                         <TableCell>
                           <Typography fontWeight={400} variant="subtitle2">
-                            ${row.description}
+                            {row.description}
                           </Typography>
                         </TableCell>
                         <TableCell>
@@ -452,11 +463,11 @@ const AirCraftSeriesTableList = () => {
                             // divider={<Divider orientation="vertical" flexItem />}
                             spacing={1}
                           >
-                              <IconButton  color="primary">
-                                <IconEye width={25} height={25}  />
+                              <IconButton  color="primary" href={`/system-support/aircraft-series/${row.id}`}>
+                                <IconEye width={25} height={25} />
                               </IconButton>
                               <IconButton  color="error">
-                                <IconTrash width={25} height={25}  />
+                                <IconTrash width={25} height={25}  onClick={() => handleDeleteRow(row.id)}/>
                               </IconButton>
                           </Stack>
                         </TableCell>
