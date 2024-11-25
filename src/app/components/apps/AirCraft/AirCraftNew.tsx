@@ -222,26 +222,24 @@ const AirCraftAddNew = () => {
     const cachedData = localStorage.getItem('aircraftData');
     const parsedData = cachedData ? JSON.parse(cachedData) : [];
     const index = parsedData.findIndex((item: { id: number }) => item.id === detailId);
-
+    console.log(detailId)
     if (index !== -1) {
       // Replace the object at that index with the new 'general' object
-      parsedData[index] = {
-        id: parsedData.length+1,
+      parsedData[index] = {...parsedData[index], ...{
         general,
         other,
         optional,
         flightStatus: {},
         concession: {},
-        informational: {},
-        created: sub(new Date(), { days: 8, hours: 6, minutes: 20 }),
-      };
+        informational: {}
+      }};
 
       // Save the updated array back into localStorage
       localStorage.setItem('aircraftData', JSON.stringify(parsedData));
 
-      console.log('Data updated successfully');
+      alert('Data updated successfully');
     } else {
-      console.log('No matching data found');
+      alert('No matching data found');
     }
     // localStorage.setItem('aircraftData', JSON.stringify(payload));
   //   try {
@@ -285,7 +283,7 @@ const AirCraftAddNew = () => {
             <Button
               variant="contained"
               color="error"
-              href="/aircraft"
+              href="/system-support/aircraft"
               sx={{
                 mr: 1,
               }}
