@@ -1,58 +1,15 @@
 import mock from '../mock';
-import { Chance } from 'chance';
+import { sub } from 'date-fns';
 
-const chance = new Chance();
 
 const TaskData = [
     {
-        taskId: 1,
+        taskId: '738-Phase 16',
         category: 'Battery',
         classification: 'Repair',
-        description: chance.paragraph({ sentences: 2 }),
+        description: 'CARGO FIRE EXTINGUISHING 60-MINUTE TIMER',
         status: 'open',
     },
-    {
-        taskId: 2,
-        category: 'Battery',
-        classification: 'Repair',
-        description: chance.paragraph({ sentences: 2 }),
-        status: 'cancel',
-    },
-    {
-        taskId: 3,
-        category: 'Battery',
-        classification: 'Repair',
-        description: chance.paragraph({ sentences: 2 }),
-        status: 'applicable',
-    },
-    {
-        taskId: 4,
-        category: 'Battery',
-        classification: 'Repair',
-        description: chance.paragraph({ sentences: 2 }),
-        status: 'not effective',
-    },
-    {
-        taskId: 5,
-        category: 'Battery',
-        classification: 'Repair',
-        description: chance.paragraph({ sentences: 2 }),
-        status: 'pending',
-    },
-    {
-        taskId: 6,
-        category: 'Battery',
-        classification: 'Repair',
-        description: chance.paragraph({ sentences: 2 }),
-        status: 'rejected',
-    },
-    {
-        taskId: 7,
-        category: 'Battery',
-        classification: 'Repair',
-        description: chance.paragraph({ sentences: 2 }),
-        status: 'terminated',
-    }
 ];
 
 mock.onGet('/api/data/task').reply(() => {

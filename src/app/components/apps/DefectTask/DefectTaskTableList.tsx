@@ -31,7 +31,7 @@ import {
 } from '@mui/material';
 import { useSelector, useDispatch } from '@/store/hooks';
 import { IconFileDatabase, IconPlus, IconReload, IconSearch } from '@tabler/icons-react';
-import { fetchTasks } from '@/store/apps/Task/TaskSlice';
+import { fetchDefectTasks } from '@/store/apps/DefectTask/DefectTaskSlice';
 import { TaskType } from '@/app/(DashboardLayout)/types/apps/task';
 import BlankCard from '../../shared/BlankCard';
 import CustomCheckbox from '../../forms/theme-elements/CustomCheckbox';
@@ -40,6 +40,7 @@ import ParentCard from '../../shared/ParentCard';
 import { Close, CloseRounded } from '@mui/icons-material';
 import CustomFormLabel from '../../forms/theme-elements/CustomFormLabel';
 import CustomSelect from '../../forms/theme-elements/CustomSelect';
+import { ro } from 'date-fns/locale';
 
 const attaNumbering = [
     { label: '001 Engine', value: '001' },
@@ -389,13 +390,14 @@ const AlertDialogCreateWO = () => {
 }
 
 const InspectionForm = (data: any) => {
+    console.log(data);
     const theme = useTheme();
     const borderColor = theme.palette.divider;
     return (
         (<Box>
             <FormControlLabel
                 control={<CustomCheckbox />}
-                label={`${data.item.title}`}
+                label={`${data.item.task.task_id}`}
                 sx={{
                     "& .MuiFormControlLabel-label": {
                         typography: "h6",
@@ -446,13 +448,13 @@ const InspectionForm = (data: any) => {
                                 fontSize: '12px',
                                 fontWeight: 400,
                             }}>
-                            PK-BKP
+                            {data.item.aircraft}
                         </Typography>
                     </Box>
                 </Grid>
             </Grid>
             {/* 6 column */}
-            {data.item.type === 'defect' ? (<Grid container mt={'2px'}>
+            {data.item.defect.defect_id !== '' ? (<Grid container mt={'2px'}>
                 <Grid item lg={2} sm={12} md={12} >
                     <Box
                         sx={{
@@ -495,7 +497,7 @@ const InspectionForm = (data: any) => {
                                 fontSize: '12px',
                                 fontWeight: 400,
                             }}>
-                            {data.item.title}
+                            {data.item.defect.defect_type}
                         </Typography>
                     </Box>
                 </Grid>
@@ -541,7 +543,7 @@ const InspectionForm = (data: any) => {
                                 fontSize: '12px',
                                 fontWeight: 400,
                             }}>
-                            232234
+                            {data.item.defect.defect_id}
                         </Typography>
                     </Box>
                 </Grid>
@@ -587,7 +589,7 @@ const InspectionForm = (data: any) => {
                                 fontSize: '12px',
                                 fontWeight: 400,
                             }}>
-                            2
+                            {data.item.defect.item}
                         </Typography>
                     </Box>
                 </Grid>
@@ -634,7 +636,7 @@ const InspectionForm = (data: any) => {
                                 fontSize: '12px',
                                 fontWeight: 400,
                             }}>
-                            {data.item.title}
+                            {data.item.task.task_id}
                         </Typography>
                     </Box>
                 </Grid>
@@ -683,7 +685,7 @@ const InspectionForm = (data: any) => {
                                 fontSize: '12px',
                                 fontWeight: 400,
                             }}>
-                            Underlined untuk direct
+                            {data.item.work_order.general.description === '' ? '-' : data.item.work_order.general.description}
                         </Typography>
                     </Box>
                 </Grid>
@@ -729,7 +731,7 @@ const InspectionForm = (data: any) => {
                                 fontSize: '12px',
                                 fontWeight: 400,
                             }}>
-                            161026
+                            {data.item.work_order.general.work_order_number === '' ? '-' : data.item.work_order.general.work_order_number}
                         </Typography>
                     </Box>
                 </Grid>
@@ -775,7 +777,7 @@ const InspectionForm = (data: any) => {
                                 fontSize: '12px',
                                 fontWeight: 400,
                             }}>
-                            OPEN
+                            {data.item.work_order.general.status === '' ? '-' : data.item.work_order.general.status}
                         </Typography>
                     </Box>
                 </Grid>
@@ -1456,14 +1458,18 @@ const DefectTaskTableList = () => {
     const dispatch = useDispatch();
 
     React.useEffect(() => {
-        dispatch(fetchTasks());
+        dispatch(fetchDefectTasks());
     }, [dispatch]);
 
-    const getTasks: TaskType[] = useSelector((state) => state.taskReducer.tasks);
-    const [rows, setRows] = React.useState<any>(getTasks);
+    const getDefectTasks: TaskType[] = useSelector((state) => state.defectTasksReducer.defectTasks);
+    const [rows, setRows] = React.useState<any>(getDefectTasks);
+
+    React.useEffect(() => {
+        setRows(getDefectTasks);
+    }, [getDefectTasks]);
 
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const filteredRows: TaskType[] = getTasks.filter((row) => {
+        const filteredRows: TaskType[] = getDefectTasks.filter((row) => {
             return row.category.toLowerCase().includes(event.target.value);
         });
         setSearch(event.target.value);
@@ -1640,7 +1646,7 @@ const DefectTaskTableList = () => {
                     </Grid>
                 </Box>
             </ParentCard>
-            {data.map((item) => (
+            {rows.map((item: any) => (
                 <Box sx={{ marginTop: '8px' }}>
                     <ParentCard title=''>
                         <InspectionForm item={item} />
