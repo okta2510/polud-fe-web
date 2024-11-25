@@ -9,11 +9,6 @@ import './email/EmailData';
 import './userprofile/PostData';
 import './userprofile/UsersData';
 import './aircraft/AirCraftData';
-<<<<<<< Updated upstream
-=======
-import './task/TaskData';
-import './task/TaskCardData';
 import './WorkOrder/WorkOrderData';
->>>>>>> Stashed changes
 
 mock.onAny().passThrough();
