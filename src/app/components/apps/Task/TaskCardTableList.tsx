@@ -435,7 +435,7 @@ const TaskCardTableList = (data: any) => {
                                             <TableCell>
                                                 <Box display="flex" alignItems="center">
                                                     <Typography variant="subtitle2">
-                                                        {row.taskCard}
+                                                        {row.general.taskCard}
                                                     </Typography>
                                                 </Box>
                                             </TableCell>
@@ -446,7 +446,7 @@ const TaskCardTableList = (data: any) => {
                                                         color="textSecondary"
                                                         variant="subtitle2"
                                                     >
-                                                        {row.type}
+                                                        {row.general.type}
                                                     </Typography>
                                                 </Box>
                                             </TableCell>
@@ -454,20 +454,20 @@ const TaskCardTableList = (data: any) => {
                                             <TableCell>
                                                 <Box display="flex" alignItems="center">
                                                     <Typography variant="subtitle2">
-                                                        {row.category}
+                                                        {row.general.category}
                                                     </Typography>
                                                 </Box>
                                             </TableCell>
                                             {/* task description */}
                                             <TableCell>
                                                 <Typography fontWeight={400} variant="subtitle2">
-                                                    {row.description}
+                                                    {row.general.description}
                                                 </Typography>
                                             </TableCell>
                                             {/* status */}
                                             <TableCell>
                                                 <Typography fontWeight={400} variant="subtitle2">
-                                                    <ChipStatus status={row.status}></ChipStatus>
+                                                    <ChipStatus status={row.general.status}></ChipStatus>
                                                 </Typography>
                                             </TableCell>
                                             {/* action */}
@@ -476,7 +476,7 @@ const TaskCardTableList = (data: any) => {
                                                     direction="row"
                                                     spacing={1}
                                                 >
-                                                    {data.from === 'task-card' && <IconButton color="primary">
+                                                    {data.from === 'task-card' && <IconButton color="primary" href={`/maintenance/task-card/${row.id}`}>
                                                         <IconEye width={25} height={25} />
                                                     </IconButton>}
                                                     <IconButton color="error">

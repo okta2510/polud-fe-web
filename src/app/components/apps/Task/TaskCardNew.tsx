@@ -1,11 +1,8 @@
-import React from 'react';
-import { Box, FormControlLabel, Button, Grid, MenuItem, FormControl, Alert, RadioGroup, Typography, InputAdornment, TableHead, TableRow, TableCell, TableSortLabel, IconButton, Stack, Table, TableBody, TableContainer, TablePagination } from '@mui/material';
-import Divider from '@mui/material/Divider';
+import React, { useState } from 'react';
+import { Box, Button, Grid, MenuItem, Typography, InputAdornment, TableHead, TableRow, TableCell, TableSortLabel, IconButton, Stack, Table, TableBody, TableContainer, TablePagination, useTheme } from '@mui/material';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField'
 import CustomSelect from '@/app/components/forms/theme-elements/CustomSelect';
-import CustomRadio from '@/app/components/forms/theme-elements/CustomRadio';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
-import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
 import ParentCard from '@/app/components/shared/ParentCard';
 import ChildCard from '@/app/components/shared/ChildCard';
 import Tab from "@mui/material/Tab";
@@ -13,11 +10,9 @@ import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import Autocomplete from '@mui/material/Autocomplete';
-import { IconEye, IconPlus, IconPrinter, IconSearch, IconTrash } from '@tabler/icons-react';
+import { IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
 import { visuallyHidden } from '@mui/utils';
-import { alpha, useTheme, styled } from '@mui/material/styles';
-import data from '../../forms/form-elements/autoComplete/data';
-import { head } from 'lodash';
+import { useDispatch } from '@/store/hooks';
 
 const taskCardStatus = [
     {
@@ -67,37 +62,37 @@ const headPartNumberCells: HeadCell[] = [
     },
     {
         id: 'description',
-        align: 'left',
+        align: 'center',
         disablePadding: false,
         label: 'Description',
     },
     {
         id: 'category',
-        align: 'left',
+        align: 'center',
         disablePadding: false,
         label: 'Category',
     },
     {
         id: 'quantity',
-        align: 'left',
+        align: 'center',
         disablePadding: false,
         label: 'Quantity',
     },
     {
         id: 'unitOfMeasurement',
-        align: 'left',
+        align: 'center',
         disablePadding: false,
         label: 'Unit Of Measurement',
     },
     {
         id: 'spare',
-        align: 'left',
+        align: 'center',
         disablePadding: false,
         label: 'Spare',
     },
     {
         id: 'reserve',
-        align: 'left',
+        align: 'center',
         disablePadding: false,
         label: 'Reserve',
     },
@@ -109,6 +104,7 @@ const headPartNumberCells: HeadCell[] = [
     },
 ];
 
+
 const headZonesCells: HeadCell[] = [
     {
         id: 'zone',
@@ -118,25 +114,25 @@ const headZonesCells: HeadCell[] = [
     },
     {
         id: 'description',
-        align: 'left',
+        align: 'center',
         disablePadding: false,
         label: 'Description',
     },
     {
         id: 'item',
-        align: 'left',
+        align: 'center',
         disablePadding: false,
         label: 'Item',
     },
     {
         id: 'aircraftType',
-        align: 'left',
+        align: 'center',
         disablePadding: false,
         label: 'Aircraft Type',
     },
     {
         id: 'aircraftSeries',
-        align: 'left',
+        align: 'center',
         disablePadding: false,
         label: 'Aircraft Series',
     },
@@ -158,25 +154,25 @@ const headPanelCells: HeadCell[] = [
     },
     {
         id: 'description',
-        align: 'left',
+        align: 'center',
         disablePadding: false,
         label: 'Description',
     },
     {
         id: 'item',
-        align: 'left',
+        align: 'center',
         disablePadding: false,
         label: 'Item',
     },
     {
         id: 'aircraftType',
-        align: 'left',
+        align: 'center',
         disablePadding: false,
         label: 'Aircraft Type',
     },
     {
         id: 'aircraftSeries',
-        align: 'left',
+        align: 'center',
         disablePadding: false,
         label: 'Aircraft Series',
     },
@@ -188,41 +184,7 @@ const headPanelCells: HeadCell[] = [
     },
 ];
 
-function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-    if (b[orderBy] < a[orderBy]) {
-        return -1;
-    }
-    if (b[orderBy] > a[orderBy]) {
-        return 1;
-    }
-
-    return 0;
-}
-
 type Order = 'asc' | 'desc';
-
-function getComparator<Key extends keyof any>(
-    order: Order,
-    orderBy: Key,
-): (a: { [key in Key]: number | string }, b: { [key in Key]: number | string }) => number {
-    return order === 'desc'
-        ? (a, b) => descendingComparator(a, b, orderBy)
-        : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-function stableSort<T>(array: T[], comparator: (a: T, b: T) => number) {
-    const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
-    stabilizedThis.sort((a, b) => {
-        const order = comparator(a[0], b[0]);
-        if (order !== 0) {
-            return order;
-        }
-
-        return a[1] - b[1];
-    });
-
-    return stabilizedThis.map((el) => el[0]);
-}
 
 interface HeadCell {
     id: string;
@@ -250,16 +212,6 @@ function EnhancedTableHead(props: EnhancedTableProps) {
     return (
         <TableHead>
             <TableRow>
-                {/* <TableCell padding="checkbox">
-            <CustomCheckbox
-              color="primary"
-              checked={rowCount > 0 && numSelected === rowCount}
-              onChange={onSelectAllClick}
-              inputProps={{
-                'aria-label': 'select all desserts',
-              }}
-            />
-          </TableCell> */}
                 {props.headCells.map((headCell) => (
                     <TableCell
                         key={headCell.id}
@@ -292,7 +244,40 @@ const EnhancedTableList = (data: any) => {
     const [selected, setSelected] = React.useState<readonly string[]>([]);
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
-    const [search, setSearch] = React.useState('');
+
+    function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
+        if (b[orderBy] < a[orderBy]) {
+            return -1;
+        }
+        if (b[orderBy] > a[orderBy]) {
+            return 1;
+        }
+
+        return 0;
+    }
+
+    function getComparator<Key extends keyof any>(
+        order: Order,
+        orderBy: Key,
+    ): (a: { [key in Key]: number | string }, b: { [key in Key]: number | string }) => number {
+        return order === 'desc'
+            ? (a, b) => descendingComparator(a, b, orderBy)
+            : (a, b) => -descendingComparator(a, b, orderBy);
+    }
+
+    function stableSort<T>(array: T[], comparator: (a: T, b: T) => number) {
+        const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
+        stabilizedThis.sort((a, b) => {
+            const order = comparator(a[0], b[0]);
+            if (order !== 0) {
+                return order;
+            }
+
+            return a[1] - b[1];
+        });
+
+        return stabilizedThis.map((el) => el[0]);
+    }
 
     const handleRequestSort = (event: React.MouseEvent<unknown>, property: any) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -300,9 +285,12 @@ const EnhancedTableList = (data: any) => {
         setOrderBy(property);
     };
 
-    const [rows, setRows] = React.useState<any>([]);
+    const [rows, setRows] = React.useState<any>([data.items]);
 
-    // This is for select all the row
+    React.useEffect(() => {
+        setRows(data.items);
+    }, [data.items]);
+
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.checked) {
             const newSelecteds = rows.map((n: any) => n.id);
@@ -313,28 +301,6 @@ const EnhancedTableList = (data: any) => {
         setSelected([]);
     };
 
-    // This is for the single row sleect
-    /*  const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
-         event.stopPropagation();
-         const selectedIndex = selected.indexOf(name);
-         let newSelected: readonly string[] = [];
- 
-         if (selectedIndex === -1) {
-             newSelected = newSelected.concat(selected, name);
-         } else if (selectedIndex === 0) {
-             newSelected = newSelected.concat(selected.slice(1));
-         } else if (selectedIndex === selected.length - 1) {
-             newSelected = newSelected.concat(selected.slice(0, -1));
-         } else if (selectedIndex > 0) {
-             newSelected = newSelected.concat(
-                 selected.slice(0, selectedIndex),
-                 selected.slice(selectedIndex + 1),
-             );
-         }
- 
-         setSelected(newSelected);
-     }; */
-
     const handleChangePage = (event: unknown, newPage: number) => {
         setPage(newPage);
     };
@@ -344,13 +310,7 @@ const EnhancedTableList = (data: any) => {
         setPage(0);
     };
 
-    const isSelected = (name: string) => selected.indexOf(name) !== -1;
-
-    // Avoid a layout jump when reaching the last page with empty rows.
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
-
-    const theme = useTheme();
-    const borderColor = theme.palette.divider;
     return (
         <>
             <TableContainer>
@@ -371,82 +331,109 @@ const EnhancedTableList = (data: any) => {
                         {stableSort(rows, getComparator(order, orderBy))
                             .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                             .map((row: any, index) => {
-                                const isItemSelected = isSelected(row.taskId);
                                 const labelId = `enhanced-table-checkbox-${index}`;
-
                                 return (
                                     <TableRow
                                         hover
                                         role="checkbox"
-                                        aria-checked={isItemSelected}
                                         tabIndex={-1}
-                                        key={row.id}
-                                        selected={isItemSelected}
+                                        key={labelId}
                                     >
-                                        {/* <TableCell padding="checkbox">
-                                                        <CustomCheckbox
-                                                            onClick={(event) => handleClick(event, row.title)}
-                                                            color="primary"
-                                                            checked={isItemSelected}
-                                                            inputProps={{
-                                                                'aria-labelledby': labelId,
-                                                            }}
-                                                        />
-                                                    </TableCell> */}
-                                        <TableCell>
-                                            <Box>
-                                                <Typography >{row.id}</Typography>
-                                            </Box>
-                                        </TableCell>
-                                        {/* task card */}
-                                        <TableCell>
-                                            <Box display="flex" alignItems="center">
-                                                <Typography variant="subtitle2">
-                                                    {row.taskCard}
-                                                </Typography>
-                                            </Box>
-                                        </TableCell>
-                                        {/* type */}
-                                        <TableCell>
-                                            <Box display="flex" alignItems="center">
-                                                <Typography
-                                                    color="textSecondary"
-                                                    variant="subtitle2"
-                                                >
-                                                    {row.type}
-                                                </Typography>
-                                            </Box>
-                                        </TableCell>
-                                        {/* category */}
-                                        <TableCell>
-                                            <Box display="flex" alignItems="center">
-                                                <Typography variant="subtitle2">
-                                                    {row.category}
-                                                </Typography>
-                                            </Box>
-                                        </TableCell>
-                                        {/* task description */}
-                                        <TableCell>
-                                            <Typography fontWeight={400} variant="subtitle2">
-                                                {row.description}
-                                            </Typography>
-                                        </TableCell>
-                                        {/* status */}
-                                        <TableCell>
-                                            <Typography fontWeight={400} variant="subtitle2">
-                                                {row.status}
-                                            </Typography>
-                                        </TableCell>
-                                        {/* action */}
-                                        <TableCell>
-                                            <Stack
-                                                direction="row"
-                                                spacing={1}
-                                            >
-                                                <IconButton color="error">
-                                                    <IconTrash width={25} height={25} />
-                                                </IconButton>
-                                            </Stack>
+                                        {data.for === 'part-number' && (
+                                            <React.Fragment>
+                                                <TableCell align='center'>
+                                                    <Typography >{row.partNumber}</Typography>
+                                                </TableCell>
+                                                <TableCell align='center'>
+                                                    <Typography variant="subtitle2">
+                                                        {row.description}
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell align='center'>
+                                                    <Typography variant="subtitle2">
+                                                        {row.category}
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell align='center'>
+                                                    <Typography variant="subtitle2">
+                                                        {row.quantity}
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell align='center'>
+                                                    <Typography fontWeight={400} variant="subtitle2">
+                                                        {row.unitOfMeasurement}
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell align='center'>
+                                                    <Typography fontWeight={400} variant="subtitle2">
+                                                        {row.spare}
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell align='center'>
+                                                    <Typography fontWeight={400} variant="subtitle2">
+                                                        {row.reserve}
+                                                    </Typography>
+                                                </TableCell>
+                                            </React.Fragment>)}
+
+                                        {data.for === 'zones' && (
+                                            <React.Fragment>
+                                                <TableCell align='center'>
+                                                    <Typography >{row.zone}</Typography>
+                                                </TableCell>
+                                                <TableCell align='center'>
+                                                    <Typography variant="subtitle2">
+                                                        {row.description}
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell align='center'>
+                                                    <Typography variant="subtitle2">
+                                                        {row.item}
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell align='center'>
+                                                    <Typography fontWeight={400} variant="subtitle2">
+                                                        {row.aircraft_type}
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell align='center'>
+                                                    <Typography fontWeight={400} variant="subtitle2">
+                                                        {row.aircraft_series}
+                                                    </Typography>
+                                                </TableCell>
+                                            </React.Fragment>)}
+
+                                        {data.for === 'panels' && (
+                                            <React.Fragment>
+                                                <TableCell align='center'>
+                                                    <Typography >{row.panel}</Typography>
+                                                </TableCell>
+                                                <TableCell align='center'>
+                                                    <Typography variant="subtitle2">
+                                                        {row.description}
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell align='center'>
+                                                    <Typography variant="subtitle2">
+                                                        {row.item}
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell align='center'>
+                                                    <Typography fontWeight={400} variant="subtitle2">
+                                                        {row.aircraft_type}
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell align='center'>
+                                                    <Typography fontWeight={400} variant="subtitle2">
+                                                        {row.aircraft_series}
+                                                    </Typography>
+                                                </TableCell>
+                                            </React.Fragment>)}
+
+                                        <TableCell align='center'>
+                                            <IconButton color="error">
+                                                <IconTrash width={25} height={25} />
+                                            </IconButton>
                                         </TableCell>
                                     </TableRow>
                                 );
@@ -474,15 +461,126 @@ const EnhancedTableList = (data: any) => {
 }
 
 const TaskCardAddNew = () => {
+    const dispatch = useDispatch();
+    const [error, setError] = useState(false);
+    const [detailId, setDetailId] = useState(0);
     const [value, setValue] = React.useState("1");
-    const [status, setStatus] = React.useState('');
+    const [formValues, setFormValues] = useState({
+        createdBy: 'ACTYPSERMS',
+        createdDate: '2024-11-15T01:23',
+        lastEditedBy: 'GEVERFOREVER',
+        lastEditedDate: '2024-11-15T01:23',
+    });
+
+
+    const initialGeneral = {
+        taskCard: '',
+        type: '',
+        category: '',
+        description: '',
+        ata: '',
+        aircraft_effectivity: '',
+        status: '',
+    }
+    const [general, setGeneral] = React.useState({ ...initialGeneral })
+
+    const initialPartNumber = {
+        partNumber: '',
+        description: '',
+        category: '',
+        quantity: 0,
+        unitOfMeasurement: '',
+        spare: '',
+        reserve: '',
+    }
+
+    const initialZone = {
+        zone: '',
+        description: '',
+        item: '',
+        aircraft_type: '',
+        aircraft_series: '',
+    }
+
+    const initialPanel = {
+        panel: '',
+        description: '',
+        item: '',
+        aircraft_type: '',
+        aircraft_series: '',
+    }
+
+    const initialMaterial = {
+        partNumbers: [],
+        zones: [],
+        panels: [],
+    }
+    const [material, setMaterial] = React.useState({ ...initialMaterial })
+
+    const initialInformational = {
+        createdBy: '',
+        createdDate: '',
+        lastEditedBy: '',
+        lastEditedDate: '',
+    }
+    const [informational, setInformational] = React.useState({ ...initialInformational })
+
+    interface typeTaskCards {
+        id: number;
+        general?: {
+            taskCard: string;
+            type: string;
+            category: string;
+            description: string;
+            ata: string;
+            aircraft_effectivity: string;
+            status: string;
+        },
+        material?: {
+            partNumbers: [];
+            zones: [];
+            panels: [];
+        };
+        informational?: {
+            createdBy: string;
+            createdDate: string;
+            lastEditedBy: string;
+            lastEditedDate: string;
+        }
+    }
+
+
+    React.useEffect(() => {
+        const cachedData = localStorage.getItem('taskCardData');
+        const currentUrl = window.location.href;
+        const match = currentUrl.match(/\/task-card\/(\d+)/);
+        const id = match ? parseInt(match[1], 10) : 0
+        setDetailId(id)
+
+        if (cachedData && match) {
+            const parsedData: typeTaskCards[] = JSON.parse(cachedData);
+            const obj = parsedData.find(x => x.id === id)
+            if (obj && obj.general) {
+                setGeneral(obj.general)
+            }
+
+            if (obj && obj.material) {
+                setMaterial(obj.material)
+            }
+        }
+    }, []);
 
     const handleChange = (_: React.SyntheticEvent, newValue: string) => {
         setValue(newValue);
     };
 
-    const handleChangeStatus = (event: any) => {
-        setStatus(event.target.value);
+    const handleGeneralChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        console.log(e.target)
+        const { name, value } = e.target;
+        setGeneral((prevState) => ({
+            ...prevState,
+            [name]: value,
+        }));
     };
 
     return (
@@ -530,49 +628,86 @@ const TaskCardAddNew = () => {
                                 <Grid container spacing={3} mb={3}>
                                     <Grid item lg={4} md={12} sm={12}>
                                         <CustomFormLabel htmlFor="fname-text">Task Card</CustomFormLabel>
-                                        <CustomTextField disabled id="fname-text" variant="outlined" fullWidth />
+                                        <CustomTextField disabled
+                                            id="fname-text"
+                                            variant="outlined"
+                                            fullWidth
+                                            name="taskCard"
+                                            value={general.taskCard}
+                                        />
                                     </Grid>
                                 </Grid>
 
                                 <Grid container spacing={3} mb={3}>
                                     <Grid item lg={4} md={12} sm={12}>
                                         <CustomFormLabel htmlFor="fname-text">Type</CustomFormLabel>
-                                        <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                                        <CustomTextField
+                                            id="fname-text"
+                                            variant="outlined"
+                                            fullWidth
+                                            name="type"
+                                            value={general.type}
+                                            onChange={handleGeneralChange}
+                                        />
                                     </Grid>
 
                                     <Grid item lg={4} md={12} sm={12}>
                                         <CustomFormLabel htmlFor="fname-text">Category</CustomFormLabel>
-                                        <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                                        <CustomTextField
+                                            id="fname-text"
+                                            variant="outlined"
+                                            fullWidth
+                                            name="category"
+                                            value={general.category}
+                                            onChange={handleGeneralChange}
+                                        />
                                     </Grid>
                                 </Grid>
 
                                 <Grid container spacing={3} mb={3}>
                                     <Grid item lg={12} md={12} sm={12}>
                                         <CustomFormLabel htmlFor="fname-text">Task Description</CustomFormLabel>
-                                        <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                                        <CustomTextField
+                                            id="fname-text"
+                                            variant="outlined"
+                                            fullWidth
+                                            name="description"
+                                            value={general.description}
+                                            onChange={handleGeneralChange}
+                                        />
                                     </Grid>
                                 </Grid>
 
                                 <Grid container spacing={3} mb={3}>
                                     <Grid item lg={4} md={12} sm={12}>
                                         <CustomFormLabel htmlFor="fname-text">ATA Numbering</CustomFormLabel>
-                                        <Autocomplete
-                                            disablePortal
-                                            id="combo-box-search-task"
-                                            options={attaNumbering}
+                                        <CustomSelect
+                                            id="general-ata"
+                                            name="ata"
+                                            value={general.ata}
+                                            onChange={handleGeneralChange}
                                             fullWidth
-                                            sx={{
-                                                "& .MuiInputBase-root": { padding: "5px" },
-                                            }}
-                                            renderInput={(params) => (
-                                                <CustomTextField {...params} placeholder="Select ATA Number" aria-label="Select ATA Number" />
-                                            )}
-                                        />
+                                            required
+                                            variant="outlined"
+                                        >
+                                            {attaNumbering.map((option) => (
+                                                <MenuItem key={option.value} value={option.value}>
+                                                    {option.label}
+                                                </MenuItem>
+                                            ))}
+                                        </CustomSelect>
                                     </Grid>
 
                                     <Grid item lg={4} md={12} sm={12}>
                                         <CustomFormLabel htmlFor="fname-text">Aircraft Effectivity</CustomFormLabel>
-                                        <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                                        <CustomTextField
+                                            id="fname-text"
+                                            variant="outlined"
+                                            fullWidth
+                                            name="aircraft_effectivity"
+                                            value={general.aircraft_effectivity}
+                                            onChange={handleGeneralChange}
+                                        />
                                     </Grid>
                                 </Grid>
 
@@ -580,10 +715,12 @@ const TaskCardAddNew = () => {
                                     <Grid item lg={4} md={12} sm={12}>
                                         <CustomFormLabel htmlFor="fname-text">Status</CustomFormLabel>
                                         <CustomSelect
-                                            id="standard-select-status"
-                                            value={status}
-                                            onChange={handleChangeStatus}
+                                            id="general-status"
+                                            name="status"
+                                            value={general.status}
+                                            onChange={handleGeneralChange}
                                             fullWidth
+                                            required
                                             variant="outlined"
                                         >
                                             {taskCardStatus.map((option) => (
@@ -699,7 +836,7 @@ const TaskCardAddNew = () => {
                                     </>
                                 </ChildCard>
                                 <Box sx={{ marginTop: '24px', marginBottom: '60px' }}>
-                                    <EnhancedTableList headCells={headPartNumberCells}/>
+                                    <EnhancedTableList headCells={headPartNumberCells} items={material.partNumbers} for="part-number" />
                                 </Box>
                                 {/* ### Zones ###*/}
                                 <ChildCard title=''>
@@ -792,7 +929,7 @@ const TaskCardAddNew = () => {
                                     </>
                                 </ChildCard>
                                 <Box sx={{ marginTop: '24px', marginBottom: '60px' }}>
-                                    <EnhancedTableList headCells={headZonesCells} />
+                                    <EnhancedTableList headCells={headZonesCells} items={material.zones} for="zones" />
                                 </Box>
                                 {/* ### Panels ###*/}
                                 <ChildCard title=''>
@@ -885,7 +1022,7 @@ const TaskCardAddNew = () => {
                                     </>
                                 </ChildCard>
                                 <Box sx={{ marginTop: '24px' }}>
-                                    <EnhancedTableList headCells={headPanelCells} />
+                                    <EnhancedTableList headCells={headPanelCells} items={material.panels} for="panels" />
                                 </Box>
                             </form>
                         </TabPanel>
@@ -896,21 +1033,45 @@ const TaskCardAddNew = () => {
                                 <Grid container spacing={3} mb={3}>
                                     <Grid item lg={4} md={12} sm={12}>
                                         <CustomFormLabel htmlFor="fname-text">Created By</CustomFormLabel>
-                                        <CustomTextField disabled id="fname-text" variant="outlined" fullWidth />
+                                        <CustomTextField value={formValues.createdBy} disabled id="fname-text" variant="outlined" fullWidth />
                                     </Grid>
                                     <Grid item lg={4} md={12} sm={12}>
                                         <CustomFormLabel htmlFor="fname-text">Created Date</CustomFormLabel>
-                                        <CustomTextField disabled type="date" id="fs-date" placeholder="dd/mm/yyyy" fullWidth />
+                                        <CustomTextField
+                                            id="date"
+                                            type="datetime-local"
+                                            disabled
+                                            variant="outlined"
+                                            fullWidth
+                                            value={formValues.createdDate}
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormValues({ ...formValues, createdDate: e.target.value })}
+                                            InputLabelProps={{
+                                                shrink: true,
+                                            }}
+                                        />
                                     </Grid>
                                 </Grid>
                                 <Grid container spacing={3} mb={3}>
                                     <Grid item lg={4} md={12} sm={12}>
                                         <CustomFormLabel htmlFor="fname-text">Last Edited By</CustomFormLabel>
-                                        <CustomTextField disabled id="fname-text" variant="outlined" fullWidth />
+                                        <CustomTextField disabled id="fname-text" value={formValues.lastEditedBy} variant="outlined" fullWidth />
                                     </Grid>
                                     <Grid item lg={4} md={12} sm={12}>
                                         <CustomFormLabel htmlFor="fname-text">Last Edited Date</CustomFormLabel>
-                                        <CustomTextField disabled type="date" id="fs-date" placeholder="dd/mm/yyyy" fullWidth />
+                                        <CustomTextField
+                                            id="date"
+                                            type="datetime-local"
+                                            variant="outlined"
+                                            fullWidth
+                                            disabled
+                                            value={formValues.lastEditedDate}
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                                setFormValues({ ...formValues, lastEditedDate: e.target.value });
+                                            }}
+                                            InputLabelProps={{
+                                                shrink: true,
+                                            }}
+                                        />
                                     </Grid>
                                 </Grid>
                             </form>

@@ -10,9 +10,6 @@ import {
     InputAdornment,
     Button,
     Autocomplete,
-    CardContent,
-    Divider,
-    Card,
     TableContainer,
     Table,
     TableBody,
@@ -22,10 +19,6 @@ import {
     TableHead,
     useTheme,
     Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogContentText,
-    DialogActions,
     IconButton,
     MenuItem
 } from '@mui/material';
@@ -37,10 +30,45 @@ import BlankCard from '../../shared/BlankCard';
 import CustomCheckbox from '../../forms/theme-elements/CustomCheckbox';
 import CustomTextField from '../../forms/theme-elements/CustomTextField';
 import ParentCard from '../../shared/ParentCard';
-import { Close, CloseRounded } from '@mui/icons-material';
+import { CloseRounded } from '@mui/icons-material';
 import CustomFormLabel from '../../forms/theme-elements/CustomFormLabel';
 import CustomSelect from '../../forms/theme-elements/CustomSelect';
-import { ro } from 'date-fns/locale';
+import { format } from 'date-fns';
+import { fetchAirCraft } from '@/store/apps/AirCraft/AirCraftSlice';
+import { AircraftType } from '@/app/(DashboardLayout)/types/apps/aircraft';
+import { sub } from 'date-fns';
+
+
+interface General {
+    work_order_number: string;
+    status: string;
+    category: string;
+    description: string;
+    location: string;
+    site: string;
+    priority: string;
+    aircraft: string;
+    aircraft_serial_number: string;
+    type_series1: string;
+    type_series2: string;
+    schedule_start_date: string;
+    schedule_start_hours: string;
+    schedule_start_minute: string;
+    schedule_end_date: string;
+    schedule_end_hours: string;
+    schedule_end_minute: string;
+    flight_number: string;
+    actual_start_date: string;
+    actual_start_hours: string;
+    actual_start_minute: string;
+    actual_end_date: string;
+    actual_end_hours: string;
+    actual_end_minute: string;
+}
+interface typeWorkOrder {
+    id: number;
+    general?: General;
+}
 
 const attaNumbering = [
     { label: '001 Engine', value: '001' },
@@ -50,45 +78,90 @@ const attaNumbering = [
     { label: '005 Engine', value: '005' },
 ];
 
-const data = [
-    { id: 1, aircraft: 'RP-C789', title: 'A320 - PHASE 44', type: 'task', status: 'OPEN', dueDate: '01/12/2025' },
-    { id: 2, aircraft: 'RP-C780', title: 'A320 - PHASE 45', type: 'defect', status: 'OPEN', dueDate: '01/12/2024' },
-    { id: 3, aircraft: 'RP-C781', title: 'A320 - PHASE 46', type: 'task', status: 'OPEN', dueDate: '01/12/2023' },
-    { id: 4, aircraft: 'RP-C782', title: 'A320 - PHASE 47', type: 'defect', status: 'OPEN', dueDate: '01/12/2023' },
-    { id: 5, aircraft: 'RP-C783', title: 'A320 - PHASE 48', type: 'task', status: 'OPEN', dueDate: '01/12/2023' },
-    { id: 6, aircraft: 'RP-C784', title: 'A320 - PHASE 49', type: 'defect', status: 'OPEN', dueDate: '01/12/2023' },
-];
 
-const taskStatus = [
+const generalStatus = [
     {
-        value: 'open',
+        value: 'OPEN',
         label: 'OPEN',
     },
     {
-        value: 'cancel',
-        label: 'CANCEL',
+        value: 'CLOSED',
+        label: 'CLOSED',
     },
     {
-        value: 'applicable',
-        label: 'APPLICABLE',
+        value: 'COMPLETED',
+        label: 'COMPLETED',
     },
     {
-        value: 'not effective',
-        label: 'NOT EFFECTIVE',
+        value: 'HOLD',
+        label: 'HOLD',
     },
     {
-        value: 'pending',
-        label: 'PENDING',
-    },
-    {
-        value: 'rejected',
-        label: 'REJECTED',
-    },
-    {
-        value: 'terminated',
-        label: 'TERMINATED',
+        value: 'GENERATE',
+        label: 'GENERATE',
     },
 ];
+
+const locations = [
+    {
+        value: 'jakarta',
+        label: 'Jakarta',
+    },
+    {
+        value: 'surabaya',
+        label: 'Surabaya',
+    },
+    {
+        value: 'semarang',
+        label: 'Semarang',
+    },
+];
+
+const category = [
+    {
+        value: 'LINE',
+        label: 'LINE',
+    },
+    {
+        value: 'PHASE',
+        label: 'PHASE',
+    },
+    {
+        value: 'CHECK',
+        label: 'CHECK',
+    },
+];
+
+const priority = [
+    {
+        value: 'LOW',
+        label: 'LOW',
+    },
+    {
+        value: 'NORMAL',
+        label: 'NORMAL',
+    },
+    {
+        value: 'CRITICAL',
+        label: 'CRITICAL',
+    },
+    {
+        value: 'AOG',
+        label: 'AOG',
+    },
+    {
+        value: 'URGENT',
+        label: 'URGENT',
+    },
+];
+
+
+interface AircraftNameType {
+    value: string;
+    label: string;
+}
+const aircraftNames: AircraftNameType[] = []
+const aircraftSeries: AircraftNameType[] = []
 
 interface EnhancedTableToolbarProps {
     numSelected: number;
@@ -97,7 +170,34 @@ interface EnhancedTableToolbarProps {
 }
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
+    const dispatch = useDispatch();
     const { numSelected, handleSearch, search } = props;
+    const getAircraft: AircraftType[] = useSelector((state) => state.aircraftReducer.aircraft);
+    const [aircraft, setAircraft] = React.useState<any>(getAircraft);
+
+    React.useEffect(() => {
+        setAircraft(getAircraft);
+    }, [getAircraft]);
+
+
+    React.useEffect(() => {
+        if (aircraft.length > 0) {
+            aircraft.forEach((x: { general: { aircraft_name: any; series: any }; }) => {
+                if (x.general?.aircraft_name) aircraftNames.push({
+                    value: x.general.aircraft_name,
+                    label: x.general.aircraft_name
+                })
+                if (x.general?.series) aircraftSeries.push({
+                    value: x.general.aircraft_name,
+                    label: x.general.aircraft_name
+                })
+            });
+        }
+    }, [aircraft]);
+
+    React.useEffect(() => {
+        dispatch(fetchAirCraft());
+    }, [dispatch]);
 
     return (
         <Toolbar>
@@ -145,10 +245,59 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
 
 const AlertDialogCreateWO = () => {
     const [open, setOpen] = React.useState(false);
-    const [status, setStatus] = React.useState('');
-    const router = useRouter();
+    const [randomNumber, setRandomNumber] = React.useState(0);
+
+    const generateRandomNumber = () => {
+        const min = 100;
+        const max = 10000;
+        const result = Math.floor(Math.random() * (max - min + 1)) + min;
+        setRandomNumber(result);
+    };
+
+    React.useEffect(() => {
+        generateRandomNumber();
+    }, []);
+
+    const initialGeneral = {
+        work_order_number: '',
+        status: '',
+        category: '',
+        description: '',
+        location: '',
+        site: '',
+        priority: '',
+        aircraft: '',
+        aircraft_serial_number: '',
+        type_series1: '',
+        type_series2: '',
+        schedule_start_date: '',
+        schedule_start_hours: '',
+        schedule_start_minute: '',
+        schedule_end_date: '',
+        schedule_end_hours: '',
+        schedule_end_minute: '',
+        flight_number: '',
+        actual_start_date: '',
+        actual_start_hours: '',
+        actual_start_minute: '',
+        actual_end_date: '',
+        actual_end_hours: '',
+        actual_end_minute: '',
+    }
+    const [general, setGeneral] = React.useState({ ...initialGeneral })
+
+    const handleGeneralChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target;
+        setGeneral((prevState) => ({
+            ...prevState,
+            [name]: value,
+        }));
+    };
+
 
     const handleClickOpen = () => {
+        generateRandomNumber();
+        setGeneral({ ...general, work_order_number: `WO${randomNumber}` });
         setOpen(true);
     };
 
@@ -156,12 +305,30 @@ const AlertDialogCreateWO = () => {
         setOpen(false);
     };
 
-    const handleChangeStatus = (event: any) => {
-        setStatus(event.target.value);
-    };
+    const handleReset = () => {
+        setGeneral({ ...initialGeneral })
+    }
 
-    const handleRedirect = (_: any) => {
-        router.push('/maintenance/defect-task-expiration/new');
+    const handleSave = () => {
+        const cachedData = localStorage.getItem('workOrderData');
+        const parsedData = cachedData ? JSON.parse(cachedData) : [];
+
+        try {
+            const payload = [...parsedData, ...[{
+                id: parsedData.length + 1,
+                general,
+                optional: {},
+                informational: {},
+                created: sub(new Date(), { days: 8, hours: 6, minutes: 20 }),
+            }]]
+            localStorage.setItem('workOrderData', JSON.stringify(payload)); // Save to localStorage
+            handleReset()
+            alert('Aircraft data saved successfully!');
+            window.location.href = '/maintenance/work-order';
+        } catch (error) {
+            console.error('Error saving data to localStorage:', error);
+            alert('Failed to save aircraft data.');
+        }
     };
 
     return (
@@ -200,7 +367,7 @@ const AlertDialogCreateWO = () => {
                                     Cancel
                                 </Button>
                                 <Button
-                                    onClick={(event) => handleRedirect(event)}
+                                    onClick={() => handleSave()}
                                     variant="contained"
                                     color="primary"
                                 >
@@ -218,7 +385,7 @@ const AlertDialogCreateWO = () => {
                                     fontWeight: 600,
                                     alignContent: 'center',
                                 }}>
-                                WO161026
+                                {general.work_order_number}
                             </Typography>
                             <IconButton color="default">
                                 <CloseRounded onClick={handleClose} />
@@ -230,7 +397,7 @@ const AlertDialogCreateWO = () => {
                                 fontWeight: 600,
                                 alignContent: 'center',
                             }}>
-                            A320 FAMILY - PHASE 44 INSPECTION
+                            A320 - PHASE 16
                         </Typography>
                         <Box
                             sx={{
@@ -257,13 +424,14 @@ const AlertDialogCreateWO = () => {
                             <Grid item lg={4} md={12} sm={12}>
                                 <CustomFormLabel htmlFor="fname-text">Status</CustomFormLabel>
                                 <CustomSelect
-                                    id="standard-select-status"
-                                    value={status}
-                                    onChange={handleChangeStatus}
+                                    id="standard-select-currency"
+                                    value={general.status}
+                                    name="status"
+                                    onChange={handleGeneralChange}
                                     fullWidth
                                     variant="outlined"
                                 >
-                                    {taskStatus.map((option) => (
+                                    {generalStatus.map((option) => (
                                         <MenuItem key={option.value} value={option.value}>
                                             {option.label}
                                         </MenuItem>
@@ -272,19 +440,54 @@ const AlertDialogCreateWO = () => {
                             </Grid>
                             <Grid item lg={1.3} md={12} sm={12}>
                                 <CustomFormLabel htmlFor="fname-text">Location</CustomFormLabel>
-                                <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                                <CustomSelect
+                                    id="standard-select-currency"
+                                    value={general.location} name="location" onChange={handleGeneralChange}
+                                    fullWidth
+                                    variant="outlined"
+                                >
+                                    {locations.map((option) => (
+                                        <MenuItem key={option.value} value={option.value}>
+                                            {option.label}
+                                        </MenuItem>
+                                    ))}
+                                </CustomSelect>
                             </Grid>
                             <Grid item lg={1.3} md={12} sm={12}>
                                 <CustomFormLabel htmlFor="fname-text">Site</CustomFormLabel>
-                                <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                                <CustomTextField id="fname-text" value={general.site} name="site" onChange={handleGeneralChange} variant="outlined" fullWidth />
                             </Grid>
                             <Grid item lg={1.3} md={12} sm={12}>
                                 <CustomFormLabel htmlFor="fname-text">Category</CustomFormLabel>
-                                <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                                <CustomSelect
+                                    id="standard-select-currency"
+                                    value={general.category}
+                                    name="category"
+                                    onChange={handleGeneralChange}
+                                    fullWidth
+                                    variant="outlined"
+                                >
+                                    {category.map((option) => (
+                                        <MenuItem key={option.value} value={option.value}>
+                                            {option.label}
+                                        </MenuItem>
+                                    ))}
+                                </CustomSelect>
                             </Grid>
                             <Grid item lg={4} md={12} sm={12}>
                                 <CustomFormLabel htmlFor="fname-text">Priority</CustomFormLabel>
-                                <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                                <CustomSelect
+                                    id="standard-select-currency"
+                                    value={general.priority} name="priority" onChange={handleGeneralChange}
+                                    fullWidth
+                                    variant="outlined"
+                                >
+                                    {priority.map((option) => (
+                                        <MenuItem key={option.value} value={option.value}>
+                                            {option.label}
+                                        </MenuItem>
+                                    ))}
+                                </CustomSelect>
                             </Grid>
                         </Grid>
 
@@ -292,13 +495,12 @@ const AlertDialogCreateWO = () => {
                             <Grid item lg={2} md={12} sm={12}>
                                 <CustomFormLabel htmlFor="fname-text">Aircraft</CustomFormLabel>
                                 <CustomSelect
-                                    id="standard-select-status"
-                                    value={status}
-                                    onChange={handleChangeStatus}
+                                    id="standard-select-currency"
+                                    value={general.aircraft} name="aircraft" onChange={handleGeneralChange}
                                     fullWidth
                                     variant="outlined"
                                 >
-                                    {taskStatus.map((option) => (
+                                    {aircraftNames.map((option) => (
                                         <MenuItem key={option.value} value={option.value}>
                                             {option.label}
                                         </MenuItem>
@@ -307,7 +509,7 @@ const AlertDialogCreateWO = () => {
                             </Grid>
                             <Grid item lg={10} md={12} sm={12}>
                                 <CustomFormLabel htmlFor="fname-text">Description</CustomFormLabel>
-                                <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                                <CustomTextField id="fname-text" variant="outlined" value={general.description} name="description" onChange={handleGeneralChange} fullWidth />
                             </Grid>
                         </Grid>
                         <Box
@@ -333,53 +535,89 @@ const AlertDialogCreateWO = () => {
                         <Grid container spacing={1} mt={1}>
                             <Grid item lg={4} md={12} sm={12}>
                                 <CustomFormLabel htmlFor="fname-text">Schedule Start Date</CustomFormLabel>
-                                <CustomTextField type="date" id="fs-date" fullWidth />
+                                <CustomTextField
+                                    id="date"
+                                    type="date"
+                                    variant="outlined"
+                                    fullWidth
+                                    value={general.schedule_start_date} name="schedule_start_date" onChange={handleGeneralChange}
+                                    InputLabelProps={{
+                                        shrink: true,
+                                    }}
+                                />
                             </Grid>
                             <Grid item lg={1} md={12} sm={12}>
                                 <CustomFormLabel htmlFor="fname-text">Hours</CustomFormLabel>
-                                <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                                <CustomTextField id="fname-text" variant="outlined" value={general.schedule_start_hours} name="schedule_start_hours" onChange={handleGeneralChange} fullWidth />
                             </Grid>
                             <Grid item lg={1} md={12} sm={12}>
                                 <CustomFormLabel htmlFor="fname-text">Minutes</CustomFormLabel>
-                                <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                                <CustomTextField id="fname-text" variant="outlined" value={general.schedule_start_minute} name="schedule_start_minute" onChange={handleGeneralChange} fullWidth />
                             </Grid>
                             <Grid item lg={4} md={12} sm={12}>
                                 <CustomFormLabel htmlFor="fname-text">Schedule End Date</CustomFormLabel>
-                                <CustomTextField type="date" id="fs-date" fullWidth />
+                                <CustomTextField
+                                    id="date"
+                                    type="date"
+                                    variant="outlined"
+                                    fullWidth
+                                    value={general.schedule_end_date} name="schedule_end_date" onChange={handleGeneralChange}
+                                    InputLabelProps={{
+                                        shrink: true,
+                                    }}
+                                />
                             </Grid>
                             <Grid item lg={1} md={12} sm={12}>
                                 <CustomFormLabel htmlFor="fname-text">Hours</CustomFormLabel>
-                                <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                                <CustomTextField id="fname-text" variant="outlined" value={general.schedule_end_hours} name="schedule_end_hours" onChange={handleGeneralChange} fullWidth />
                             </Grid>
                             <Grid item lg={1} md={12} sm={12}>
                                 <CustomFormLabel htmlFor="fname-text">Minutes</CustomFormLabel>
-                                <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                                <CustomTextField id="fname-text" variant="outlined" value={general.schedule_end_minute} name="schedule_end_minute" onChange={handleGeneralChange} fullWidth />
                             </Grid>
                         </Grid>
                         <Grid container spacing={1} mt={2}>
                             <Grid item lg={4} md={12} sm={12}>
                                 <CustomFormLabel htmlFor="fname-text">Actual Start Date</CustomFormLabel>
-                                <CustomTextField type="date" id="fs-date" fullWidth />
+                                <CustomTextField
+                                    id="date"
+                                    type="date"
+                                    variant="outlined"
+                                    fullWidth
+                                    value={general.actual_start_date} name="actual_start_date" onChange={handleGeneralChange}
+                                    InputLabelProps={{
+                                        shrink: true,
+                                    }}
+                                />
                             </Grid>
                             <Grid item lg={1} md={12} sm={12}>
                                 <CustomFormLabel htmlFor="fname-text">Hours</CustomFormLabel>
-                                <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                                <CustomTextField id="fname-text" variant="outlined" value={general.actual_start_hours} name="actual_start_hours" onChange={handleGeneralChange} fullWidth />
                             </Grid>
                             <Grid item lg={1} md={12} sm={12}>
                                 <CustomFormLabel htmlFor="fname-text">Minutes</CustomFormLabel>
-                                <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                                <CustomTextField id="fname-text" variant="outlined" value={general.actual_start_minute} name="actual_start_minute" onChange={handleGeneralChange} fullWidth />
                             </Grid>
                             <Grid item lg={4} md={12} sm={12}>
                                 <CustomFormLabel htmlFor="fname-text">Actual End Date</CustomFormLabel>
-                                <CustomTextField type="date" id="fs-date" fullWidth />
+                                <CustomTextField
+                                    id="date"
+                                    type="date"
+                                    variant="outlined"
+                                    fullWidth
+                                    value={general.actual_end_date} name="actual_end_date" onChange={handleGeneralChange}
+                                    InputLabelProps={{
+                                        shrink: true,
+                                    }}
+                                />
                             </Grid>
                             <Grid item lg={1} md={12} sm={12}>
                                 <CustomFormLabel htmlFor="fname-text">Hours</CustomFormLabel>
-                                <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                                <CustomTextField id="fname-text" variant="outlined" value={general.actual_end_hours} name="actual_end_hours" onChange={handleGeneralChange} fullWidth />
                             </Grid>
                             <Grid item lg={1} md={12} sm={12}>
                                 <CustomFormLabel htmlFor="fname-text">Minutes</CustomFormLabel>
-                                <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                                <CustomTextField id="fname-text" variant="outlined" value={general.actual_end_minute} name="actual_end_minute" onChange={handleGeneralChange} fullWidth />
                             </Grid>
                         </Grid>
                     </>
@@ -390,20 +628,10 @@ const AlertDialogCreateWO = () => {
 }
 
 const InspectionForm = (data: any) => {
-    console.log(data);
     const theme = useTheme();
     const borderColor = theme.palette.divider;
     return (
         (<Box>
-            <FormControlLabel
-                control={<CustomCheckbox />}
-                label={`${data.item.task.task_id}`}
-                sx={{
-                    "& .MuiFormControlLabel-label": {
-                        typography: "h6",
-                    },
-                }}
-            />
             {/* 2 column */}
             <Grid container>
                 <Grid item lg={2} sm={12} md={12} >
@@ -448,7 +676,7 @@ const InspectionForm = (data: any) => {
                                 fontSize: '12px',
                                 fontWeight: 400,
                             }}>
-                            {data.item.aircraft}
+                            {data.item.aircraft === '' ? '-' : data.item.aircraft}
                         </Typography>
                     </Box>
                 </Grid>
@@ -826,7 +1054,7 @@ const InspectionForm = (data: any) => {
                                 fontSize: '12px',
                                 fontWeight: 400,
                             }}>
-                            -
+                            {data.item.position === '' ? '-' : data.item.position}
                         </Typography>
                     </Box>
                 </Grid>
@@ -872,7 +1100,7 @@ const InspectionForm = (data: any) => {
                                 fontSize: '12px',
                                 fontWeight: 400,
                             }}>
-                            5-20-0
+                            {data.item.task.ata === '' ? '-' : data.item.task.ata}
                         </Typography>
                     </Box>
                 </Grid>
@@ -921,7 +1149,7 @@ const InspectionForm = (data: any) => {
                                 fontSize: '12px',
                                 fontWeight: 400,
                             }}>
-                            ALL
+                            {data.item.defect.capability_area === '' ? '-' : data.item.defect.capability_area}
                         </Typography>
                     </Box>
                 </Grid>
@@ -967,7 +1195,7 @@ const InspectionForm = (data: any) => {
                                 fontSize: '12px',
                                 fontWeight: 400,
                             }}>
-                            AP
+                            {data.item.task.category === '' ? '-' : data.item.task.category}
                         </Typography>
                     </Box>
                 </Grid>
@@ -1013,7 +1241,7 @@ const InspectionForm = (data: any) => {
                                 fontSize: '12px',
                                 fontWeight: 400,
                             }}>
-                            -
+                            {data.item.task.sub_category === '' ? '-' : data.item.task.sub_category}
                         </Typography>
                     </Box>
                 </Grid>
@@ -1062,7 +1290,7 @@ const InspectionForm = (data: any) => {
                                 fontSize: '12px',
                                 fontWeight: 400,
                             }}>
-                            -
+                            {data.item.defect.mddr === '' ? '-' : data.item.defect.mddr}
                         </Typography>
                     </Box>
                 </Grid>
@@ -1111,7 +1339,7 @@ const InspectionForm = (data: any) => {
                                 fontSize: '12px',
                                 fontWeight: 400,
                             }}>
-                            -
+                            {data.item.defect.ground_time === '' ? '-' : data.item.defect.ground_time}
                         </Typography>
                     </Box>
                 </Grid>
@@ -1136,7 +1364,7 @@ const InspectionForm = (data: any) => {
                                 fontSize: '12px',
                                 fontWeight: 400,
                             }}>
-                            GMM Category
+                            {data.item.defect.defect_id === '' ? 'GMM Category' : 'MEL Category'}
                         </Typography>
                     </Box>
                 </Grid>
@@ -1157,7 +1385,7 @@ const InspectionForm = (data: any) => {
                                 fontSize: '12px',
                                 fontWeight: 400,
                             }}>
-                            -
+                            {data.item.defect.defect_id === '' ? (data.item.defect.gmm === '' ? '-' : data.item.defect.gmm) : (data.item.task.mel === '' ? '-' : data.item.task.mel)}
                         </Typography>
                     </Box>
                 </Grid>
@@ -1186,9 +1414,9 @@ const InspectionForm = (data: any) => {
                                         <TableCell align="center">Cycles</TableCell>
                                     </TableRow>
                                     <TableRow>
-                                        <TableCell align="center">100</TableCell>
-                                        <TableCell align="center">170</TableCell>
-                                        <TableCell align="center">744</TableCell>
+                                        <TableCell align="center">{data.item.initial_schedule.hours === '' ? '-' : data.item.initial_schedule.hours}</TableCell>
+                                        <TableCell align="center">{data.item.initial_schedule.days === '' ? '-' : data.item.initial_schedule.days}</TableCell>
+                                        <TableCell align="center">{data.item.initial_schedule.cycles === '' ? '-' : data.item.initial_schedule.cycles}</TableCell>
                                     </TableRow>
                                 </TableBody>
                             </Table>
@@ -1218,9 +1446,9 @@ const InspectionForm = (data: any) => {
                                         <TableCell align="center">Cycles</TableCell>
                                     </TableRow>
                                     <TableRow>
-                                        <TableCell align="center">326:48</TableCell>
-                                        <TableCell align="center">53</TableCell>
-                                        <TableCell align="center">255</TableCell>
+                                        <TableCell align="center">{data.item.actual.hours === '' ? '-' : data.item.actual.hours}</TableCell>
+                                        <TableCell align="center">{data.item.actual.days === '' ? '-' : data.item.actual.days}</TableCell>
+                                        <TableCell align="center">{data.item.actual.cycles === '' ? '-' : data.item.actual.cycles}</TableCell>
                                     </TableRow>
                                 </TableBody>
                             </Table>
@@ -1250,9 +1478,9 @@ const InspectionForm = (data: any) => {
                                         <TableCell align="center">Cycles</TableCell>
                                     </TableRow>
                                     <TableRow>
-                                        <TableCell align="center">648:12</TableCell>
-                                        <TableCell align="center">117</TableCell>
-                                        <TableCell align="center">489</TableCell>
+                                        <TableCell align="center">{data.item.remaining.hours === '' ? '-' : data.item.remaining.hours}</TableCell>
+                                        <TableCell align="center">{data.item.remaining.days === '' ? '-' : data.item.remaining.days}</TableCell>
+                                        <TableCell align="center">{data.item.remaining.cycles === '' ? '-' : data.item.remaining.cycles}</TableCell>
                                     </TableRow>
                                 </TableBody>
                             </Table>
@@ -1288,9 +1516,9 @@ const InspectionForm = (data: any) => {
                                         "& .MuiTableCell-root": { padding: "4px" }
                                     }}>
                                     <TableRow>
-                                        <TableCell align="center">33018:15</TableCell>
-                                        <TableCell align="center">24834</TableCell>
-                                        <TableCell align="center">11/12/2024</TableCell>
+                                        <TableCell align="center">{data.item.totals.aircraft_hours === '' ? '-' : data.item.totals.aircraft_hours}</TableCell>
+                                        <TableCell align="center">{data.item.totals.aircraft_cycles === '' ? '-' : data.item.totals.aircraft_cycles}</TableCell>
+                                        <TableCell align="center">{data.item.totals.time_as_of === '' ? '-' : data.item.totals.time_as_of}</TableCell>
                                     </TableRow>
                                 </TableBody>
                             </Table>
@@ -1350,7 +1578,7 @@ const InspectionForm = (data: any) => {
                                 fontSize: '12px',
                                 fontWeight: 400,
                             }}>
-                            01/12/2025
+                            {data.item.due_date === '' ? '-' : format(new Date(data.item.due_date), 'dd/MM/yyyy')}
                         </Typography>
                     </Box>
                 </Grid>
@@ -1396,7 +1624,7 @@ const InspectionForm = (data: any) => {
                                 fontSize: '12px',
                                 fontWeight: 400,
                             }}>
-                            33666:00
+                            {data.item.totals.aircraft_hours === '' ? '-' : data.item.totals.aircraft_hours}
                         </Typography>
                     </Box>
                 </Grid>
@@ -1442,7 +1670,7 @@ const InspectionForm = (data: any) => {
                                 fontSize: '12px',
                                 fontWeight: 400,
                             }}>
-                            25323
+                            {data.item.totals.aircraft_cycles === '' ? '-' : data.item.totals.aircraft_cycles}
                         </Typography>
                     </Box>
                 </Grid>
@@ -1452,8 +1680,10 @@ const InspectionForm = (data: any) => {
 };
 
 const DefectTaskTableList = () => {
-    const [selected, setSelected] = React.useState<readonly string[]>([]);
+    const [selected, setSelected] = React.useState<[]>([]);
+    const [selectedItem, setSelectedItem] = React.useState(null);
     const [search, setSearch] = React.useState('');
+    const [isVisibleTask, setIsVisibleTask] = React.useState(false);
 
     const dispatch = useDispatch();
 
@@ -1484,6 +1714,15 @@ const DefectTaskTableList = () => {
             return;
         }
         setSelected([]);
+    };
+
+    const handleSelect = (item: any, checked: boolean) => {
+        console.log(checked);
+        if (checked) {
+            setSelectedItem(item);
+        } else {
+            setSelectedItem(null);
+        }
     };
 
     return (
@@ -1649,7 +1888,19 @@ const DefectTaskTableList = () => {
             {rows.map((item: any) => (
                 <Box sx={{ marginTop: '8px' }}>
                     <ParentCard title=''>
-                        <InspectionForm item={item} />
+                        <>
+                            <FormControlLabel
+                                control={<CustomCheckbox />}
+                                label={`${item.task.task_id}`}
+                                onChange={(event, checked) => handleSelect(item, checked)}
+                                sx={{
+                                    "& .MuiFormControlLabel-label": {
+                                        typography: "h6",
+                                    },
+                                }}
+                            />
+                            <InspectionForm item={item} />
+                        </>
                     </ParentCard>
                 </Box>
             ))}

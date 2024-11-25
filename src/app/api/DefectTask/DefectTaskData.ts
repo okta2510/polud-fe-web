@@ -5,9 +5,8 @@ import { sub } from 'date-fns';
 const DefectTaskData = [
     {
         is_defect: false,
-        is_task: false,
+        is_task: true,
         is_work_order: false,
-        is_all: false,
         is_selected: false,
         aircraft: 'A320',
         task: {
@@ -25,6 +24,7 @@ const DefectTaskData = [
             ground_time: '',
             capability_area: '',
             mel: '',
+            gmm: '',
         },
         work_order: {
             general: {

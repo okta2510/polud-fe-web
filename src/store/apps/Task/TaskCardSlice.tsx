@@ -107,7 +107,17 @@ export const {
 
 export const fetchTaskCards = () => async (dispatch: AppDispatch) => {
     try {
+        const cachedData = localStorage.getItem('taskCardData');
+        if (cachedData) {
+            const parsedData = JSON.parse(cachedData);
+            if (parsedData && parsedData.length > 0) {
+                dispatch(getTaskCards(parsedData));
+                return;
+            }
+        }
+
         const response = await axios.get(`${API_URL}`);
+        localStorage.setItem('taskCardData', JSON.stringify(response.data));
         dispatch(getTaskCards(response.data));
     } catch (error) {
         dispatch(hasError(error));

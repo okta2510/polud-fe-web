@@ -1,65 +1,92 @@
 import mock from '../mock';
-import { Chance } from 'chance';
 
-const chance = new Chance();
 
 const TaskCardData = [
     {
         id: 1,
-        taskCard: 'B789-70-818-02-01-IDN',
-        type: 'Repair',
-        category: 'Battery',
-        description: chance.paragraph({ sentences: 2 }),
-        status: 'open',
-    },
-    {
-        id: 2,
-        taskCard: 'B789-70-818-02-02-IDN',
-        type: 'Repair',
-        category: 'Battery',
-        description: chance.paragraph({ sentences: 2 }),
-        status: 'cancel',
-    },
-    {
-        id: 3,
-        taskCard: 'B789-70-818-02-03-IDN',
-        type: 'Repair',
-        category: 'Battery',
-        description: chance.paragraph({ sentences: 2 }),
-        status: 'applicable',
-    },
-    {
-        id: 4,
-        taskCard: 'B789-70-818-02-04-IDN',
-        type: 'Repair',
-        category: 'Battery',
-        description: chance.paragraph({ sentences: 2 }),
-        status: 'not effective',
-    },
-    {
-        id: 5,
-        taskCard: 'B789-70-818-02-05-IDN',
-        type: 'Repair',
-        category: 'Battery',
-        description: chance.paragraph({ sentences: 2 }),
-        status: 'pending',
-    },
-    {
-        id: 6,
-        taskCard: 'B789-70-818-02-06-IDN',
-        type: 'Repair',
-        category: 'Battery',
-        description: chance.paragraph({ sentences: 2 }),
-        status: 'rejected',
-    },
-    {
-        id: 7,
-        taskCard: 'B789-70-818-02-06-IDN',
-        type: 'Repair',
-        category: 'Battery',
-        description: chance.paragraph({ sentences: 2 }),
-        status: 'terminated',
-    },
+        general: {
+            taskCard: '26-400-00-03',
+            type: 'Routine',
+            category: 'Phase16',
+            description: 'CARGO FIRE EXTINGUISHING 60-MINUTE TIMER',
+            ata: '001',
+            aircraft_effectivity: 'B',
+            status: 'open',
+        },
+        material: {
+            partNumbers: [
+                {
+                    partNumber: '117',
+                    description: 'MULTIMETER - DIGITAL/ANALOG',
+                    category: 'TOOL',
+                    quantity: 1,
+                    unitOfMeasurement: 'EA',
+                    spare: 'Part',
+                    reserve: 'Reserved',
+                },
+                {
+                    partNumber: 'C26006-70',
+                    description: 'TEST  BOX - CARGO FIRE EXTINGUISHER SYSTEM',
+                    category: 'TOOL',
+                    quantity: 1,
+                    unitOfMeasurement: 'EA',
+                    spare: 'Part',
+                    reserve: 'Reserved',
+                },
+                {
+                    partNumber: 'M83723/60-114AN',
+                    description: 'CAP-PROTECTIVE',
+                    category: 'EXPANDABLE',
+                    quantity: 1,
+                    unitOfMeasurement: 'EA',
+                    spare: 'Part',
+                    reserve: 'Reserved',
+                },
+                {
+                    partNumber: 'STD-1079',
+                    description: 'RESISTOR - 10K OHM OR GREATER',
+                    category: 'TOOL',
+                    quantity: 1,
+                    unitOfMeasurement: 'EA',
+                    spare: 'Part',
+                    reserve: 'Reserved',
+                },
+                {
+                    partNumber: 'STD-1168',
+                    description: 'CAP - SHORTING OR FARADAY CAP',
+                    category: 'TOOL',
+                    quantity: 1,
+                    unitOfMeasurement: 'EA',
+                    spare: 'Part',
+                    reserve: 'Reserved',
+                },
+            ],
+            zones: [
+                {
+                    zone: '121',
+                    description: '121AF',
+                    item: '1',
+                    aircraft_type: '737',
+                    aircraft_series: '800',
+                },
+            ],
+            panels: [
+                {
+                    panel: 'panel a 121AF',
+                    description: 'panel b 122AF',
+                    item: '1',
+                    aircraft_type: '737',
+                    aircraft_series: '800',
+                },
+            ],
+        },
+        informational: {
+            createdBy: 'ACTYPSERMS',
+            createdDate: '2024-11-15T01:23',
+            lastEditedBy: 'GEVERFOREVER',
+            lastEditedDate: '2024-11-15T01:23',
+        },
+    }
 ];
 
 mock.onGet('/api/data/task/card').reply(() => {
