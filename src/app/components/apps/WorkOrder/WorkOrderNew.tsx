@@ -345,7 +345,6 @@ const WorkOrderNew = () => {
             
             <TabPanel value="1">
               <form>
-                {JSON.stringify(general,null,2)}
                 <Grid container spacing={3} mb={3}>
                   <Grid item lg={4} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Work Order Number</CustomFormLabel>
