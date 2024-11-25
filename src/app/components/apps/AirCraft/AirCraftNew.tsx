@@ -13,17 +13,35 @@ import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import {IconFilePlus, IconFileExport, IconFileSearch} from "@tabler/icons-react";
 import { sub } from 'date-fns';
-import { fetchAirCraft } from '@/store/apps/AirCraft/AirCraftSlice';
-import { useSelector, useDispatch } from '@/store/hooks';
 
-const currencies = [
+
+const ownerShipStatus = [
+  {
+    value: 'Owned',
+    label: 'Owned',
+  },
+  {
+    value: 'Manage',
+    label: 'Manage',
+  },
+  {
+    value: ' Dry Lease',
+    label: ' Dry Lease',
+  },
+  {
+    value: ' White Lease',
+    label: ' White Lease',
+  },
+];
+
+const status = [
   {
     value: 'active',
-    label: 'Active',
+    label: 'active',
   },
   {
     value: 'inactive',
-    label: 'Inactive',
+    label: 'inactive',
   },
   {
     value: 'maintenance',
@@ -238,6 +256,7 @@ const AirCraftAddNew = () => {
       localStorage.setItem('aircraftData', JSON.stringify(parsedData));
 
       alert('Data updated successfully');
+      window.location.href = '/system-support/aircraft';
     } else {
       alert('No matching data found');
     }
@@ -351,7 +370,7 @@ const AirCraftAddNew = () => {
                         required
                         variant="outlined"
                       >
-                        {currencies.map((option) => (
+                        {status.map((option) => (
                           <MenuItem key={option.value} value={option.value}>
                             {option.label}
                           </MenuItem>
@@ -364,11 +383,7 @@ const AirCraftAddNew = () => {
                 <Grid container spacing={3} mb={3}>
                   <Grid item lg={4} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Aircraft Name*</CustomFormLabel>
-                    <FormControl required>
-                      <CustomTextField id="fname-text" required variant="outlined" value={general.aircraft_name}
-                      name="aircraft_name" onChange={handleGeneralChange} fullWidth />
-                    </FormControl>
-                    
+                    <CustomTextField id="fname-text" required variant="outlined" value={general.aircraft_name} name="aircraft_name" onChange={handleGeneralChange} fullWidth />
                   </Grid>
                   
                   <Grid item lg={4} md={12} sm={12}>
@@ -707,7 +722,7 @@ const AirCraftAddNew = () => {
                       fullWidth
                       variant="outlined"
                     >
-                      {currencies.map((option) => (
+                      {ownerShipStatus.map((option) => (
                         <MenuItem key={option.value} value={option.value}>
                           {option.label}
                         </MenuItem>

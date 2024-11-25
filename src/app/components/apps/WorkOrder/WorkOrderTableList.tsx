@@ -188,17 +188,23 @@ interface EnhancedTableToolbarProps {
   search: string;
 }
 
-type AirCraftStatus = 'active' | 'inactive';
+
 interface ChipStatusProps {
-  status: 'active' | 'inactive';
+  status: 'OPEN' | 'CLOSED' | 'COMPLETED' | 'HOLD' | 'GENERATE';
 }
 
 const ChipStatus = ({status}:ChipStatusProps) => {
-  let color:'primary'|'success'|'error' = status === 'active' ? 'success' : status === 'inactive' ? 'error' : 'primary'
-  if (status === 'active') {
+  let color:'primary'|'success'|'error' | 'warning' = status === 'OPEN' ? 'success' : status === 'CLOSED' ? 'error' : 'primary'
+  if (status === 'OPEN') {
     color = 'success'
-  }  else if (status === 'inactive') {
+  }  else if (status === 'CLOSED') {
     color = 'error'
+  }  else if (status === 'COMPLETED') {
+    color = 'primary'
+  }  else if (status === 'HOLD') {
+    color = 'warning'
+  } else if (status === 'GENERATE') {
+    color = 'warning'
   } else {
     color= 'primary'
   }
@@ -322,6 +328,17 @@ const AirCraftSeriesTableList = () => {
     setRows(filteredRows);
   };
 
+  interface dataTable  {
+    id: number;
+  }
+  const handleDeleteRow = async (id: number) => {
+    if (window.confirm('Are you sure you want to delete this item?')) {
+      const updatedItems = rows.filter((item:dataTable) => item.id !== id);
+      await localStorage.setItem('workOrderData', JSON.stringify(updatedItems));
+      await dispatch(fetchWorkOrder());
+    }
+  };
+  
   // This is for the sorting
   const handleRequestSort = (event: React.MouseEvent<unknown>, property: any) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -432,7 +449,7 @@ const AirCraftSeriesTableList = () => {
                         <TableCell   sx={{
                           width: '15%'
                         }}>
-                          <Typography>{row.id}</Typography>
+                          <Typography>{row.general?.work_order_number || '-'}</Typography>
                         </TableCell>
                         
                         <TableCell sx={{
@@ -441,8 +458,8 @@ const AirCraftSeriesTableList = () => {
                           <Box display="flex" alignItems="center">
                             {/* <Avatar src={row.photo} alt="product" sx={{ width: 56, height: 56 }} /> */}
                             <Typography variant="subtitle2">
-                                {/* {row.title} */}
-                                WO1633
+                                {row.general?.aircraft || '-'}
+                                
                               </Typography>
                           </Box>
                         </TableCell>
@@ -460,7 +477,7 @@ const AirCraftSeriesTableList = () => {
                                 textTransform: 'uppercase'
                               }}
                             >
-                              Normal
+                              {row.general?.category || '-'}
                             </Typography>
                           </Box>
                         </TableCell >
@@ -469,7 +486,7 @@ const AirCraftSeriesTableList = () => {
                           width: '20%'
                         }}>
                           <Typography fontWeight={400} variant="subtitle2">
-                          CG-PPQ
+                            {row.general?.priority || '-'}
                           </Typography>
                         </TableCell>
                         {/* description cell */}
@@ -477,7 +494,7 @@ const AirCraftSeriesTableList = () => {
                           width: '20%'
                         }}>
                           <Typography fontWeight={400} variant="subtitle2">
-                            <ChipStatus status={row.status}></ChipStatus>
+                            <ChipStatus status={row.general?.status || '-'}></ChipStatus>
                             {/* <Chip label="Inactive" color="error" />
                             <Chip label="Active" color="success" /> */}
                           </Typography>
@@ -489,11 +506,11 @@ const AirCraftSeriesTableList = () => {
                             // divider={<Divider orientation="vertical" flexItem />}
                             spacing={1}
                           >
-                              <IconButton  color="primary">
+                             <IconButton  color="primary" href={`/maintenance/work-order/${row.id}`}>
                                 <IconEye width={25} height={25}  />
                               </IconButton>
                               <IconButton  color="error">
-                                <IconTrash width={25} height={25}  />
+                                <IconTrash width={25} height={25} onClick={() => handleDeleteRow(row.id)}  />
                               </IconButton>
                           </Stack>
                         </TableCell>

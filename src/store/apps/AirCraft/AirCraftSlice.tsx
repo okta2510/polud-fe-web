@@ -2,6 +2,7 @@ import axios from '@/utils/axios';
 import { filter, map } from 'lodash';
 import { createSlice } from '@reduxjs/toolkit';
 import { AppDispatch } from '@/store/store';
+import { getProducts } from './AirCraftSeriesSlice';
 
 const API_URL = '/api/data/aircraft';
 
@@ -41,6 +42,9 @@ export const AirCraftSlice = createSlice({
     getProducts: (state, action) => {
       state.aircraft = action.payload;
     },
+    getAircraft: (state, action) => {
+      state.aircraft = action.payload;
+    },
     
     SearchProduct: (state, action) => {
       state.aircraftSearch = action.payload;
@@ -62,7 +66,7 @@ export const AirCraftSlice = createSlice({
 });
 export const {
   hasError,
-  getProducts,
+  getAircraft,
   SearchProduct,
   sortBy,
   filterAircraft,

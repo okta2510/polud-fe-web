@@ -444,7 +444,7 @@ const AirCraftSeriesTableList = () => {
                               }}
                             >
                               <Typography variant="subtitle2">
-                                {row.general.aircraft_type || '-'}
+                                {row.general?.aircraft_type || '-'}
                               </Typography>
                               {/* <Typography color="textSecondary" variant="subtitle2">
                                 {row.category}
@@ -463,20 +463,20 @@ const AirCraftSeriesTableList = () => {
                                 ml: 1,
                               }}
                             >
-                              {row.general.series || '-'}
+                              {row.general?.series || '-'}
                             </Typography>
                           </Box>
                         </TableCell>
                         {/* aircraft name  */}
                         <TableCell>
                           <Typography fontWeight={400} variant="subtitle2">
-                            {row.general.aircraft_name || '-'}
+                            {row.general?.aircraft_name || '-'}
                           </Typography>
                         </TableCell>
                         {/* flight status */}
                         <TableCell>
                           <Typography fontWeight={400} variant="subtitle2">
-                            <ChipStatus status={row.general.status || '-'}></ChipStatus>
+                            <ChipStatus status={row.general?.status || '-'}></ChipStatus>
                           </Typography>
                         </TableCell>
                         <TableCell>
