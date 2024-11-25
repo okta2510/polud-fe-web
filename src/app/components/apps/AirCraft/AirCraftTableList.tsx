@@ -485,7 +485,7 @@ const AirCraftSeriesTableList = () => {
                             // divider={<Divider orientation="vertical" flexItem />}
                             spacing={1}
                           >
-                              <IconButton  color="primary">
+                              <IconButton  color="primary" href={`/system-support/aircraft/${row.id}`}>
                                 <IconEye width={25} height={25}  />
                               </IconButton>
                               <IconButton  color="error">
