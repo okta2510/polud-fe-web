@@ -188,11 +188,10 @@ interface EnhancedTableToolbarProps {
   search: string;
 }
 
-type AirCraftStatus = 'active' | 'inactive';
+
 interface ChipStatusProps {
   status: 'active' | 'inactive';
 }
-
 const ChipStatus = ({status}:ChipStatusProps) => {
   let color:'primary'|'success'|'error' = status === 'active' ? 'success' : status === 'inactive' ? 'error' : 'primary'
   if (status === 'active') {

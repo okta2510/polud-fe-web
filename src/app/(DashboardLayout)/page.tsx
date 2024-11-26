@@ -34,18 +34,18 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <PageContainer title={t('Selamat Datang')} description="this is Dashboard">
+    <PageContainer title={t('Welcome Sir,')} description="this is Dashboard">
       {/* breadcrumb */}
-      <Breadcrumb title={t('Selamat Datang')} items={BCrumb} />
+      <Breadcrumb title={t('Welcome Sir,')} items={BCrumb} />
       
       <Box>
-        <Grid container spacing={3}>
+        {/* <Grid container spacing={3}>
         <Grid item xs={12} lg={3}></Grid>
           <Grid item xs={12} lg={6}>
               <img src="/images/backgrounds/sidebar-profile-bg2.jpg" style={{ width: '100%', height: 'auto' }} />
           </Grid>
-        </Grid>
-        {/* <Grid container spacing={3}>
+        </Grid> */}
+        <Grid container spacing={3}>
           <Grid item xs={12} lg={8}>
             <SalesOverview isLoading={isLoading} />
           </Grid>
@@ -53,14 +53,14 @@ export default function Dashboard() {
             <OurVisitors isLoading={isLoading} />
           </Grid>
 
-          <Grid item xs={12} lg={4}>
+          {/* <Grid item xs={12} lg={4}>
             <BlogCard />
-          </Grid>
-          <Grid item xs={12} lg={8}>
+          </Grid> */}
+          <Grid item xs={12} lg={12}>
             <NewsletterCampaign isLoading={isLoading} />
           </Grid>
 
-          <Grid item xs={12} lg={4}>
+          {/* <Grid item xs={12} lg={4}>
             <BandwidthUsage isLoading={isLoading} />
           </Grid>
           <Grid item xs={12} lg={4}>
@@ -68,9 +68,9 @@ export default function Dashboard() {
           </Grid>
           <Grid item xs={12} lg={4}>
             <WeatherCard />
-          </Grid>
+          </Grid> */}
 
-          <Grid item xs={12} lg={4}>
+          {/* <Grid item xs={12} lg={4}>
             <Grid container spacing={3}>
               <Grid item xs={12}>
                 <ProfileCard />
@@ -79,11 +79,11 @@ export default function Dashboard() {
                 <MyContacts />
               </Grid>
             </Grid>
-          </Grid>
-          <Grid item xs={12} lg={8}>
+          </Grid> */}
+          {/* <Grid item xs={12} lg={8}>
             <ActivityTimeline />
-          </Grid>
-        </Grid> */}
+          </Grid> */}
+        </Grid>
         <Welcome />
       </Box>
     </PageContainer>

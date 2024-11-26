@@ -370,7 +370,7 @@ const EnhancedTableList = (data: any) => {
                                                     </Typography>
                                                 </TableCell>
                                                 <TableCell align='center'>
-                                                    <Typography fontWeight={400} variant="subtitle2">
+                                                    <Typography fontWeight={400} variant="subtitle2" color={row.reserve === 'Booked' ? 'primary': 'error'}>
                                                         {row.reserve}
                                                     </Typography>
                                                 </TableCell>

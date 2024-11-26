@@ -45,11 +45,11 @@ export default function TwoSteps() {
             }}
           >
             <Image
-              src={"/images/backgrounds/login-bg.svg"}
+              src={"/images/backgrounds/bg-login.png"}
               alt="bg" width={500} height={500}
               style={{
                 width: '100%',
-                maxWidth: '500px',  maxHeight: '500px',
+                height: 'auto',
               }}
             />
           </Box>

@@ -72,11 +72,11 @@ const NewsletterCampaign = ({ isLoading }: NewsletterCampaigntwoCardProps) => {
   };
   const seriescolumnchart = [
     {
-      name: "Earnings",
+      name: "Air Time",
       data: [0, 5, 6, 8, 25, 9, 11, 24],
     },
     {
-      name: "Expense",
+      name: "Landing",
       data: [0, 3, 1, 2, 8, 1, 5, 1],
     },
   ];
@@ -87,46 +87,45 @@ const NewsletterCampaign = ({ isLoading }: NewsletterCampaigntwoCardProps) => {
         <SktNewsletterCampaign />
       ) : (
         <DashboardCard
-          title="Newsletter Campaign"
-          subtitle="Overview of Newsletter Campaign"
-          action={
-            <Stack spacing={3} mt={5} direction="row">
-              <Stack direction="row" spacing={1} alignItems="center">
-                <Avatar
-                  sx={{
-                    width: 9,
-                    height: 9,
-                    bgcolor: primary,
-                    svg: { display: "none" },
-                  }}
-                ></Avatar>
-                <Typography
-                  variant="subtitle2"
-                  fontSize="12px"
-                  color="primary.main"
-                >
-                  Earning
-                </Typography>
-              </Stack>
-              <Stack direction="row" spacing={1} alignItems="center">
-                <Avatar
-                  sx={{
-                    width: 9,
-                    height: 9,
-                    bgcolor: secondary,
-                    svg: { display: "none" },
-                  }}
-                ></Avatar>
-                <Typography
-                  variant="subtitle2"
-                  fontSize="12px"
-                  color="secondary.main"
-                >
-                  Expense
-                </Typography>
-              </Stack>
-            </Stack>
-          }
+          title="Aircraft Status"
+          subtitle=""
+          // action={
+          //   <Stack spacing={3} mt={5} direction="row">
+          //     <Stack direction="row" spacing={1} alignItems="center">
+          //       <Avatar
+          //         sx={{
+          //           width: 9,
+          //           height: 9,
+          //           bgcolor: primary,
+          //           svg: { display: "none" },
+          //         }}
+          //       ></Avatar>
+          //       <Typography
+          //         variant="subtitle2"
+          //         fontSize="12px"
+          //         color="primary.main"
+          //       >
+          //         Air Time                </Typography>
+          //     </Stack>
+          //     <Stack direction="row" spacing={1} alignItems="center">
+          //       <Avatar
+          //         sx={{
+          //           width: 9,
+          //           height: 9,
+          //           bgcolor: secondary,
+          //           svg: { display: "none" },
+          //         }}
+          //       ></Avatar>
+          //       <Typography
+          //         variant="subtitle2"
+          //         fontSize="12px"
+          //         color="secondary.main"
+          //       >
+          //         Landing
+          //       </Typography>
+          //     </Stack>
+          //   </Stack>
+          // }
         >
           <>
             <Box height="322px">
@@ -153,8 +152,7 @@ const NewsletterCampaign = ({ isLoading }: NewsletterCampaigntwoCardProps) => {
                   fontSize="12px"
                   color="primary.main"
                 >
-                  Earning
-                </Typography>
+                  Air Time                </Typography>
               </Stack>
               <Stack direction="row" spacing={1} alignItems="center">
                 <Avatar
@@ -170,7 +168,7 @@ const NewsletterCampaign = ({ isLoading }: NewsletterCampaigntwoCardProps) => {
                   fontSize="12px"
                   color="secondary.main"
                 >
-                  Expense
+                  Landing
                 </Typography>
               </Stack>
             </Stack>

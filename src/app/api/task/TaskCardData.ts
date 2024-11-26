@@ -22,7 +22,7 @@ const TaskCardData = [
                     quantity: 1,
                     unitOfMeasurement: 'EA',
                     spare: 'Part',
-                    reserve: 'Reserved',
+                    reserve: 'Booked',
                 },
                 {
                     partNumber: 'C26006-70',
@@ -31,7 +31,7 @@ const TaskCardData = [
                     quantity: 1,
                     unitOfMeasurement: 'EA',
                     spare: 'Part',
-                    reserve: 'Reserved',
+                    reserve: 'None',
                 },
                 {
                     partNumber: 'M83723/60-114AN',
@@ -40,7 +40,7 @@ const TaskCardData = [
                     quantity: 1,
                     unitOfMeasurement: 'EA',
                     spare: 'Part',
-                    reserve: 'Reserved',
+                    reserve: 'None',
                 },
                 {
                     partNumber: 'STD-1079',
@@ -49,7 +49,7 @@ const TaskCardData = [
                     quantity: 1,
                     unitOfMeasurement: 'EA',
                     spare: 'Part',
-                    reserve: 'Reserved',
+                    reserve: 'None',
                 },
                 {
                     partNumber: 'STD-1168',
@@ -58,7 +58,7 @@ const TaskCardData = [
                     quantity: 1,
                     unitOfMeasurement: 'EA',
                     spare: 'Part',
-                    reserve: 'Reserved',
+                    reserve: 'None',
                 },
             ],
             zones: [

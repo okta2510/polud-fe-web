@@ -64,7 +64,7 @@ const OurVisitors = ({ isLoading }: OurVisitortwoCardProps) => {
         <SktOurVisitor />
       ) : (
         <DashboardCard
-          title="Our Visitors"
+          title="Aircraft Inspections"
           subtitle="Different Devices Used to Visit"
         >
           <>
@@ -98,7 +98,7 @@ const OurVisitors = ({ isLoading }: OurVisitortwoCardProps) => {
                   fontSize="12px"
                   color="textSecondary"
                 >
-                  Tablet
+                  Current
                 </Typography>
               </Stack>
               <Stack direction="row" spacing={1} alignItems="center">
@@ -115,7 +115,7 @@ const OurVisitors = ({ isLoading }: OurVisitortwoCardProps) => {
                   fontSize="12px"
                   color="textSecondary"
                 >
-                  Mobile
+                  Due
                 </Typography>
               </Stack>
               <Stack direction="row" spacing={1} alignItems="center">
@@ -132,7 +132,7 @@ const OurVisitors = ({ isLoading }: OurVisitortwoCardProps) => {
                   fontSize="12px"
                   color="textSecondary"
                 >
-                  Desktop
+                  Overdue
                 </Typography>
               </Stack>
             </Stack>

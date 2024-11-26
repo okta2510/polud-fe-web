@@ -80,8 +80,8 @@ const SalesOverview = ({ isLoading }: SktSalesOverviewtwoCardProps) => {
         <SktSalesOverview />
       ) : (
         <DashboardCard
-          title="Sales Overview"
-          subtitle="Ample Admin Vs Pixel Admin"
+          title="Work Order Ticket"
+          subtitle="Defect vs Task"
           action={
             <Stack spacing={3} mt={5} direction="row">
               <Stack direction="row" spacing={1} alignItems="center">
@@ -98,7 +98,7 @@ const SalesOverview = ({ isLoading }: SktSalesOverviewtwoCardProps) => {
                   fontSize="12px"
                   color="primary.main"
                 >
-                  Ample
+                  Defect
                 </Typography>
               </Stack>
               <Stack direction="row" spacing={1} alignItems="center">
@@ -115,7 +115,7 @@ const SalesOverview = ({ isLoading }: SktSalesOverviewtwoCardProps) => {
                   fontSize="12px"
                   color="secondary.main"
                 >
-                  Pixel
+                  Task
                 </Typography>
               </Stack>
             </Stack>
