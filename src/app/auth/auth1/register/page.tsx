@@ -52,11 +52,11 @@ export default function Register() {
             }}
           >
             <Image
-              src={"/images/backgrounds/login-bg.svg"}
+              src={"/images/backgrounds/bg-login.png"}
               alt="bg" width={500} height={500}
               style={{
-                width: "100%",
-                maxWidth: "500px",  maxHeight: '500px',
+                width: '100%',
+                height: 'auto',
               }}
             />
           </Box>
@@ -74,7 +74,7 @@ export default function Register() {
       >
         <Box p={4}>
           <AuthRegister
-            title="Welcome to MaterialPro"
+            title="Welcome"
             subtext={
               <Typography variant="subtitle1" color="textSecondary" mb={1}>
                 Your Admin Dashboard
@@ -82,9 +82,9 @@ export default function Register() {
             }
             subtitle={
               <Stack direction="row" spacing={1} mt={3}>
-                <Typography color="textSecondary" variant="h6" fontWeight="400">
+                {/* <Typography color="textSecondary" variant="h6" fontWeight="400">
                   Already have an Account?
-                </Typography>
+                </Typography> */}
                 <Typography
                   component={Link}
                   href="/auth/auth1/login"

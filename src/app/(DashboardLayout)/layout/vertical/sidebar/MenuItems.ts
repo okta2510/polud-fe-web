@@ -81,6 +81,12 @@ import {
 const MainItems:MenuitemsType[] = [
   {
     id: uniqueId(),
+    title: "Dashboard",
+    icon: IconChartPie,
+    href: "/",
+  },
+  {
+    id: uniqueId(),
     title: "Maintenance",
     icon: IconTools,
     href: "/maintenance/",
