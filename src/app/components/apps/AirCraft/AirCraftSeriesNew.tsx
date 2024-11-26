@@ -13,16 +13,16 @@ import TabPanel from "@mui/lab/TabPanel";
 
 const currencies = [
   {
-    value: 'female',
-    label: 'Female',
+    value: 'OPTION1',
+    label: 'OPTION1',
   },
   {
-    value: 'male',
-    label: 'Male',
+    value: 'OPTION2',
+    label: 'OPTION2',
   },
   {
-    value: 'other',
-    label: 'Other',
+    value: 'OPTION3',
+    label: 'OPTION3',
   },
 ];
 
