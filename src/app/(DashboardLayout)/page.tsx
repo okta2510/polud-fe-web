@@ -22,11 +22,7 @@ import BlogCard from "@/app/components/dashboards/analytical/TheBlogCard";
 
 const BCrumb = [
   {
-    to: "/",
-    title: "Dashboard",
-  },
-  {
-    title: "Analytical",
+    // title: "Dashboard",
   },
 ];
 
@@ -38,12 +34,18 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <PageContainer title={t('Analytical')} description="this is Dashboard">
+    <PageContainer title={t('Selamat Datang')} description="this is Dashboard">
       {/* breadcrumb */}
-      <Breadcrumb title={t('Analytical')} items={BCrumb} />
+      <Breadcrumb title={t('Selamat Datang')} items={BCrumb} />
       
       <Box>
         <Grid container spacing={3}>
+        <Grid item xs={12} lg={3}></Grid>
+          <Grid item xs={12} lg={6}>
+              <img src="/images/backgrounds/sidebar-profile-bg2.jpg" style={{ width: '100%', height: 'auto' }} />
+          </Grid>
+        </Grid>
+        {/* <Grid container spacing={3}>
           <Grid item xs={12} lg={8}>
             <SalesOverview isLoading={isLoading} />
           </Grid>
@@ -81,7 +83,7 @@ export default function Dashboard() {
           <Grid item xs={12} lg={8}>
             <ActivityTimeline />
           </Grid>
-        </Grid>
+        </Grid> */}
         <Welcome />
       </Box>
     </PageContainer>
