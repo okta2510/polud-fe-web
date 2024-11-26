@@ -5,6 +5,7 @@ import PageContainer from '@/app/components/container/PageContainer';
 import AuthLogo from '@/app/(DashboardLayout)/layout/shared/logo/AuthLogo';
 import AuthLogin from '../../authForms/AuthLogin';
 import Image from 'next/image';
+import CenteredBgAndLogo from '@/app/components/shared/CenteredBgAndLogo';
 
 export default function Login () {
   return(
@@ -30,7 +31,12 @@ export default function Login () {
           },
         }}
       >
-        <Box position="relative">
+        <CenteredBgAndLogo
+            backgroundSrc="/images/backgrounds/bg-login2.png"
+            logoSrc="/images/logos/logo-login.png"
+            altText="bg-logo"
+          />
+        {/* <Box position="relative">
           <Box px={3}>
             <AuthLogo />
           </Box>
@@ -54,7 +60,7 @@ export default function Login () {
               }}
             />
           </Box>
-        </Box>
+        </Box> */}
       </Grid>
       <Grid
         item

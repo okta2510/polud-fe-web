@@ -24,7 +24,7 @@ import {
 } from '@mui/material';
 import { useSelector, useDispatch } from '@/store/hooks';
 import { IconFileDatabase, IconPlus, IconReload, IconSearch } from '@tabler/icons-react';
-import { fetchDefectTasks } from '@/store/apps/DefectTask/DefectTaskSlice';
+import { fetchDefectTasks, getDefectTasks } from '@/store/apps/DefectTask/DefectTaskSlice';
 import { TaskType } from '@/app/(DashboardLayout)/types/apps/task';
 import BlankCard from '../../shared/BlankCard';
 import CustomCheckbox from '../../forms/theme-elements/CustomCheckbox';
@@ -244,6 +244,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
 
 
 const AlertDialogCreateWO = () => {
+    const defectTasks = useSelector((state) => state.defectTasksReducer.defectTasks);
     const [open, setOpen] = React.useState(false);
     const [randomNumber, setRandomNumber] = React.useState(0);
 
@@ -321,13 +322,13 @@ const AlertDialogCreateWO = () => {
                 informational: {},
                 created: sub(new Date(), { days: 8, hours: 6, minutes: 20 }),
             }]]
-            localStorage.setItem('workOrderData', JSON.stringify(payload)); // Save to localStorage
+            localStorage.setItem('workOrderData', JSON.stringify(payload));
             handleReset()
-            alert('Aircraft data saved successfully!');
+            alert('WO data saved successfully!');
             window.location.href = '/maintenance/work-order';
         } catch (error) {
             console.error('Error saving data to localStorage:', error);
-            alert('Failed to save aircraft data.');
+            alert('Failed to save WO data.');
         }
     };
 
@@ -378,6 +379,7 @@ const AlertDialogCreateWO = () => {
                     }
                 >
                     <>
+                        {JSON.stringify(defectTasks)}
                         <Box sx={{ marginBottom: 3, display: 'flex', justifyContent: 'space-between' }}>
                             <Typography
                                 sx={{

@@ -74,11 +74,20 @@ import {
   // IconPlane,
   // IconPlaneTilt,
   // IconHelicopter,
-  IconTools
+  // IconTools,
+  IconBrandNetbeans,
+  IconBuildingWarehouse,
+  IconSpeakerphone,
+  IconPlaneTilt,
+  IconSettingsCode
 } from "@tabler/icons-react";
 
 
-const MainItems:MenuitemsType[] = [
+const MainItems: MenuitemsType[] = [
+  {
+    navlabel: true,
+    subheader: "Admin",
+  },
   {
     id: uniqueId(),
     title: "Dashboard",
@@ -88,7 +97,7 @@ const MainItems:MenuitemsType[] = [
   {
     id: uniqueId(),
     title: "Maintenance",
-    icon: IconTools,
+    icon: IconBrandNetbeans,
     href: "/maintenance/",
     children: [
       {
@@ -131,8 +140,26 @@ const MainItems:MenuitemsType[] = [
   },
   {
     id: uniqueId(),
+    title: "Inventory",
+    icon: IconBuildingWarehouse,
+    href: "/inventory",
+  },
+  {
+    id: uniqueId(),
+    title: "Publication",
+    icon: IconSpeakerphone,
+    href: "/publication",
+  },
+  {
+    id: uniqueId(),
+    title: "Operation",
+    icon: IconPlaneTilt ,
+    href: "/operation",
+  },
+  {
+    id: uniqueId(),
     title: "Support & Setting",
-    icon: IconSettings,
+    icon: IconSettingsCode,
     href: "/system-support/",
     children: [
       {
@@ -149,12 +176,12 @@ const MainItems:MenuitemsType[] = [
       },
     ],
   },
-  
+
   // {
   //   navlabel: true,
   //   subheader: "System Support & Setting",
   // },
-  
+
   {
     separator: true,
   },
@@ -164,7 +191,7 @@ const InitialItems: MenuitemsType[] = [
     navlabel: true,
     subheader: "Home",
   },
-  
+
   {
     id: uniqueId(),
     title: "Analytical",
@@ -825,9 +852,9 @@ const InitialItems: MenuitemsType[] = [
   },
 ];
 let Menuitems: MenuitemsType[] = []
-if(process.env.NODE_ENV === "production"){
+if (process.env.NODE_ENV === "production") {
   Menuitems = [...MainItems]
-}else{
+} else {
   Menuitems = [...MainItems, ...InitialItems]
 }
 export default Menuitems;
