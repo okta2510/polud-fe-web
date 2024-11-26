@@ -46,9 +46,29 @@ interface General {
   actual_end_hours: string;
   actual_end_minute: string;
 }
+interface Optional {
+  status: string;
+  defect_type: string;
+  item: string;
+  warranty: boolean;
+  damage: boolean;
+  field_trip: boolean;
+  work_order_initial_issued: boolean;
+  insurance_claim: boolean;
+  all_require_item: boolean;
+  long_term_event: boolean;
+  restrict_actual: boolean;
+  allow_non_routine: boolean;
+  vendor: string;
+  aircraft_maintenance: string;
+  revision: string;
+  date: string;
+  temporary_revision: string;
+}
 interface typeWorkOrder {
   id: number;
   general?: General;
+  optional?: Optional;
 }
 
 const sampleSelect = [
@@ -196,8 +216,34 @@ const WorkOrderNew = () => {
   const [informational, setInformational] = React.useState({...initialInformational})
 
   const initialOptional = {
+    status: '',
+    defect_type: '',
+    item: '',
+    warranty: false,
+    damage: false,
+    field_trip: false,
+    work_order_initial_issued: false,
+    insurance_claim: false,
+    all_require_item: false,
+    long_term_event: false,
+    restrict_actual: false,
+    allow_non_routine: false,
+    vendor: '',
+    aircraft_maintenance: '',
+    revision: '',
+    date: '',
+    temporary_revision: '',
   }
   const [optional, setOptional] = React.useState({...initialOptional})
+  const handleOptionalChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    
+    setOptional((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
   const getAircraft: AircraftType[] = useSelector((state) => state.aircraftReducer.aircraft);
   const [aircraft, setAircraft] = React.useState<any>(getAircraft);
 
@@ -231,8 +277,9 @@ const WorkOrderNew = () => {
     if (cachedData && match) {
       const parsedData:typeWorkOrder[] = JSON.parse(cachedData);
       const obj = parsedData.find(x => x.id === id)
-      if (obj && obj.general) {
+      if (obj && obj.general && obj.optional) {
         setGeneral(obj.general)
+        setOptional(obj.optional)
       }
     }
     dispatch(fetchAirCraft());
@@ -280,7 +327,7 @@ const WorkOrderNew = () => {
     const cachedData = localStorage.getItem('workOrderData');
     const parsedData = cachedData ? JSON.parse(cachedData) : [];
     const index = parsedData.findIndex((item: { id: number }) => item.id === detailId);
-    console.log(detailId)
+    console.log(detailId, )
     if (index !== -1) {
       // Replace the object at that index with the new 'general' object
       parsedData[index] = {...parsedData[index], ...{
@@ -291,9 +338,9 @@ const WorkOrderNew = () => {
 
       // Save the updated array back into localStorage
       localStorage.setItem('workOrderData', JSON.stringify(parsedData));
-
+      console.log(parsedData)
       alert('Data updated successfully');
-      window.location.href = '/maintenance/work-order';
+      // window.location.href = '/maintenance/work-order';
     } else {
       alert('No matching data found');
     }
@@ -556,8 +603,7 @@ const WorkOrderNew = () => {
                       type="date"
                       variant="outlined"
                       fullWidth
-                      value={formValues.createdDate}
-                      onChange={(e:React.ChangeEvent<HTMLInputElement>) => setFormValues({ ...formValues, createdDate: e.target.value })}
+                      value={general.actual_end_date} name="actual_end_date" onChange={handleGeneralChange}
                       InputLabelProps={{
                         shrink: true,
                       }}
@@ -565,11 +611,11 @@ const WorkOrderNew = () => {
                   </Grid>
                   <Grid item lg={1} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Hours</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    <CustomTextField id="fname-text" variant="outlined"  value={general.actual_end_hours} name="actual_end_hours" onChange={handleGeneralChange} fullWidth />
                   </Grid>
                   <Grid item lg={1} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Minutes</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    <CustomTextField id="fname-text" variant="outlined"  value={general.actual_end_minute} name="actual_end_minute" onChange={handleGeneralChange} fullWidth />
                   </Grid>
                 </Grid>
               </form>
@@ -579,18 +625,17 @@ const WorkOrderNew = () => {
               <Grid container spacing={3} mb={3}>
                   <Grid item lg={4} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Status*</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    <CustomTextField id="fname-text" variant="outlined" value={optional.status} name="status" onChange={handleOptionalChange} fullWidth />
                   </Grid>
                   <Grid item lg={4} md={12} sm={12}>
-                    <CustomFormLabel htmlFor="fname-text">Defect Type*</CustomFormLabel>
+                    <CustomFormLabel htmlFor="fname-text">Maintenance Manual Revision</CustomFormLabel>
                     <CustomSelect
                         id="standard-select-currency"
-                        value={currency}
-                        onChange={handleChange2}
+                        value={optional.defect_type} name="defect_type" onChange={handleOptionalChange}
                         fullWidth
                         variant="outlined"
                         >
-                        {sampleSelect.map((option) => (
+                        {[{label: 'OPTION1', value: 'OPTION1'}, {label: 'OPTION2', value: 'OPTION2'}, {label: 'OPTION3', value: 'OPTION3'}].map((option) => (
                           <MenuItem key={option.value} value={option.value}>
                             {option.label}
                           </MenuItem>
@@ -599,15 +644,14 @@ const WorkOrderNew = () => {
                   </Grid>
                   
                   <Grid item lg={4} md={12} sm={12}>
-                    <CustomFormLabel htmlFor="fname-text">Defect Type*</CustomFormLabel>
+                    <CustomFormLabel htmlFor="fname-text">Approval*</CustomFormLabel>
                     <CustomSelect
                         id="standard-select-currency"
-                        value={currency}
-                        onChange={handleChange2}
+                        value={optional.item} name="item" onChange={handleOptionalChange}
                         fullWidth
                         variant="outlined"
                         >
-                        {sampleSelect.map((option) => (
+                        {[{label: 'FAA', value: 'FAA'}, {label: 'EASA', value: 'EASA'}, {label: 'DGCA', value: 'DGCA'}].map((option) => (
                           <MenuItem key={option.value} value={option.value}>
                             {option.label}
                           </MenuItem>
@@ -630,7 +674,7 @@ const WorkOrderNew = () => {
                           <Checkbox color="primary"
                               icon={<CheckBoxOutlineBlankIcon />}
                               checkedIcon={<CheckBoxIcon />}
-                              name="checkednormal"
+                              value={optional.warranty} name="warranty" onChange={handleOptionalChange}
                           />
                         }
                         label="WARRANTY"
@@ -640,7 +684,7 @@ const WorkOrderNew = () => {
                           <Checkbox color="primary"
                               icon={<CheckBoxOutlineBlankIcon />}
                               checkedIcon={<CheckBoxIcon />}
-                              name="checkednormal"
+                              value={optional.damage} name="damage" onChange={handleOptionalChange}
                           />
                         }
                         label="DAMAGE"
@@ -650,7 +694,7 @@ const WorkOrderNew = () => {
                           <Checkbox color="primary"
                               icon={<CheckBoxOutlineBlankIcon />}
                               checkedIcon={<CheckBoxIcon />}
-                              name="checkednormal"
+                              value={optional.field_trip} name="field_trip" onChange={handleOptionalChange}
                           />
                         }
                         label="FIELD TRIP"
@@ -660,7 +704,7 @@ const WorkOrderNew = () => {
                           <Checkbox color="primary"
                               icon={<CheckBoxOutlineBlankIcon />}
                               checkedIcon={<CheckBoxIcon />}
-                              name="checkednormal"
+                              value={optional.work_order_initial_issued} name="work_order_initial_issued" onChange={handleOptionalChange}
                           />
                         }
                         label="WORK ORDER INITIAL ISSUED"
@@ -670,7 +714,7 @@ const WorkOrderNew = () => {
                           <Checkbox color="primary"
                               icon={<CheckBoxOutlineBlankIcon />}
                               checkedIcon={<CheckBoxIcon />}
-                              name="checkednormal"
+                              value={optional.insurance_claim} name="insurance_claim" onChange={handleOptionalChange}
                           />
                         }
                         label="INSURANCE CLAIM"
@@ -680,7 +724,7 @@ const WorkOrderNew = () => {
                           <Checkbox color="primary"
                               icon={<CheckBoxOutlineBlankIcon />}
                               checkedIcon={<CheckBoxIcon />}
-                              name="checkednormal"
+                              value={optional.all_require_item} name="all_require_item" onChange={handleOptionalChange}
                           />
                         }
                         label="ALL N/R T/CS REQUIRE ITEM"
@@ -690,7 +734,7 @@ const WorkOrderNew = () => {
                           <Checkbox color="primary"
                               icon={<CheckBoxOutlineBlankIcon />}
                               checkedIcon={<CheckBoxIcon />}
-                              name="checkednormal"
+                              value={optional.long_term_event} name="long_term_event" onChange={handleOptionalChange}
                           />
                         }
                         label="LONG TERM EVENT"
@@ -700,7 +744,7 @@ const WorkOrderNew = () => {
                           <Checkbox color="primary"
                               icon={<CheckBoxOutlineBlankIcon />}
                               checkedIcon={<CheckBoxIcon />}
-                              name="checkednormal"
+                              value={optional.restrict_actual} name="restrict_actual" onChange={handleOptionalChange}
                           />
                         }
                         label="RESTRICT ACTUAL TO ESTIMATE"
@@ -710,7 +754,7 @@ const WorkOrderNew = () => {
                           <Checkbox color="primary"
                               icon={<CheckBoxOutlineBlankIcon />}
                               checkedIcon={<CheckBoxIcon />}
-                              name="checkednormal"
+                              value={optional.allow_non_routine} name="allow_non_routine" onChange={handleOptionalChange}
                           />
                         }
                         label="ALLOW NON ROUTINE TASK CREATION"
@@ -722,23 +766,23 @@ const WorkOrderNew = () => {
                 <Grid container spacing={3} mb={3}>
                     <Grid item lg={4} md={12} sm={12}>
                       <CustomFormLabel htmlFor="fname-text">Vendor</CustomFormLabel>
-                      <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                      <CustomTextField id="fname-text" variant="outlined" value={optional.vendor} name="vendor" onChange={handleOptionalChange} fullWidth />
                     </Grid>
                     <Grid item lg={4} md={12} sm={12}>
                       <CustomFormLabel htmlFor="fname-text">&nbsp;</CustomFormLabel>
-                      <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                      <CustomTextField id="fname-text" variant="outlined" value={optional.aircraft_maintenance} name="aircraft_maintenance" onChange={handleOptionalChange} fullWidth />
                     </Grid>
                 </Grid>
                 <Grid container spacing={3} mb={3}>
                   <Grid item lg={8} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Aircraft Maintenance Program / Maintenance Schedule</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    <CustomTextField id="fname-text" variant="outlined" value={optional.aircraft_maintenance} name="aircraft_maintenance" onChange={handleOptionalChange} fullWidth />
                   </Grid>
                 </Grid>
                 <Grid container spacing={3} mb={3}>
                     <Grid item lg={4} md={12} sm={12}>
                       <CustomFormLabel htmlFor="fname-text">Revision</CustomFormLabel>
-                      <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                      <CustomTextField id="fname-text" variant="outlined" value={optional.revision} name="revision" onChange={handleOptionalChange}  fullWidth />
                     </Grid>
                     <Grid item lg={4} md={12} sm={12}>
                       <CustomFormLabel htmlFor="fname-text">Date</CustomFormLabel>
@@ -748,8 +792,7 @@ const WorkOrderNew = () => {
                         disabled
                         variant="outlined"
                         fullWidth
-                        value={formValues.createdDate}
-                        onChange={(e:React.ChangeEvent<HTMLInputElement>) => setFormValues({ ...formValues, createdDate: e.target.value })}
+                        value={optional.date} name="date" onChange={handleOptionalChange}
                         InputLabelProps={{
                           shrink: true,
                         }}
@@ -759,7 +802,7 @@ const WorkOrderNew = () => {
                 <Grid container spacing={3} mb={3}>
                   <Grid item lg={8} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Temporary Revision</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    <CustomTextField id="fname-text" variant="outlined"  value={optional.temporary_revision} name="date" onChange={handleOptionalChange} ullWidth />
                   </Grid>
                 </Grid>
             </TabPanel>
