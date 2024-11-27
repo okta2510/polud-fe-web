@@ -47,7 +47,17 @@ const TaskData = [
             limit_schedule_date: '2024-11-15T01:23',
         },
         aircraft: [],
-        task_card_control: [],
+        task_card_control: [
+            {
+                taskCard: '26-400-00-03',
+                type: 'Routine',
+                category: 'Phase16',
+                description: 'CARGO FIRE EXTINGUISHING 60-MINUTE TIMER',
+                ata: '001',
+                aircraft_effectivity: 'B',
+                status: 'open',
+            },
+        ],
         attachment: [],
         informational: {
             createdBy: 'ACTYPSERMS',

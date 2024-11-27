@@ -339,11 +339,11 @@ const EnhancedTableList = (data: any) => {
                                         key={labelId}
                                     >
                                         <TableCell align='center'>
-                                            <Typography >{row.partNumber}</Typography>
+                                            <Typography >{row.taskCard}</Typography>
                                         </TableCell>
                                         <TableCell align='center'>
                                             <Typography variant="subtitle2">
-                                                {row.description}
+                                                {row.type}
                                             </Typography>
                                         </TableCell>
                                         <TableCell align='center'>
@@ -353,22 +353,12 @@ const EnhancedTableList = (data: any) => {
                                         </TableCell>
                                         <TableCell align='center'>
                                             <Typography variant="subtitle2">
-                                                {row.quantity}
+                                                {row.description}
                                             </Typography>
                                         </TableCell>
                                         <TableCell align='center'>
                                             <Typography fontWeight={400} variant="subtitle2">
-                                                {row.unitOfMeasurement}
-                                            </Typography>
-                                        </TableCell>
-                                        <TableCell align='center'>
-                                            <Typography fontWeight={400} variant="subtitle2">
-                                                {row.spare}
-                                            </Typography>
-                                        </TableCell>
-                                        <TableCell align='center'>
-                                            <Typography fontWeight={400} variant="subtitle2" color={row.reserve === 'Booked' ? 'primary' : 'error'}>
-                                                {row.reserve}
+                                                {row.status}
                                             </Typography>
                                         </TableCell>
 
@@ -631,6 +621,10 @@ const TaskAddNew = () => {
     }
     const [general, setGeneral] = React.useState({ ...initialGeneral })
 
+
+    const initialTaskCardControl = [initialTaskCard]
+    const [taskCardControls, setTaskCardControls] = React.useState({ ...initialTaskCardControl })
+
     interface typeTasks {
         id: number;
         general?: {
@@ -641,6 +635,7 @@ const TaskAddNew = () => {
             description: string;
             status: string;
         },
+        task_card_control?: [],
         informational?: {
             createdBy: string;
             createdDate: string;
@@ -662,6 +657,10 @@ const TaskAddNew = () => {
             if (obj && obj.general) {
                 setGeneral(obj.general)
             }
+
+            if (obj && obj.task_card_control) {
+                setTaskCardControls(obj.task_card_control)
+            }
         }
     }, []);
 
@@ -670,7 +669,6 @@ const TaskAddNew = () => {
     };
 
     const handleGeneralChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        console.log(e.target)
         const { name, value } = e.target;
         setGeneral((prevState) => ({
             ...prevState,
@@ -687,8 +685,11 @@ const TaskAddNew = () => {
     };
 
     function handleTaskCardInputChange(value: any): void {
-        console.log(value)
-        setTaskCard(value);
+        if (value) {
+            setTaskCard(value);
+        } else {
+            setTaskCard(initialTaskCard);
+        }
     }
 
     const handleReset = () => {
@@ -1167,7 +1168,7 @@ const TaskAddNew = () => {
                                             <CustomSelect
                                                 id="standard-select-status1"
                                                 placeholder="Select"
-                                                value={taskCard.status}
+                                                value={status}
                                                 name="status"
                                                 onChange={handleChangeStatus}
                                                 fullWidth
@@ -1201,7 +1202,7 @@ const TaskAddNew = () => {
                                     </>
                                 </ChildCard>
                                 <Box sx={{ marginTop: '24px' }}>
-                                    <EnhancedTableList headCells={headTaskCardCells} items={[]} />
+                                    <EnhancedTableList headCells={headTaskCardCells} items={taskCardControls} />
                                 </Box>
                             </form>
                         </TabPanel>

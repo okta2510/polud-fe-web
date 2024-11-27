@@ -12,8 +12,10 @@ import TabPanel from "@mui/lab/TabPanel";
 import Autocomplete, { AutocompleteInputChangeReason } from '@mui/material/Autocomplete';
 import { IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
 import { visuallyHidden } from '@mui/utils';
-import { useDispatch } from '@/store/hooks';
+import { useDispatch, useSelector } from '@/store/hooks';
 import { TaskCardType } from '@/app/(DashboardLayout)/types/apps/task';
+import { fetchAirCraft } from '@/store/apps/AirCraft/AirCraftSlice';
+import { AircraftType } from '@/app/(DashboardLayout)/types/apps/aircraft';
 
 
 
@@ -135,6 +137,36 @@ const partNumbersMaster = [
         partNumber: 'STD-1168',
         description: 'CAP - SHORTING OR FARADAY CAP',
         category: 'TOOL',
+    },
+];
+
+const zonesMaster = [
+    {
+        zone: '121',
+        description: '121AF',
+    },
+];
+
+const panelsMaster = [
+    {
+        panel: '241VF',
+        description: 'PANEL ASSY - PASSENGER CABIN FLOOR ACCESS - (SEC 46 - WET AREA)',
+    },
+    {
+        panel: '111',
+        description: 'RADOME',
+    },
+    {
+        panel: '112A',
+        description: 'FWD ACCESS DOOR',
+    },
+    {
+        panel: '113AC',
+        description: 'FWD NOSE WHEEL WELL UPPER PANEL',
+    },
+    {
+        panel: '113AW',
+        description: 'FWD NOSE WHEEL WELL PANEL',
     },
 ];
 
@@ -573,6 +605,14 @@ const EnhancedTableList = (data: any) => {
     );
 }
 
+interface AircraftNameType {
+    value: string;
+    label: string;
+}
+const aircraftNames: AircraftNameType[] = []
+const aircraftSeries: AircraftNameType[] = []
+const aircraftTypes: AircraftNameType[] = []
+
 const TaskCardAddNew = () => {
     const dispatch = useDispatch();
     const [error, setError] = useState(false);
@@ -584,6 +624,40 @@ const TaskCardAddNew = () => {
         lastEditedBy: 'GEVERFOREVER',
         lastEditedDate: '2024-11-15T01:23',
     });
+    const getAircraft: AircraftType[] = useSelector((state) => state.aircraftReducer.aircraft);
+    const [aircraft, setAircraft] = React.useState<any>(getAircraft);
+
+    React.useEffect(() => {
+        setAircraft(getAircraft);
+    }, [getAircraft]);
+
+
+    React.useEffect(() => {
+        if (aircraft.length > 0) {
+            aircraftNames.splice(0, aircraftNames.length);
+            aircraftSeries.splice(0, aircraftSeries.length);
+            aircraftTypes.splice(0, aircraftTypes.length);
+
+            aircraft.forEach((x: { general: { aircraft_name: any; series: any, aircraft_type: any }; }) => {
+                if (x.general?.aircraft_name) aircraftNames.push({
+                    value: x.general.aircraft_name,
+                    label: x.general.aircraft_name
+                })
+                if (x.general?.series) aircraftSeries.push({
+                    value: x.general.series,
+                    label: x.general.series,
+                })
+                if (x.general?.aircraft_type) aircraftTypes.push({
+                    value: x.general.aircraft_type,
+                    label: x.general.aircraft_type
+                })
+            });
+        }
+    }, [aircraft]);
+
+    React.useEffect(() => {
+        dispatch(fetchAirCraft());
+    }, [dispatch]);
 
 
     const initialGeneral = {
@@ -615,6 +689,7 @@ const TaskCardAddNew = () => {
         aircraft_type: '',
         aircraft_series: '',
     }
+    const [zone, setZone] = React.useState({ ...initialZone });
 
     const initialPanel = {
         panel: '',
@@ -623,6 +698,7 @@ const TaskCardAddNew = () => {
         aircraft_type: '',
         aircraft_series: '',
     }
+    const [panel, setPanel] = React.useState({ ...initialPanel });
 
     const initialMaterial = {
         partNumbers: [],
@@ -674,7 +750,28 @@ const TaskCardAddNew = () => {
     };
 
     function handlePartNumberInputChange(value: any): void {
-        setPartNumber(value);
+        if (value) {
+            setPartNumber(value);
+        } else {
+            setPartNumber(initialPartNumber);
+        }
+    }
+
+    function handleZoneInputChange(value: any): void {
+        if (value) {
+            setZone(value);
+        } else {
+            setZone(initialZone);
+        }
+    }
+
+
+    function handlePanelInputChange(value: any): void {
+        if (value) {
+            setPanel(value);
+        } else {
+            setPanel(initialPanel);
+        }
     }
 
     const handleReset = () => {
@@ -990,7 +1087,10 @@ const TaskCardAddNew = () => {
                                             <Autocomplete
                                                 disablePortal
                                                 id="combo-box-search-task"
-                                                options={attaNumbering}
+                                                options={zonesMaster}
+                                                getOptionLabel={(option) => option.zone}
+                                                onChange={(_, value) => { handleZoneInputChange(value) }}
+                                                isOptionEqualToValue={(option, value) => option.zone === value.zone}
                                                 fullWidth
                                                 sx={{
                                                     "& .MuiInputBase-root": { paddingTop: "6px", paddingBottom: "6px", paddingLeft: "16px" },
@@ -1016,7 +1116,7 @@ const TaskCardAddNew = () => {
                                     <Grid container spacing={3} mb={3}>
                                         <Grid item lg={6} md={12} sm={12}>
                                             <CustomFormLabel htmlFor="fname-text">Description</CustomFormLabel>
-                                            <CustomTextField disabled id="fname-text" variant="outlined" fullWidth />
+                                            <CustomTextField disabled value={zone.description} id="fname-text" variant="outlined" fullWidth />
                                         </Grid>
                                         <Grid item lg={6} md={12} sm={12}>
                                             <CustomFormLabel htmlFor="fname-text">Item</CustomFormLabel>
@@ -1028,7 +1128,7 @@ const TaskCardAddNew = () => {
                                             <CustomFormLabel htmlFor="fname-text">Aircraft Type</CustomFormLabel>
                                             <Autocomplete
                                                 id="combo-box-search-task"
-                                                options={attaNumbering}
+                                                options={aircraftTypes}
                                                 fullWidth
                                                 sx={{
                                                     "& .MuiInputBase-root": { padding: "6px" },
@@ -1042,7 +1142,7 @@ const TaskCardAddNew = () => {
                                             <CustomFormLabel htmlFor="fname-text">Aircraft Series</CustomFormLabel>
                                             <Autocomplete
                                                 id="combo-box-search-task"
-                                                options={attaNumbering}
+                                                options={aircraftSeries}
                                                 fullWidth
                                                 sx={{
                                                     "& .MuiInputBase-root": { padding: "6px" },
@@ -1083,7 +1183,10 @@ const TaskCardAddNew = () => {
                                             <Autocomplete
                                                 disablePortal
                                                 id="combo-box-search-task"
-                                                options={attaNumbering}
+                                                options={panelsMaster}
+                                                getOptionLabel={(option) => option.panel}
+                                                onChange={(_, value) => { handlePanelInputChange(value) }}
+                                                isOptionEqualToValue={(option, value) => option.panel === value.panel}
                                                 fullWidth
                                                 sx={{
                                                     "& .MuiInputBase-root": { paddingTop: "6px", paddingBottom: "6px", paddingLeft: "16px" },
@@ -1109,7 +1212,7 @@ const TaskCardAddNew = () => {
                                     <Grid container spacing={3} mb={3}>
                                         <Grid item lg={6} md={12} sm={12}>
                                             <CustomFormLabel htmlFor="fname-text">Description</CustomFormLabel>
-                                            <CustomTextField disabled id="fname-text" variant="outlined" fullWidth />
+                                            <CustomTextField disabled value={panel.description} id="fname-text" variant="outlined" fullWidth />
                                         </Grid>
                                         <Grid item lg={6} md={12} sm={12}>
                                             <CustomFormLabel htmlFor="fname-text">Item</CustomFormLabel>
@@ -1121,7 +1224,7 @@ const TaskCardAddNew = () => {
                                             <CustomFormLabel htmlFor="fname-text">Aircraft Type</CustomFormLabel>
                                             <Autocomplete
                                                 id="combo-box-search-task"
-                                                options={attaNumbering}
+                                                options={aircraftTypes}
                                                 fullWidth
                                                 sx={{
                                                     "& .MuiInputBase-root": { padding: "6px" },
@@ -1135,7 +1238,7 @@ const TaskCardAddNew = () => {
                                             <CustomFormLabel htmlFor="fname-text">Aircraft Series</CustomFormLabel>
                                             <Autocomplete
                                                 id="combo-box-search-task"
-                                                options={attaNumbering}
+                                                options={aircraftSeries}
                                                 fullWidth
                                                 sx={{
                                                     "& .MuiInputBase-root": { padding: "6px" },
