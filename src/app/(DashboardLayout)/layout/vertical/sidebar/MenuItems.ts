@@ -79,7 +79,9 @@ import {
   IconBuildingWarehouse,
   IconSpeakerphone,
   IconPlaneTilt,
-  IconSettingsCode
+  IconSettingsCode,
+  IconTools,
+  IconHome
 } from "@tabler/icons-react";
 
 
@@ -91,7 +93,7 @@ const MainItems: MenuitemsType[] = [
   {
     id: uniqueId(),
     title: "Dashboard",
-    icon: IconChartPie,
+    icon: IconHome,
     href: "/",
   },
   {

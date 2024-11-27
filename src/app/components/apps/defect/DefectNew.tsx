@@ -15,8 +15,14 @@ import {IconFilePlus, IconFileExport, IconFileSearch} from "@tabler/icons-react"
 import { format } from 'date-fns';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import {intialGeneral,initialDefer, initialResolution, defect_type_ops, defect_status_ops, defect_category_ops,resolution_category_ops} from '@/app/api/defect/defectData';
+import { sub } from 'date-fns';
+import { fetchAirCraft } from '@/store/apps/AirCraft/AirCraftSlice';
+import { AircraftType } from '@/app/(DashboardLayout)/types/apps/aircraft';
+import { useSelector, useDispatch } from '@/store/hooks';
 
-const currencies = [
+
+const sample_ops = [
   {
     value: 'OPTION1',
     label: 'OPTION1',
@@ -31,36 +37,27 @@ const currencies = [
   },
 ];
 
-const countries = [
-  {
-    value: 'india',
-    label: 'India',
-  },
-  {
-    value: 'uk',
-    label: 'United Kingdom',
-  },
-  {
-    value: 'srilanka',
-    label: 'Srilanka',
-  },
-];
 
+// const formatDate = (date: Date) => {
+//   const pad = (num: number) => String(num).padStart(2, '0'); // Helper for padding
+//   const day = pad(date.getDate());
+//   const month = pad(date.getMonth() + 1); // Months are 0-based
+//   const year = String(date.getFullYear()).slice(-2); // Get last two digits of year
+//   const hours = pad(date.getHours());
+//   const minutes = pad(date.getMinutes());
+//   const seconds = pad(date.getSeconds());
 
+//   return `${day}${month}${year}-${hours}${minutes}${seconds}`;
+// };
 
-const formatDate = (date: Date) => {
-  const pad = (num: number) => String(num).padStart(2, '0'); // Helper for padding
-  const day = pad(date.getDate());
-  const month = pad(date.getMonth() + 1); // Months are 0-based
-  const year = String(date.getFullYear()).slice(-2); // Get last two digits of year
-  const hours = pad(date.getHours());
-  const minutes = pad(date.getMinutes());
-  const seconds = pad(date.getSeconds());
-
-  return `${day}${month}${year}-${hours}${minutes}${seconds}`;
-};
-
+interface AircraftNameType {
+  value: string;
+  label: string;
+}
+const aircraftNames:AircraftNameType[] = []
+const aircraftSeries:AircraftNameType[] = []
 const AirCraftAddNew = () => {
+  const dispatch = useDispatch();
   const [formValues, setFormValues] = useState({
     createdBy: 'ACTYPSERMS',
     createdDate: '2024-11-15T01:23',
@@ -68,35 +65,85 @@ const AirCraftAddNew = () => {
     lastEditedDate: '2024-11-15T01:23',
   });
 
-  useEffect(() => {
-    console.log(formValues.lastEditedDate);
-  }, [formValues.lastEditedDate]);
-
+  const [detailId, setDetailId] = useState(0);
   const [currency, setCurrency] = React.useState('');
   const [value, setValue] = React.useState("1");
   const [group1Value, setGroup1Value] = useState(''); // State for the first group
   const [group2Value, setGroup2Value] = useState('');
 
+  const [general, setGeneral] = React.useState(intialGeneral)
+  const [defer, setDefer] = React.useState(initialDefer)
+  const [resolution, setResolution] = React.useState(initialResolution)
+
+  const [informational, setInformational] = React.useState({
+    createdBy: 'ACTYPSERMS',
+    createdDate: '2024-11-15T01:23',
+    lastEditedBy: 'GEVERFOREVER',
+    lastEditedDate: '2024-11-15T01:23',
+  })
+  
+  
+
+  const getAircraft: AircraftType[] = useSelector((state) => state.aircraftReducer.aircraft);
+  const [aircraft, setAircraft] = React.useState<any>(getAircraft);
+
+  React.useEffect(() => {
+    setAircraft(getAircraft);
+  }, [getAircraft]);
+  
+  
+  React.useEffect(() => {
+    if(aircraft.length > 0 && aircraftSeries.length <1 && aircraftNames.length < 1) {
+      aircraft.forEach((x: { general: { aircraft_name: any;series: any }; }) => {
+        console.log(x.general?.aircraft_name)
+        if(x.general?.aircraft_name) aircraftNames.push({
+          value: x.general.aircraft_name,
+          label: x.general.aircraft_name
+        })
+        if(x.general?.series) aircraftSeries.push({
+          value: x.general.aircraft_name,
+          label: x.general.aircraft_name
+        })
+      });
+    }
+  }, [aircraft]);
+
+
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
   };
 
+  const handleGeneralChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setGeneral((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+  const handleDeferChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setDefer((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+  const handleResolutionChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setResolution((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+// intialGeneral,initialDefer, initialResolution
+
+  const handleReset = () => {
+    setGeneral({...intialGeneral})
+    setDefer({...initialDefer})
+    setResolution({...initialResolution})
+  }
   const handleChange2 = (event: any) => {
     setCurrency(event.target.value);
   };
-
-  const [selectedValue, setSelectedValue] = React.useState('');
-
-  const handleChange3 = (event: any) => {
-    setSelectedValue(event.target.value);
-  };
-
-  const [country, setCountry] = React.useState('');
-
-  const handleChange4 = (event: any) => {
-    setCountry(event.target.value);
-  };
-
   const handleGroup1Change = (event: React.SyntheticEvent, checked: boolean) => {
     const target = event.target as HTMLInputElement;
     setGroup1Value(target.value); 
@@ -105,6 +152,78 @@ const AirCraftAddNew = () => {
     const target = event.target as HTMLInputElement;
     setGroup2Value(target.value); 
   };
+
+  const handleSave = () => {
+    const cachedData = localStorage.getItem('defectData');
+    const parsedData = cachedData ? JSON.parse(cachedData) : [];
+    
+    try {
+      const payload = [...parsedData, ...[{ 
+        id: parsedData.length+1,
+        general,
+        defer,
+        resolution,
+        created: sub(new Date(), { days: 8, hours: 6, minutes: 20 }),
+      }]]
+      localStorage.setItem('defectData', JSON.stringify(payload)); // Save to localStorage
+      // console.log('Saved payload:', payload);
+      handleReset()
+      alert('Aircraft data saved successfully!');
+      window.location.href = '/maintenance/defect';
+    } catch (error) {
+      console.error('Error saving data to localStorage:', error);
+      alert('Failed to save aircraft data.');
+    }
+  };
+
+  const handleEdit = () => {
+    const cachedData = localStorage.getItem('defectData');
+    const parsedData = cachedData ? JSON.parse(cachedData) : [];
+
+    console.log(parsedData)
+    const index = parsedData.findIndex((item: { id: number }) => item.id === detailId);
+    console.log(detailId)
+    if (index !== -1) {
+      // Replace the object at that index with the new 'general' object
+      parsedData[index] = {...parsedData[index], ...{
+        general,
+        defer,
+        resolution,
+      }};
+
+      // Save the updated array back into localStorage
+      localStorage.setItem('defectData', JSON.stringify(parsedData));
+
+      alert('Data updated successfully');
+      window.location.href = '/maintenance/defect';
+    } else {
+      alert('No matching data found');
+    }
+  };
+
+  interface typeDefect {
+      id: number;
+      general?: typeof intialGeneral;
+      defer?: typeof initialDefer;
+      resolution?: typeof initialResolution;
+    }
+    React.useEffect(() => {
+      const cachedData = localStorage.getItem('defectData');
+      const currentUrl = window.location.href;
+      const match = currentUrl.match(/\/defect\/(\d+)/);
+      const id = match ? parseInt(match[1], 10) : 0
+      setDetailId(id)
+
+      if (cachedData && match) {
+        const parsedData:typeDefect[] = JSON.parse(cachedData);
+        const obj = parsedData.find(x => x.id === id)
+        if (obj && obj.general) {
+          setGeneral(obj.general)
+        }
+      }
+      dispatch(fetchAirCraft());
+    }, [dispatch]);
+
 
   return (
     <div>
@@ -118,13 +237,14 @@ const AirCraftAddNew = () => {
             <Button
               variant="contained"
               color="error"
+              href="/maintenance/defect"
               sx={{
                 mr: 1,
               }}
             >
               Cancel
             </Button>
-            <Button variant="contained" color="primary">
+            <Button variant="contained" color="primary" onClick={detailId < 1 ? handleSave : handleEdit}>
               Save
             </Button>
           </>
@@ -146,21 +266,18 @@ const AirCraftAddNew = () => {
                 <Tab sx={{ width: "auto", px: '20px'}} label="informational" value="4" />
               </TabList>
             </Box>
-            
             <TabPanel value="1">
               <form>
-
                 <Grid container spacing={3} mb={3}>
                   <Grid item lg={4} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Defect Type*</CustomFormLabel>
                     <CustomSelect
                         id="standard-select-currency"
-                        value={currency}
-                        onChange={handleChange2}
+                        value={general.type} name="type" onChange={handleGeneralChange}
                         fullWidth
                         variant="outlined"
                         >
-                        {currencies.map((option) => (
+                        {defect_type_ops.map((option) => (
                           <MenuItem key={option.value} value={option.value}>
                             {option.label}
                           </MenuItem>
@@ -170,48 +287,46 @@ const AirCraftAddNew = () => {
                   
                   <Grid item lg={4} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Defect</CustomFormLabel>
-                    <CustomSelect
-                        id="standard-select-currency"
-                        value={currency}
-                        onChange={handleChange2}
-                        fullWidth
-                        variant="outlined"
-                      >
-                        {currencies.map((option) => (
-                          <MenuItem key={option.value} value={option.value}>
-                            {option.label}
-                          </MenuItem>
-                        ))}
-                    </CustomSelect>
+                    <CustomTextField id="fname-text" variant="outlined" value={general.defect} name="defect" onChange={handleGeneralChange} fullWidth />
                   </Grid>
                   <Grid item lg={4} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Item</CustomFormLabel>
-                    <CustomSelect
-                        id="standard-select-currency"
-                        value={currency}
-                        onChange={handleChange2}
-                        fullWidth
-                        variant="outlined"
-                      >
-                        {currencies.map((option) => (
-                          <MenuItem key={option.value} value={option.value}>
-                            {option.label}
-                          </MenuItem>
-                        ))}
-                    </CustomSelect>
+                    <CustomTextField id="fname-text" variant="outlined" value={general.item} name="item" onChange={handleGeneralChange} fullWidth />
                   </Grid>
                 </Grid>
 
                 <Grid container spacing={3} mb={3}>
                   <Grid item lg={4} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Status*</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    <CustomSelect
+                        id="standard-select-currency"
+                        value={general.status} name="status" onChange={handleGeneralChange}
+                        fullWidth
+                        variant="outlined"
+                      >
+                        {defect_status_ops.map((option) => (
+                          <MenuItem key={option.value} value={option.value}>
+                            {option.label}
+                          </MenuItem>
+                        ))}
+                    </CustomSelect>
                   </Grid>
                   
 
                   <Grid item lg={8} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Aircraft*</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    <CustomSelect
+                        id="standard-select-currency"
+                        value={general.aircraft} name="aircraft" onChange={handleGeneralChange}
+                        fullWidth
+                        variant="outlined"
+                        >
+                        {aircraftNames.map((option,index) => (
+                          <MenuItem key={option.value} value={option.value}>
+                            {option.label}
+                          </MenuItem>
+                        ))}
+                      </CustomSelect>
                   </Grid>
                 </Grid>
 
@@ -229,15 +344,15 @@ const AirCraftAddNew = () => {
                   </Grid>
                   <Grid item lg={4} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Chapter*</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    <CustomTextField id="fname-text" variant="outlined" value={general.chapter} name="chapter" onChange={handleGeneralChange} fullWidth />
                   </Grid>
                   <Grid item lg={4} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Section*</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    <CustomTextField id="fname-text" variant="outlined" value={general.section} name="section" onChange={handleGeneralChange} fullWidth />
                   </Grid>
                   <Grid item lg={4} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Paragraph*</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    <CustomTextField id="fname-text" variant="outlined" value={general.paragrapgh} name="paragrapgh" onChange={handleGeneralChange} fullWidth />
                   </Grid>
 
                   <Grid item lg={12} md={12} sm={12} sx={{
@@ -248,34 +363,33 @@ const AirCraftAddNew = () => {
 
                   <Grid item lg={4} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Flight</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    <CustomTextField id="fname-text" variant="outlined" value={general.flight} name="flight" onChange={handleGeneralChange} fullWidth />
                   </Grid>
                   <Grid item lg={4} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Gate</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    <CustomTextField id="fname-text" variant="outlined" value={general.gate} name="gate" onChange={handleGeneralChange} fullWidth />
                   </Grid>
                   <Grid item lg={4} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Station*</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    <CustomTextField id="fname-text" variant="outlined" value={general.station} name="station" onChange={handleGeneralChange} fullWidth />
                   </Grid>
                   <Grid item lg={4} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">SDR/MRR*</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    <CustomTextField id="fname-text" variant="outlined" value={general.sdr_mmr} name="sdr_mmr" onChange={handleGeneralChange} fullWidth />
                   </Grid>
                   <Grid item lg={4} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Position</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    <CustomTextField id="fname-text" variant="outlined" value={general.position} name="position" onChange={handleGeneralChange} fullWidth />
                   </Grid>
                   <Grid item lg={4} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Defect Category*</CustomFormLabel>
                     <CustomSelect
                         id="standard-select-currency"
-                        value={currency}
-                        onChange={handleChange2}
+                        value={general.defect_category} name="defect_category" onChange={handleGeneralChange}
                         fullWidth
                         variant="outlined"
                       >
-                        {currencies.map((option) => (
+                        {defect_category_ops.map((option) => (
                           <MenuItem key={option.value} value={option.value}>
                             {option.label}
                           </MenuItem>
@@ -284,13 +398,13 @@ const AirCraftAddNew = () => {
                   </Grid>
                   <Grid item lg={12} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Defect Description*</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    <CustomTextField id="fname-text" variant="outlined" value={general.defect_description} name="defect_description" onChange={handleGeneralChange} fullWidth />
                   </Grid>
                 </Grid>
 
                 <Grid container spacing={3} mb={3}>
                   <Grid item lg={4} md={12} sm={12}>
-                    <RadioGroup aria-label="gender" defaultValue="radio1" name="radio-buttons-group">
+                    <RadioGroup aria-label="gender" defaultValue="radio1" value={general.internal_capability} name="internal_capability" onChange={handleGeneralChange}>
                     </RadioGroup>
                     <FormControlLabel
                             control={<CustomCheckbox />}
@@ -316,7 +430,7 @@ const AirCraftAddNew = () => {
                             onChange={handleGroup1Change}
                             value="a"
                             label="Yes"
-                            name="radio-button-demo2"
+                            name=""
                             control={<CustomRadio />}
                           
                           />
@@ -326,7 +440,7 @@ const AirCraftAddNew = () => {
                             value="b"
                             label="No"
                             control={<CustomRadio />}
-                            name="radio-button-demo2"
+                            name=""
                           />
                         </Box>
                       </FormControl>
@@ -370,15 +484,15 @@ const AirCraftAddNew = () => {
                 <Grid container spacing={3} mb={3}>
                   <Grid item lg={4} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Estimated TAT</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    <CustomTextField id="fname-text" variant="outlined" value={general.estimated_tat} name="estimated_tat" onChange={handleGeneralChange} fullWidth />
                   </Grid>
                   <Grid item lg={4} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Hours/Minutes</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    <CustomTextField id="fname-text" variant="outlined" value={general.hours_min} name="hours_min" onChange={handleGeneralChange} fullWidth />
                   </Grid>
                   <Grid item lg={4} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Groundtime RQR*</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    <CustomTextField id="fname-text" variant="outlined" value={general.groundtime} name="groundtime" onChange={handleGeneralChange} fullWidth />
                   </Grid>
                 </Grid>
 
@@ -409,11 +523,11 @@ const AirCraftAddNew = () => {
                   </Grid>
                   <Grid item lg={4} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">No</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    <CustomTextField id="fname-text" variant="outlined" value={general.no} name="no" onChange={handleGeneralChange} fullWidth />
                   </Grid>
                   <Grid item lg={4} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Letter</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    <CustomTextField id="fname-text" variant="outlined" value={general.letter} name="letter" onChange={handleGeneralChange} fullWidth />
                   </Grid>
                 </Grid>
                 
@@ -425,19 +539,19 @@ const AirCraftAddNew = () => {
                   </Grid>
                   <Grid item lg={5} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Reported By*</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    <CustomTextField id="fname-text" variant="outlined" value={general.reported_by} name="reported_by" onChange={handleGeneralChange} fullWidth />
                   </Grid>
                   <Grid item lg={5} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Reported Date</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    <CustomTextField id="fname-text" variant="outlined" value={general.reported_date} name="reported_date" onChange={handleGeneralChange}  fullWidth />
                   </Grid>
                   <Grid item lg={1} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Hour</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    <CustomTextField id="fname-text" variant="outlined" value={general.reported_hour} name="reported_hour" onChange={handleGeneralChange} fullWidth />
                   </Grid>
                   <Grid item lg={1} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Minutes</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    <CustomTextField id="fname-text" variant="outlined" value={general.reported_min} name="reported_min" onChange={handleGeneralChange} fullWidth />
                   </Grid>
                 </Grid>
                 
@@ -447,15 +561,14 @@ const AirCraftAddNew = () => {
             <TabPanel value="2">
               <Grid container spacing={3} mb={3}>
                   <Grid item lg={4} md={12} sm={12}>
-                    <CustomFormLabel htmlFor="fname-text">Defect Type*</CustomFormLabel>
+                    <CustomFormLabel htmlFor="fname-text">Defect*</CustomFormLabel>
                     <CustomSelect
                         id="standard-select-currency"
-                        value={currency}
-                        onChange={handleChange2}
+                        value={defer.type} name="type" onChange={handleDeferChange}
                         fullWidth
                         variant="outlined"
                         >
-                        {currencies.map((option) => (
+                        {sample_ops.map((option) => (
                           <MenuItem key={option.value} value={option.value}>
                             {option.label}
                           </MenuItem>
@@ -464,12 +577,12 @@ const AirCraftAddNew = () => {
                   </Grid>
                   
                     <Grid item lg={4} md={12} sm={12}>
-                      <CustomFormLabel htmlFor="fname-text">Status*</CustomFormLabel>
-                      <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                      <CustomFormLabel htmlFor="fname-text">Defer Category*</CustomFormLabel>
+                      <CustomTextField id="fname-text" variant="outlined" value={defer.defer_category} name="defer_category" onChange={handleDeferChange} fullWidth />
                     </Grid>
                     <Grid item lg={4} md={12} sm={12}>
-                      <CustomFormLabel htmlFor="fname-text">Status*</CustomFormLabel>
-                      <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                      <CustomFormLabel htmlFor="fname-text">Defer By*</CustomFormLabel>
+                      <CustomTextField id="fname-text" variant="outlined" value={defer.defer_by} name="defer_by" onChange={handleDeferChange} fullWidth />
                     </Grid>
               </Grid>
 
@@ -481,8 +594,7 @@ const AirCraftAddNew = () => {
                       type="date"
                       variant="outlined"
                       fullWidth
-                      value={formValues.createdDate}
-                      onChange={(e:React.ChangeEvent<HTMLInputElement>) => setFormValues({ ...formValues, createdDate: e.target.value })}
+                      value={defer.defer_date} name="defer_date" onChange={handleDeferChange}
                       InputLabelProps={{
                         shrink: true,
                       }}
@@ -490,15 +602,15 @@ const AirCraftAddNew = () => {
                   </Grid>
                   <Grid item lg={2} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Hour*</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    <CustomTextField id="fname-text" variant="outlined" value={defer.defer_hour} name="defer_hour" onChange={handleDeferChange} fullWidth />
                   </Grid>
                   <Grid item lg={2} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Minutes*</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    <CustomTextField id="fname-text" variant="outlined" value={defer.defer_min} name="defer_min" onChange={handleDeferChange} fullWidth />
                   </Grid>
                   <Grid item lg={4} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">MDDR*</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    <CustomTextField id="fname-text" variant="outlined" value={defer.mddr} name="mddr" onChange={handleDeferChange} fullWidth />
                   </Grid>
                 </Grid>
 
@@ -510,8 +622,7 @@ const AirCraftAddNew = () => {
                       type="date"
                       variant="outlined"
                       fullWidth
-                      value={formValues.createdDate}
-                      onChange={(e:React.ChangeEvent<HTMLInputElement>) => setFormValues({ ...formValues, createdDate: e.target.value })}
+                      value={defer.class} name="class" onChange={handleDeferChange}
                       InputLabelProps={{
                         shrink: true,
                       }}
@@ -519,11 +630,11 @@ const AirCraftAddNew = () => {
                   </Grid>
                   <Grid item lg={4} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">GMM CTL*</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    <CustomTextField id="fname-text" variant="outlined"  value={defer.gmm_ctl} name="gmm_ctl" onChange={handleDeferChange} fullWidth />
                   </Grid>
                   <Grid item lg={4} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">GMM Category*</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    <CustomTextField id="fname-text" variant="outlined"  value={defer.gmm_category} name="gmm_category" onChange={handleDeferChange} fullWidth />
                   </Grid>
                 </Grid>
                 <Grid container spacing={3} mb={3}>
@@ -578,15 +689,15 @@ const AirCraftAddNew = () => {
                     </Grid>
                     <Grid item lg={4} md={12} sm={12}>
                       <CustomFormLabel htmlFor="fname-text">Hours</CustomFormLabel>
-                      <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                      <CustomTextField id="fname-text" variant="outlined" value={defer.schedule_hours} name="schedule_hours" onChange={handleDeferChange} fullWidth />
                     </Grid>
                     <Grid item lg={4} md={12} sm={12}>
                       <CustomFormLabel htmlFor="fname-text">Cycles</CustomFormLabel>
-                      <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                      <CustomTextField id="fname-text" variant="outlined" value={defer.schedule_cycles} name="schedule_cycles" onChange={handleDeferChange} fullWidth />
                     </Grid>
                     <Grid item lg={4} md={12} sm={12}>
                       <CustomFormLabel htmlFor="fname-text">Days</CustomFormLabel>
-                      <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                      <CustomTextField id="fname-text" variant="outlined" value={defer.schedule_days} name="schedule_days" onChange={handleDeferChange} fullWidth />
                     </Grid>
                 </Grid>
                 <Grid container spacing={3} mb={3}>
@@ -597,8 +708,7 @@ const AirCraftAddNew = () => {
                       type="date"
                       variant="outlined"
                       fullWidth
-                      value={formValues.createdDate}
-                      onChange={(e:React.ChangeEvent<HTMLInputElement>) => setFormValues({ ...formValues, createdDate: e.target.value })}
+                      value={defer.due_date_min} name="schedule_days" onChange={handleDeferChange}
                       InputLabelProps={{
                         shrink: true,
                       }}
@@ -606,11 +716,11 @@ const AirCraftAddNew = () => {
                   </Grid>
                   <Grid item lg={2} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Hour</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    <CustomTextField id="fname-text" variant="outlined" value={defer.due_date_hour} name="due_date_hour" onChange={handleDeferChange} fullWidth />
                   </Grid>
                   <Grid item lg={2} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Minutes</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    <CustomTextField id="fname-text" variant="outlined" value={defer.due_date_min} name="due_date_min" onChange={handleDeferChange} fullWidth />
                   </Grid>
                 </Grid>
                 <Grid container spacing={3} mb={3}>
@@ -621,11 +731,11 @@ const AirCraftAddNew = () => {
                     </Grid>
                     <Grid item lg={4} md={12} sm={12}>
                       <CustomFormLabel htmlFor="fname-text">Capability Area*</CustomFormLabel>
-                      <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                      <CustomTextField id="fname-text" variant="outlined" value={defer.capability_area} name="capability_area" onChange={handleDeferChange} fullWidth />
                     </Grid>
                     <Grid item lg={8} md={12} sm={12}>
                       <CustomFormLabel htmlFor="fname-text">Defer Note</CustomFormLabel>
-                      <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                      <CustomTextField id="fname-text" variant="outlined" value={defer.defer_note} name="defer_note" onChange={handleDeferChange} fullWidth />
                     </Grid>
                 </Grid>
                 <Grid container spacing={3} mb={3}>
@@ -647,15 +757,14 @@ const AirCraftAddNew = () => {
             <TabPanel value="3">
             <Grid container spacing={3} mb={3}>
               <Grid item lg={4} md={12} sm={12}>
-                <CustomFormLabel htmlFor="fname-text">Defect Type*</CustomFormLabel>
+                <CustomFormLabel htmlFor="fname-text">Resolution Category*</CustomFormLabel>
                 <CustomSelect
-                    id="standard-select-currency"
-                    value={currency}
-                    onChange={handleChange2}
+                    id="standard-select-currency1"
+                    value={resolution.category} name="category" onChange={handleResolutionChange}
                     fullWidth
                     variant="outlined"
                     >
-                    {currencies.map((option) => (
+                    {resolution_category_ops.map((option) => (
                       <MenuItem key={option.value} value={option.value}>
                         {option.label}
                       </MenuItem>
@@ -663,15 +772,14 @@ const AirCraftAddNew = () => {
                   </CustomSelect>
               </Grid>
               <Grid item lg={4} md={12} sm={12}>
-                <CustomFormLabel htmlFor="fname-text">Defect Type*</CustomFormLabel>
+                <CustomFormLabel htmlFor="fname-text">Resolve By*</CustomFormLabel>
                 <CustomSelect
-                    id="standard-select-currency"
-                    value={currency}
-                    onChange={handleChange2}
+                    id="standard-select-currenc2"
+                    value={resolution.resolved_by} name="resolved_by" onChange={handleResolutionChange}
                     fullWidth
                     variant="outlined"
                     >
-                    {currencies.map((option) => (
+                    {sample_ops.map((option) => (
                       <MenuItem key={option.value} value={option.value}>
                         {option.label}
                       </MenuItem>
@@ -687,31 +795,29 @@ const AirCraftAddNew = () => {
                   type="date"
                   variant="outlined"
                   fullWidth
-                  value={formValues.createdDate}
-                  onChange={(e:React.ChangeEvent<HTMLInputElement>) => setFormValues({ ...formValues, createdDate: e.target.value })}
+                  value={resolution.resolved_date} name="resolved_date" onChange={handleResolutionChange}
                   InputLabelProps={{
                     shrink: true,
                   }}
                 />
               </Grid>
               <Grid item lg={2} md={12} sm={12}>
-                <CustomFormLabel htmlFor="fname-text">Chapter*</CustomFormLabel>
-                <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                <CustomFormLabel htmlFor="fname-text">Hour*</CustomFormLabel>
+                <CustomTextField id="fname-text" variant="outlined"  value={resolution.resolved_hour} name="resolved_hour" onChange={handleResolutionChange} fullWidth />
               </Grid>
               <Grid item lg={2} md={12} sm={12}>
-                <CustomFormLabel htmlFor="fname-text">Chapter*</CustomFormLabel>
-                <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                <CustomFormLabel htmlFor="fname-text">Minutes*</CustomFormLabel>
+                <CustomTextField id="fname-text" variant="outlined"  value={resolution.resolved_min} name="resolved_min" onChange={handleResolutionChange} fullWidth />
               </Grid>
               <Grid item lg={4} md={12} sm={12}>
                 <CustomFormLabel htmlFor="fname-text">Resolved Station*</CustomFormLabel>
                 <CustomSelect
-                  id="standard-select-currency"
-                  value={currency}
-                  onChange={handleChange2}
+                  id="standard-select-currency3"
+                  value={resolution.resolved_station} name="resolved_station" onChange={handleResolutionChange}
                   fullWidth
                   variant="outlined"
                   >
-                  {currencies.map((option) => (
+                  {sample_ops.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
                       {option.label}
                     </MenuItem>
@@ -772,25 +878,24 @@ const AirCraftAddNew = () => {
                   </Grid>
                   <Grid item lg={12} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Resolution Description</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    <CustomTextField id="fname-text" variant="outlined"  value={resolution.res_description} name="res_description" onChange={handleResolutionChange} fullWidth />
                   </Grid>
                 </Grid>
 
                 <Grid container spacing={3} mb={3}>
                   <Grid item lg={4} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Work Order</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    <CustomTextField id="fname-text" variant="outlined"  value={resolution.work_order} name="work_order" onChange={handleResolutionChange} fullWidth />
                   </Grid>
                   <Grid item lg={4} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Task Card</CustomFormLabel>
                     <CustomSelect
-                      id="standard-select-currency"
-                      value={currency}
-                      onChange={handleChange2}
+                      id="standard-select-currency4"
+                      value={resolution.task_card} name="task_card" onChange={handleResolutionChange}
                       fullWidth
                       variant="outlined"
                       >
-                      {currencies.map((option) => (
+                      {sample_ops.map((option) => (
                         <MenuItem key={option.value} value={option.value}>
                           {option.label}
                         </MenuItem>
@@ -811,13 +916,12 @@ const AirCraftAddNew = () => {
                   <Grid item lg={4} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Inspected By*</CustomFormLabel>
                     <CustomSelect
-                      id="standard-select-currency"
-                      value={currency}
-                      onChange={handleChange2}
+                      id="standard-select-currency6"
+                      value={resolution.inspected_by} name="inspected_by" onChange={handleResolutionChange}
                       fullWidth
                       variant="outlined"
                       >
-                      {currencies.map((option) => (
+                      {sample_ops.map((option) => (
                         <MenuItem key={option.value} value={option.value}>
                           {option.label}
                         </MenuItem>
@@ -830,13 +934,12 @@ const AirCraftAddNew = () => {
                   <Grid item lg={4} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">REL to SRV By*</CustomFormLabel>
                     <CustomSelect
-                      id="standard-select-currency"
-                      value={currency}
-                      onChange={handleChange2}
+                      id="standard-select-currency5"
+                      value={resolution.rel_srv_by} name="rel_srv_by" onChange={handleResolutionChange}
                       fullWidth
                       variant="outlined"
                       >
-                      {currencies.map((option) => (
+                      {sample_ops.map((option) => (
                         <MenuItem key={option.value} value={option.value}>
                           {option.label}
                         </MenuItem>
@@ -850,8 +953,7 @@ const AirCraftAddNew = () => {
                       type="date"
                       variant="outlined"
                       fullWidth
-                      value={formValues.createdDate}
-                      onChange={(e:React.ChangeEvent<HTMLInputElement>) => setFormValues({ ...formValues, createdDate: e.target.value })}
+                      value={resolution.rel_srv_date} name="rel_srv_date" onChange={handleResolutionChange}
                       InputLabelProps={{
                         shrink: true,
                       }}
@@ -859,7 +961,7 @@ const AirCraftAddNew = () => {
                   </Grid>
                   <Grid item lg={4} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Reference</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    <CustomTextField id="fname-text" variant="outlined" value={resolution.reference} name="reference" onChange={handleResolutionChange} fullWidth />
                   </Grid>
                 </Grid>
 
@@ -876,13 +978,13 @@ const AirCraftAddNew = () => {
                       </Typography>
                   </Grid>
                   <Grid item lg={4} md={12} sm={12}>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    <CustomTextField id="fname-text" variant="outlined" value={resolution.fault_code1} name="fault_code1" onChange={handleResolutionChange} fullWidth />
                   </Grid>
                   <Grid item lg={4} md={12} sm={12}>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    <CustomTextField id="fname-text" variant="outlined" value={resolution.fault_code2} name="fault_code2" onChange={handleResolutionChange} fullWidth />
                   </Grid>
                   <Grid item lg={4} md={12} sm={12}>
-                    <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                    <CustomTextField id="fname-text" variant="outlined" value={resolution.fault_code3} name="fault_code3" onChange={handleResolutionChange} fullWidth />
                   </Grid>
                 </Grid>
             </TabPanel>

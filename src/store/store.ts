@@ -20,6 +20,7 @@ import WorkOrderReducer from "./apps/WorkOrder/WorkOrderSlice";
 import AirCraftReducer from "./apps/AirCraft/AirCraftSlice";
 import AirCraftSeriesReducer from "./apps/AirCraft/AirCraftSeriesSlice";
 import DefectTaskReducer from "./apps/DefectTask/DefectTaskSlice";
+import DefectReducer from "./apps/defect/defectSlice";
 
 const persistConfig = {
   key: "root",
@@ -43,7 +44,8 @@ export const store = configureStore({
     workOrderReducer: WorkOrderReducer,
     aircraftReducer: AirCraftReducer,
     airCraftSeriesReducer: AirCraftSeriesReducer,
-    defectTasksReducer: DefectTaskReducer
+    defectTasksReducer: DefectTaskReducer,
+    DefectReducer: DefectReducer
   },
   devTools: process.env.NODE_ENV !== "production",
   middleware: (getDefaultMiddleware) =>
@@ -66,7 +68,8 @@ const rootReducer = combineReducers({
   workOrderReducer: WorkOrderReducer,
   aircraftReducer: AirCraftReducer,
   airCraftSeriesReducer: AirCraftSeriesReducer,
-  defectTasksReducer: DefectTaskReducer
+  defectTasksReducer: DefectTaskReducer,
+  DefectReducer: DefectReducer,
 });
 
 export const persistor = persistStore(store);
