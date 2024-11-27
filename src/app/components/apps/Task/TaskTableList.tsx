@@ -316,10 +316,21 @@ const TaskTableList = () => {
 
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
         const filteredRows: TaskType[] = getTasks.filter((row) => {
-            return row.category.toLowerCase().includes(event.target.value);
+            return String(row.id).toLowerCase().includes(event.target.value);
         });
         setSearch(event.target.value);
         setRows(filteredRows);
+    };
+
+    interface dataTable {
+        id: number;
+    }
+    const handleDeleteRow = async (id: number) => {
+        if (window.confirm('Are you sure you want to delete this item?')) {
+            const updatedItems = rows.filter((item: dataTable) => item.id !== id);
+            await localStorage.setItem('taskData', JSON.stringify(updatedItems));
+            await dispatch(fetchTasks());
+        }
     };
 
     // This is for the sorting
@@ -406,7 +417,7 @@ const TaskTableList = () => {
                             {stableSort(rows, getComparator(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((row: any, index) => {
-                                    const isItemSelected = isSelected(row.taskId);
+                                    const isItemSelected = isSelected(row.id);
                                     const labelId = `enhanced-table-checkbox-${index}`;
 
                                     return (
@@ -415,7 +426,7 @@ const TaskTableList = () => {
                                             role="checkbox"
                                             aria-checked={isItemSelected}
                                             tabIndex={-1}
-                                            key={row.taskId}
+                                            key={row.id}
                                             selected={isItemSelected}
                                         >
                                             {/* <TableCell padding="checkbox">
@@ -430,14 +441,14 @@ const TaskTableList = () => {
                                                 </TableCell> */}
                                             <TableCell>
                                                 <Box sx={{ pl: 2 }}>
-                                                    <Typography >{row.taskId}</Typography>
+                                                    <Typography >{row.general.taskId}</Typography>
                                                 </Box>
                                             </TableCell>
                                             {/* category */}
                                             <TableCell>
                                                 <Box display="flex" alignItems="center">
                                                     <Typography variant="subtitle2">
-                                                        {row.category}
+                                                        {row.general.category}
                                                     </Typography>
                                                 </Box>
                                             </TableCell>
@@ -448,20 +459,20 @@ const TaskTableList = () => {
                                                         color="textSecondary"
                                                         variant="subtitle2"
                                                     >
-                                                        {row.classification}
+                                                        {row.general.classification}
                                                     </Typography>
                                                 </Box>
                                             </TableCell>
                                             {/* description  */}
                                             <TableCell>
                                                 <Typography fontWeight={400} variant="subtitle2">
-                                                    {row.description}
+                                                    {row.general.description}
                                                 </Typography>
                                             </TableCell>
                                             {/* status */}
                                             <TableCell>
                                                 <Typography fontWeight={400} variant="subtitle2">
-                                                    <ChipStatus status={row.status}></ChipStatus>
+                                                    <ChipStatus status={row.general.status}></ChipStatus>
                                                 </Typography>
                                             </TableCell>
                                             {/* action */}
@@ -470,10 +481,10 @@ const TaskTableList = () => {
                                                     direction="row"
                                                     spacing={1}
                                                 >
-                                                    <IconButton color="primary">
+                                                    <IconButton color="primary" href={`/maintenance/task/${row.id}`}>
                                                         <IconEye width={25} height={25} />
                                                     </IconButton>
-                                                    <IconButton color="error">
+                                                    <IconButton color="error" onClick={() => handleDeleteRow(row.id)}>
                                                         <IconTrash width={25} height={25} />
                                                     </IconButton>
                                                 </Stack>

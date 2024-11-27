@@ -155,6 +155,17 @@ const priority = [
     },
 ];
 
+const orderBy = [
+    {
+        value: 'ASC',
+        label: 'ASC',
+    },
+    {
+        value: 'DESC',
+        label: 'DESC',
+    },
+];
+
 
 interface AircraftNameType {
     value: string;
@@ -162,6 +173,7 @@ interface AircraftNameType {
 }
 const aircraftNames: AircraftNameType[] = []
 const aircraftSeries: AircraftNameType[] = []
+const aircraftTypes: AircraftNameType[] = []
 
 interface EnhancedTableToolbarProps {
     numSelected: number;
@@ -170,35 +182,7 @@ interface EnhancedTableToolbarProps {
 }
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
-    const dispatch = useDispatch();
     const { numSelected, handleSearch, search } = props;
-    const getAircraft: AircraftType[] = useSelector((state) => state.aircraftReducer.aircraft);
-    const [aircraft, setAircraft] = React.useState<any>(getAircraft);
-
-    React.useEffect(() => {
-        setAircraft(getAircraft);
-    }, [getAircraft]);
-
-
-    React.useEffect(() => {
-        if (aircraft.length > 0) {
-            aircraft.forEach((x: { general: { aircraft_name: any; series: any }; }) => {
-                if (x.general?.aircraft_name) aircraftNames.push({
-                    value: x.general.aircraft_name,
-                    label: x.general.aircraft_name
-                })
-                if (x.general?.series) aircraftSeries.push({
-                    value: x.general.aircraft_name,
-                    label: x.general.aircraft_name
-                })
-            });
-        }
-    }, [aircraft]);
-
-    React.useEffect(() => {
-        dispatch(fetchAirCraft());
-    }, [dispatch]);
-
     return (
         <Toolbar>
             <Box sx={{ flex: '1 1 100%' }}>
@@ -242,9 +226,8 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
     );
 };
 
-
 const AlertDialogCreateWO = () => {
-    const defectTasks = useSelector((state) => state.defectTasksReducer.defectTasks);
+    // const defectTasks = useSelector((state) => state.defectTasksReducer.defectTasks);
     const [open, setOpen] = React.useState(false);
     const [randomNumber, setRandomNumber] = React.useState(0);
 
@@ -379,7 +362,7 @@ const AlertDialogCreateWO = () => {
                     }
                 >
                     <>
-
+                        {/* {JSON.stringify(defectTasks)} */}
                         <Box sx={{ marginBottom: 3, display: 'flex', justifyContent: 'space-between' }}>
                             <Typography
                                 sx={{
@@ -1682,12 +1665,46 @@ const InspectionForm = (data: any) => {
 };
 
 const DefectTaskTableList = () => {
-    const [selected, setSelected] = React.useState<[]>([]);
-    const [selectedItem, setSelectedItem] = React.useState(null);
-    const [search, setSearch] = React.useState('');
-    const [isVisibleTask, setIsVisibleTask] = React.useState(false);
-
     const dispatch = useDispatch();
+    const [selected, setSelected] = React.useState<[]>([]);
+    const [search, setSearch] = React.useState('');
+    const [selectedItem, setSelectedItem] = React.useState(null);
+    const [isVisibleTask, setIsVisibleTask] = React.useState(false);
+    const getAircraft: AircraftType[] = useSelector((state) => state.aircraftReducer.aircraft);
+    const [aircraft, setAircraft] = React.useState<any>(getAircraft);
+
+    React.useEffect(() => {
+        setAircraft(getAircraft);
+    }, [getAircraft]);
+
+
+    React.useEffect(() => {
+        if (aircraft.length > 0) {
+            aircraftNames.splice(0, aircraftNames.length);
+            aircraftSeries.splice(0, aircraftSeries.length);
+            aircraftTypes.splice(0, aircraftTypes.length);
+
+            aircraft.forEach((x: { general: { aircraft_name: any; series: any, aircraft_type: any }; }) => {
+                if (x.general?.aircraft_name) aircraftNames.push({
+                    value: x.general.aircraft_name,
+                    label: x.general.aircraft_name
+                })
+                if (x.general?.series) aircraftSeries.push({
+                    value: x.general.series,
+                    label: x.general.series,
+                })
+                if (x.general?.aircraft_type) aircraftTypes.push({
+                    value: x.general.aircraft_type,
+                    label: x.general.aircraft_type
+                })
+            });
+        }
+    }, [aircraft]);
+
+    React.useEffect(() => {
+        dispatch(fetchAirCraft());
+    }, [dispatch]);
+
 
     React.useEffect(() => {
         dispatch(fetchDefectTasks());
@@ -1702,7 +1719,7 @@ const DefectTaskTableList = () => {
 
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
         const filteredRows: TaskType[] = getDefectTasks.filter((row) => {
-            return row.category.toLowerCase().includes(event.target.value);
+            return String(row.id).toLowerCase().includes(event.target.value);
         });
         setSearch(event.target.value);
         setRows(filteredRows);
@@ -1835,7 +1852,9 @@ const DefectTaskTableList = () => {
                         <Grid item lg={2.4} md={12} sm={12}>
                             <Autocomplete
                                 id="combo-box-search-task"
-                                options={attaNumbering}
+                                options={orderBy}
+                                getOptionLabel={(option) => option.label}
+                                isOptionEqualToValue={(option, value) => option.label === value.label}
                                 fullWidth
                                 sx={{
                                     "& .MuiInputBase-root": { padding: "5px" },
@@ -1848,7 +1867,9 @@ const DefectTaskTableList = () => {
                         <Grid item lg={2.4} md={12} sm={12}>
                             <Autocomplete
                                 id="combo-box-search-task"
-                                options={attaNumbering}
+                                options={aircraftNames}
+                                getOptionLabel={(option) => option.label}
+                                isOptionEqualToValue={(option, value) => option.label === value.label}
                                 fullWidth
                                 sx={{
                                     "& .MuiInputBase-root": { padding: "5px" },
@@ -1861,7 +1882,9 @@ const DefectTaskTableList = () => {
                         <Grid item lg={2.4} md={12} sm={12}>
                             <Autocomplete
                                 id="combo-box-search-task"
-                                options={attaNumbering}
+                                options={aircraftTypes}
+                                getOptionLabel={(option) => option.label}
+                                isOptionEqualToValue={(option, value) => option.label === value.label}
                                 fullWidth
                                 sx={{
                                     "& .MuiInputBase-root": { padding: "5px" },
@@ -1874,7 +1897,9 @@ const DefectTaskTableList = () => {
                         <Grid item lg={2.4} md={12} sm={12}>
                             <Autocomplete
                                 id="combo-box-search-task"
-                                options={attaNumbering}
+                                options={aircraftSeries}
+                                getOptionLabel={(option) => option.label}
+                                isOptionEqualToValue={(option, value) => option.label === value.label}
                                 fullWidth
                                 sx={{
                                     "& .MuiInputBase-root": { padding: "5px" },
@@ -1894,7 +1919,7 @@ const DefectTaskTableList = () => {
                             <FormControlLabel
                                 control={<CustomCheckbox />}
                                 label={`${item.task.task_id}`}
-                                onChange={(event, checked) => handleSelect(item, checked)}
+                                onChange={(_, checked) => handleSelect(item, checked)}
                                 sx={{
                                     "& .MuiFormControlLabel-label": {
                                         typography: "h6",

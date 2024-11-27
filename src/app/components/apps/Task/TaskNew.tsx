@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, FormControlLabel, Button, Grid, MenuItem, FormControl, Alert, RadioGroup, Typography, InputAdornment, Paper, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, IconButton, Select, Radio, Collapse, TablePagination } from '@mui/material';
+import { Box, FormControlLabel, Button, Grid, MenuItem, FormControl, Alert, RadioGroup, Typography, InputAdornment, Paper, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, IconButton, Select, Radio, Collapse, TablePagination, TableSortLabel } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField'
 import CustomSelect from '@/app/components/forms/theme-elements/CustomSelect';
@@ -13,10 +13,13 @@ import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import Autocomplete from '@mui/material/Autocomplete';
-import { IconPlus, IconSearch } from '@tabler/icons-react';
-import TaskCardTableList from './TaskCardTableList';
+import { IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import { visuallyHidden } from '@mui/utils';
+import { useSelector, useDispatch } from '@/store/hooks';
+import { fetchTaskCards } from '@/store/apps/Task/TaskCardSlice';
+import { TaskCardType } from '@/app/(DashboardLayout)/types/apps/task';
 
 const taskStatus = [
     {
@@ -139,6 +142,264 @@ const sampleData = [
         options: { applicable: false, notApplicable: true },
     },
 ];
+
+const headTaskCardCells: HeadCell[] = [
+    {
+        id: 'taskCard',
+        align: 'center',
+        disablePadding: false,
+        label: 'Task Card',
+    },
+    {
+        id: 'type',
+        align: 'center',
+        disablePadding: false,
+        label: 'Type',
+    },
+    {
+        id: 'category',
+        align: 'center',
+        disablePadding: false,
+        label: 'Category',
+    },
+    {
+        id: 'description',
+        align: 'center',
+        disablePadding: false,
+        label: 'Task Description',
+    },
+    {
+        id: 'status',
+        align: 'center',
+        disablePadding: false,
+        label: 'Status',
+    },
+    {
+        id: 'actions',
+        align: 'center',
+        disablePadding: false,
+        label: 'Actions',
+    },
+];
+
+type Order = 'asc' | 'desc';
+
+interface HeadCell {
+    id: string;
+    label: string;
+    disablePadding: boolean;
+    align: 'left' | 'right' | 'center' | 'justify' | 'inherit' | undefined;
+}
+
+
+interface EnhancedTableProps {
+    headCells: HeadCell[];
+    numSelected: number;
+    onRequestSort: (event: React.MouseEvent<unknown>, property: any) => void;
+    onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    order: Order;
+    orderBy: string;
+    rowCount: number;
+}
+
+function EnhancedTableHead(props: EnhancedTableProps) {
+    const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
+    const createSortHandler = (property: any) => (event: React.MouseEvent<unknown>) => {
+        onRequestSort(event, property);
+    };
+
+    return (
+        <TableHead>
+            <TableRow>
+                {props.headCells.map((headCell) => (
+                    <TableCell
+                        key={headCell.id}
+                        align={headCell.align}
+                        padding={headCell.disablePadding ? 'none' : 'normal'}
+                        sortDirection={orderBy === headCell.id ? order : false}
+                    >
+                        <TableSortLabel
+                            active={orderBy === headCell.id}
+                            direction={orderBy === headCell.id ? order : 'asc'}
+                            onClick={createSortHandler(headCell.id)}
+                        >
+                            {headCell.label}
+                            {orderBy === headCell.id ? (
+                                <Box component="span" sx={visuallyHidden}>
+                                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                                </Box>
+                            ) : null}
+                        </TableSortLabel>
+                    </TableCell>
+                ))}
+            </TableRow>
+        </TableHead>
+    );
+}
+
+const EnhancedTableList = (data: any) => {
+    const [order, setOrder] = React.useState<Order>('asc');
+    const [orderBy, setOrderBy] = React.useState<any>('');
+    const [selected, setSelected] = React.useState<readonly string[]>([]);
+    const [page, setPage] = React.useState(0);
+    const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
+    function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
+        if (b[orderBy] < a[orderBy]) {
+            return -1;
+        }
+        if (b[orderBy] > a[orderBy]) {
+            return 1;
+        }
+
+        return 0;
+    }
+
+    function getComparator<Key extends keyof any>(
+        order: Order,
+        orderBy: Key,
+    ): (a: { [key in Key]: number | string }, b: { [key in Key]: number | string }) => number {
+        return order === 'desc'
+            ? (a, b) => descendingComparator(a, b, orderBy)
+            : (a, b) => -descendingComparator(a, b, orderBy);
+    }
+
+    function stableSort<T>(array: T[], comparator: (a: T, b: T) => number) {
+        const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
+        stabilizedThis.sort((a, b) => {
+            const order = comparator(a[0], b[0]);
+            if (order !== 0) {
+                return order;
+            }
+
+            return a[1] - b[1];
+        });
+
+        return stabilizedThis.map((el) => el[0]);
+    }
+
+    const handleRequestSort = (event: React.MouseEvent<unknown>, property: any) => {
+        const isAsc = orderBy === property && order === 'asc';
+        setOrder(isAsc ? 'desc' : 'asc');
+        setOrderBy(property);
+    };
+
+    const [rows, setRows] = React.useState<any>([data.items]);
+
+    React.useEffect(() => {
+        setRows(data.items);
+    }, [data.items]);
+
+    const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.checked) {
+            const newSelecteds = rows.map((n: any) => n.id);
+            setSelected(newSelecteds);
+
+            return;
+        }
+        setSelected([]);
+    };
+
+    const handleChangePage = (event: unknown, newPage: number) => {
+        setPage(newPage);
+    };
+
+    const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0);
+    };
+
+    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+    return (
+        <>
+            <TableContainer>
+                <Table
+                    sx={{ minWidth: 750 }}
+                    aria-labelledby="tableTitle"
+                >
+                    <EnhancedTableHead
+                        headCells={data.headCells}
+                        numSelected={selected.length}
+                        order={order}
+                        orderBy={orderBy}
+                        onSelectAllClick={handleSelectAllClick}
+                        onRequestSort={handleRequestSort}
+                        rowCount={rows.length}
+                    />
+                    <TableBody>
+                        {stableSort(rows, getComparator(order, orderBy))
+                            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                            .map((row: any, index) => {
+                                const labelId = `enhanced-table-checkbox-${index}`;
+                                return (
+                                    <TableRow
+                                        hover
+                                        role="checkbox"
+                                        tabIndex={-1}
+                                        key={labelId}
+                                    >
+                                        <TableCell align='center'>
+                                            <Typography >{row.partNumber}</Typography>
+                                        </TableCell>
+                                        <TableCell align='center'>
+                                            <Typography variant="subtitle2">
+                                                {row.description}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell align='center'>
+                                            <Typography variant="subtitle2">
+                                                {row.category}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell align='center'>
+                                            <Typography variant="subtitle2">
+                                                {row.quantity}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell align='center'>
+                                            <Typography fontWeight={400} variant="subtitle2">
+                                                {row.unitOfMeasurement}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell align='center'>
+                                            <Typography fontWeight={400} variant="subtitle2">
+                                                {row.spare}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell align='center'>
+                                            <Typography fontWeight={400} variant="subtitle2" color={row.reserve === 'Booked' ? 'primary' : 'error'}>
+                                                {row.reserve}
+                                            </Typography>
+                                        </TableCell>
+
+                                        <TableCell align='center'>
+                                            <IconButton color="error">
+                                                <IconTrash width={25} height={25} />
+                                            </IconButton>
+                                        </TableCell>
+                                    </TableRow>
+                                );
+                            })}
+                        {emptyRows > 0 && (
+                            <TableRow>
+                                <TableCell colSpan={6} />
+                            </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+            <TablePagination
+                rowsPerPageOptions={[5, 10, 25]}
+                component="div"
+                count={rows.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+        </>
+    );
+}
 
 const AircraftTable = () => {
     const [expandedRows, setExpandedRows] = useState<number[]>([]);
@@ -332,14 +593,89 @@ const AircraftTable = () => {
     );
 }
 
-
 const TaskAddNew = () => {
+    const dispatch = useDispatch();
     const [value, setValue] = React.useState("1");
     const [status, setStatus] = React.useState('');
     const [choice, setChoice] = React.useState('');
+    const [detailId, setDetailId] = useState(0);
+    const [formValues, setFormValues] = useState({
+        createdBy: 'ACTYPSERMS',
+        createdDate: '2024-11-15T01:23',
+        lastEditedBy: 'GEVERFOREVER',
+        lastEditedDate: '2024-11-15T01:23',
+    });
+    const getTaskCards: TaskCardType[] = useSelector((state) => state.taskCardReducer.taskCards);
+    React.useEffect(() => {
+        dispatch(fetchTaskCards());
+    }, [dispatch]);
+
+    const initialTaskCard = {
+        taskCard: '',
+        type: '',
+        category: '',
+        description: '',
+        ata: '',
+        aircraft_effectivity: '',
+        status: '',
+    }
+    const [taskCard, setTaskCard] = React.useState({ ...initialTaskCard })
+
+    const initialGeneral = {
+        taskId: '',
+        category: '',
+        sub_category: '',
+        classification: '',
+        description: '',
+        status: '',
+    }
+    const [general, setGeneral] = React.useState({ ...initialGeneral })
+
+    interface typeTasks {
+        id: number;
+        general?: {
+            taskId: string;
+            category: string;
+            sub_category: string;
+            classification: string;
+            description: string;
+            status: string;
+        },
+        informational?: {
+            createdBy: string;
+            createdDate: string;
+            lastEditedBy: string;
+            lastEditedDate: string;
+        }
+    }
+
+    React.useEffect(() => {
+        const cachedData = localStorage.getItem('taskData');
+        const currentUrl = window.location.href;
+        const match = currentUrl.match(/\/task\/(\d+)/);
+        const id = match ? parseInt(match[1], 10) : 0
+        setDetailId(id)
+
+        if (cachedData && match) {
+            const parsedData: typeTasks[] = JSON.parse(cachedData);
+            const obj = parsedData.find(x => x.id === id)
+            if (obj && obj.general) {
+                setGeneral(obj.general)
+            }
+        }
+    }, []);
 
     const handleChange = (_: React.SyntheticEvent, newValue: string) => {
         setValue(newValue);
+    };
+
+    const handleGeneralChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        console.log(e.target)
+        const { name, value } = e.target;
+        setGeneral((prevState) => ({
+            ...prevState,
+            [name]: value,
+        }));
     };
 
     const handleChangeStatus = (event: any) => {
@@ -348,6 +684,56 @@ const TaskAddNew = () => {
 
     const handleChangeChoice = (event: any) => {
         setChoice(event.target.value);
+    };
+
+    function handleTaskCardInputChange(value: any): void {
+        console.log(value)
+        setTaskCard(value);
+    }
+
+    const handleReset = () => {
+        setGeneral({ ...initialGeneral })
+    }
+
+    const handleSave = () => {
+        const cachedData = localStorage.getItem('taskData');
+        const parsedData = cachedData ? JSON.parse(cachedData) : [];
+
+        try {
+            const payload = [...parsedData, ...[{
+                id: parsedData.length + 1,
+                general,
+                informational: {},
+                created: new Date(),
+            }]]
+            localStorage.setItem('taskData', JSON.stringify(payload));
+            handleReset()
+            alert('Task data saved successfully!');
+            window.location.href = '/maintenance/task';
+        } catch (error) {
+            console.error('Error saving data to localStorage:', error);
+            alert('Failed to save Task data.');
+        }
+    };
+
+    const handleEdit = () => {
+        const cachedData = localStorage.getItem('taskData');
+        const parsedData = cachedData ? JSON.parse(cachedData) : [];
+        const index = parsedData.findIndex((item: { id: number }) => item.id === detailId);
+        if (index !== -1) {
+            parsedData[index] = {
+                ...parsedData[index], ...{
+                    general,
+                    informational: {}
+                }
+            };
+
+            localStorage.setItem('taskData', JSON.stringify(parsedData));
+            alert('Data updated successfully');
+        } else {
+            alert('No matching data found');
+        }
+
     };
 
     return (
@@ -366,7 +752,7 @@ const TaskAddNew = () => {
                             >
                                 Cancel
                             </Button>
-                            <Button variant="contained" color="primary">
+                            <Button variant="contained" color="primary" onClick={detailId < 1 ? handleSave : handleEdit}>
                                 Save
                             </Button>
                         </Box>
@@ -398,42 +784,80 @@ const TaskAddNew = () => {
                                 <Grid container spacing={3} mb={3}>
                                     <Grid item lg={4} md={12} sm={12}>
                                         <CustomFormLabel htmlFor="fname-text">Task ID</CustomFormLabel>
-                                        <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                                        <CustomTextField
+                                            disabled={detailId > 0}
+                                            id="fname-text"
+                                            variant="outlined"
+                                            fullWidth
+                                            name="taskId"
+                                            value={general.taskId}
+                                            onChange={handleGeneralChange}
+                                        />
                                     </Grid>
                                 </Grid>
 
                                 <Grid container spacing={3} mb={3}>
                                     <Grid item lg={4} md={12} sm={12}>
                                         <CustomFormLabel htmlFor="fname-text">Category*</CustomFormLabel>
-                                        <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                                        <CustomTextField
+                                            id="fname-text"
+                                            variant="outlined"
+                                            fullWidth
+                                            name="category"
+                                            value={general.category}
+                                            onChange={handleGeneralChange}
+                                        />
                                     </Grid>
 
                                     <Grid item lg={4} md={12} sm={12}>
                                         <CustomFormLabel htmlFor="fname-text">Sub Category*</CustomFormLabel>
-                                        <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                                        <CustomTextField
+                                            id="fname-text"
+                                            variant="outlined"
+                                            fullWidth
+                                            name="sub_category"
+                                            value={general.sub_category}
+                                            onChange={handleGeneralChange}
+                                        />
                                     </Grid>
 
                                     <Grid item lg={4} md={12} sm={12}>
                                         <CustomFormLabel htmlFor="fname-text">Classification*</CustomFormLabel>
-                                        <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                                        <CustomTextField
+                                            id="fname-text"
+                                            variant="outlined"
+                                            fullWidth
+                                            name="classification"
+                                            value={general.classification}
+                                            onChange={handleGeneralChange}
+                                        />
                                     </Grid>
                                 </Grid>
 
                                 <Grid container spacing={3} mb={3}>
                                     <Grid item lg={12} md={12} sm={12}>
                                         <CustomFormLabel htmlFor="fname-text">Task Description*</CustomFormLabel>
-                                        <CustomTextField id="fname-text" variant="outlined" fullWidth />
+                                        <CustomTextField
+                                            id="fname-text"
+                                            variant="outlined"
+                                            fullWidth
+                                            name="description"
+                                            value={general.description}
+                                            onChange={handleGeneralChange}
+                                        />
                                     </Grid>
                                 </Grid>
 
                                 <Grid container spacing={3} mb={3}>
                                     <Grid item lg={4} md={12} sm={12}>
-                                        <CustomFormLabel htmlFor="fname-text">status</CustomFormLabel>
+                                        <CustomFormLabel htmlFor="fname-text">Status</CustomFormLabel>
                                         <CustomSelect
-                                            id="standard-select-status"
-                                            value={status}
-                                            onChange={handleChangeStatus}
+                                            id="general-status"
+                                            name="status"
+                                            value={general.status}
+                                            onChange={handleGeneralChange}
                                             fullWidth
+                                            required
                                             variant="outlined"
                                         >
                                             {taskStatus.map((option) => (
@@ -697,7 +1121,10 @@ const TaskAddNew = () => {
                                             <Autocomplete
                                                 disablePortal
                                                 id="combo-box-search-task"
-                                                options={top100Films}
+                                                options={getTaskCards}
+                                                getOptionLabel={(option) => option.general.taskCard}
+                                                onChange={(_, value) => { handleTaskCardInputChange(value?.general) }}
+                                                isOptionEqualToValue={(option, value) => option.general.taskCard === value.general.taskCard}
                                                 fullWidth
                                                 sx={{
                                                     "& .MuiInputBase-root": { paddingTop: "6px", paddingBottom: "6px", paddingLeft: "16px" },
@@ -723,34 +1150,25 @@ const TaskAddNew = () => {
                                     <Grid container spacing={3} mb={3}>
                                         <Grid item lg={6} md={12} sm={12}>
                                             <CustomFormLabel htmlFor="fname-text">Type</CustomFormLabel>
-                                            <CustomTextField disabled id="fname-text" variant="outlined" fullWidth />
+                                            <CustomTextField disabled value={taskCard.type} id="fname-text" variant="outlined" fullWidth />
                                         </Grid>
                                         <Grid item lg={6} md={12} sm={12}>
                                             <CustomFormLabel htmlFor="fname-text">Category</CustomFormLabel>
-                                            <CustomTextField disabled id="fname-text" variant="outlined" fullWidth />
+                                            <CustomTextField disabled value={taskCard.category} id="fname-text" variant="outlined" fullWidth />
                                         </Grid>
                                     </Grid>
                                     <Grid container spacing={3} mb={3}>
                                         <Grid item lg={6} md={12} sm={12}>
                                             <CustomFormLabel htmlFor="fname-text">Task Description</CustomFormLabel>
-                                            <Autocomplete
-                                                id="combo-box-search-task"
-                                                options={top100Films}
-                                                fullWidth
-                                                sx={{
-                                                    "& .MuiInputBase-root": { padding: "6px" },
-                                                }}
-                                                renderInput={(params) => (
-                                                    <CustomTextField {...params} placeholder="Select" aria-label="Select" />
-                                                )}
-                                            />
+                                            <CustomTextField disabled value={taskCard.description} id="fname-text" variant="outlined" fullWidth />
                                         </Grid>
                                         <Grid item lg={6} md={12} sm={12}>
                                             <CustomFormLabel htmlFor="fname-text">Status</CustomFormLabel>
                                             <CustomSelect
                                                 id="standard-select-status1"
                                                 placeholder="Select"
-                                                value={status}
+                                                value={taskCard.status}
+                                                name="status"
                                                 onChange={handleChangeStatus}
                                                 fullWidth
                                                 variant="outlined"
@@ -783,7 +1201,7 @@ const TaskAddNew = () => {
                                     </>
                                 </ChildCard>
                                 <Box sx={{ marginTop: '24px' }}>
-                                    <TaskCardTableList from="task" />
+                                    <EnhancedTableList headCells={headTaskCardCells} items={[]} />
                                 </Box>
                             </form>
                         </TabPanel>
@@ -811,21 +1229,55 @@ const TaskAddNew = () => {
                                 <Grid container spacing={3} mb={3}>
                                     <Grid item lg={4} md={12} sm={12}>
                                         <CustomFormLabel htmlFor="fname-text">Created By</CustomFormLabel>
-                                        <CustomTextField disabled id="fname-text" variant="outlined" fullWidth />
+                                        <CustomTextField
+                                            value={formValues.createdBy}
+                                            disabled id="fname-text"
+                                            variant="outlined"
+                                            fullWidth
+                                        />
                                     </Grid>
                                     <Grid item lg={4} md={12} sm={12}>
                                         <CustomFormLabel htmlFor="fname-text">Created Date</CustomFormLabel>
-                                        <CustomTextField disabled type="date" id="fs-date" placeholder="dd/mm/yyyy" fullWidth />
+                                        <CustomTextField
+                                            id="date"
+                                            type="datetime-local"
+                                            disabled
+                                            variant="outlined"
+                                            fullWidth
+                                            value={formValues.createdDate}
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormValues({ ...formValues, createdDate: e.target.value })}
+                                            InputLabelProps={{
+                                                shrink: true,
+                                            }}
+                                        />
                                     </Grid>
                                 </Grid>
                                 <Grid container spacing={3} mb={3}>
                                     <Grid item lg={4} md={12} sm={12}>
                                         <CustomFormLabel htmlFor="fname-text">Last Edited By</CustomFormLabel>
-                                        <CustomTextField disabled id="fname-text" variant="outlined" fullWidth />
+                                        <CustomTextField disabled
+                                            id="fname-text"
+                                            value={formValues.lastEditedBy}
+                                            variant="outlined"
+                                            fullWidth
+                                        />
                                     </Grid>
                                     <Grid item lg={4} md={12} sm={12}>
                                         <CustomFormLabel htmlFor="fname-text">Last Edited Date</CustomFormLabel>
-                                        <CustomTextField disabled type="date" id="fs-date" placeholder="dd/mm/yyyy" fullWidth />
+                                        <CustomTextField
+                                            id="date"
+                                            type="datetime-local"
+                                            variant="outlined"
+                                            fullWidth
+                                            disabled
+                                            value={formValues.lastEditedDate}
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                                setFormValues({ ...formValues, lastEditedDate: e.target.value });
+                                            }}
+                                            InputLabelProps={{
+                                                shrink: true,
+                                            }}
+                                        />
                                     </Grid>
                                 </Grid>
                             </form>

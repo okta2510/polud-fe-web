@@ -1,9 +1,10 @@
-import { is } from 'date-fns/locale';
+import { id, is } from 'date-fns/locale';
 import mock from '../mock';
 import { sub } from 'date-fns';
 
 const DefectTaskData = [
     {
+        id: 1,
         is_defect: false,
         is_task: true,
         is_work_order: false,
@@ -79,6 +80,7 @@ const DefectTaskData = [
         created: sub(new Date(), { days: 3, hours: 6, minutes: 20 }),
     },
     {
+        id: 2,
         is_defect: false,
         is_task: true,
         is_work_order: false,

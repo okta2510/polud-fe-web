@@ -99,7 +99,17 @@ export const {
 
 export const fetchTasks = () => async (dispatch: AppDispatch) => {
     try {
+        const cachedData = localStorage.getItem('taskData');
+        if (cachedData) {
+            const parsedData = JSON.parse(cachedData);
+            if (parsedData && parsedData.length > 0) {
+                dispatch(getTasks(parsedData));
+                return;
+            }
+        }
+
         const response = await axios.get(`${API_URL}`);
+        localStorage.setItem('taskData', JSON.stringify(response.data));
         dispatch(getTasks(response.data));
     } catch (error) {
         dispatch(hasError(error));
