@@ -29,12 +29,8 @@ const taskCardStatus = [
         label: 'CANCEL',
     },
     {
-        value: 'applicable',
-        label: 'APPLICABLE',
-    },
-    {
-        value: 'not effective',
-        label: 'NOT EFFECTIVE',
+        value: 'hold',
+        label: 'HOLD',
     },
     {
         value: 'pending',
@@ -43,10 +39,6 @@ const taskCardStatus = [
     {
         value: 'rejected',
         label: 'REJECTED',
-    },
-    {
-        value: 'terminated',
-        label: 'TERMINATED',
     },
 ];
 
@@ -741,7 +733,6 @@ const TaskCardAddNew = () => {
     };
 
     const handleGeneralChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        console.log(e.target)
         const { name, value } = e.target;
         setGeneral((prevState) => ({
             ...prevState,

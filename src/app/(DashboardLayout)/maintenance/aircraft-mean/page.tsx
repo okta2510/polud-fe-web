@@ -11,7 +11,7 @@ const BCrumb = [
     title: 'Home',
   },
   {
-    title: 'Aircraft Mean',
+    title: 'Average Time Utilization',
   },
 ];
 
@@ -19,7 +19,7 @@ const AirCraft = () => {
   return (
     <PageContainer title="Aircraft mean" description="this is Aircraft Mean">
       {/* breadcrumb */}
-      <Breadcrumb title="Aircraft" items={BCrumb} />
+      <Breadcrumb title="Average Time Utilization" items={BCrumb} />
       {/* end breadcrumb */}
       <BlankCard>
         <AirCraftMeanTableList />

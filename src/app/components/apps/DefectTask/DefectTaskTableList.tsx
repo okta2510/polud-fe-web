@@ -37,6 +37,13 @@ import { format } from 'date-fns';
 import { fetchAirCraft } from '@/store/apps/AirCraft/AirCraftSlice';
 import { AircraftType } from '@/app/(DashboardLayout)/types/apps/aircraft';
 import { sub } from 'date-fns';
+import { DefectTaskType } from '@/app/(DashboardLayout)/types/apps/defetctTask';
+import { DefectType } from '@/app/(DashboardLayout)/types/apps/defect';
+import { de, ro } from 'date-fns/locale';
+import { fetchTasks } from '@/store/apps/Task/TaskSlice';
+import { fetchDefect } from '@/store/apps/defect/defectSlice';
+import { get } from 'lodash';
+import { a } from 'react-spring';
 
 
 interface General {
@@ -174,15 +181,18 @@ interface AircraftNameType {
 const aircraftNames: AircraftNameType[] = []
 const aircraftSeries: AircraftNameType[] = []
 const aircraftTypes: AircraftNameType[] = []
+const defectTasks: DefectTaskType[] = []
+
 
 interface EnhancedTableToolbarProps {
     numSelected: number;
     handleSearch: React.ChangeEvent<HTMLInputElement> | any;
     search: string;
+    items: DefectTaskType[];
 }
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
-    const { numSelected, handleSearch, search } = props;
+    const { numSelected, handleSearch, search, items } = props;
     return (
         <Toolbar>
             <Box sx={{ flex: '1 1 100%' }}>
@@ -218,7 +228,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
                         startIcon={<IconFileDatabase width={18} />}>
                         Existing Work Order
                     </Button>
-                    <AlertDialogCreateWO />
+                    <AlertDialogCreateWO items={items} />
                 </Box>
             </Box>
         </Toolbar>
@@ -226,8 +236,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
     );
 };
 
-const AlertDialogCreateWO = () => {
-    // const defectTasks = useSelector((state) => state.defectTasksReducer.defectTasks);
+const AlertDialogCreateWO = ({ items }: { items: DefectTaskType[] }) => {
     const [open, setOpen] = React.useState(false);
     const [randomNumber, setRandomNumber] = React.useState(0);
 
@@ -280,9 +289,13 @@ const AlertDialogCreateWO = () => {
 
 
     const handleClickOpen = () => {
-        generateRandomNumber();
-        setGeneral({ ...general, work_order_number: `WO${randomNumber}` });
-        setOpen(true);
+        if (items.length > 0) {
+            generateRandomNumber();
+            setGeneral({ ...general, work_order_number: `WO${randomNumber}` });
+            setOpen(true);
+        } else {
+            alert('Please first select item.');
+        }
     };
 
     const handleClose = () => {
@@ -306,13 +319,39 @@ const AlertDialogCreateWO = () => {
                 created: sub(new Date(), { days: 8, hours: 6, minutes: 20 }),
             }]]
             localStorage.setItem('workOrderData', JSON.stringify(payload));
-            handleReset()
-            alert('WO data saved successfully!');
-            window.location.href = '/maintenance/work-order';
+            handleUpdate().then(() => {
+                handleReset()
+                alert('WO data saved successfully!');
+                window.location.href = '/maintenance/work-order';
+            });
         } catch (error) {
             console.error('Error saving data to localStorage:', error);
             alert('Failed to save WO data.');
         }
+    };
+
+    const handleUpdate = async () => {
+        const cachedData = localStorage.getItem('defectTaskData');
+        const parsedData = cachedData ? JSON.parse(cachedData) : [];
+        try {
+            items.forEach(x => {
+                const index = parsedData.findIndex((item: { id: number }) => item.id === x.id);
+                console.log(x, index)
+                if (index !== -1) {
+                    parsedData[index] = {
+                        ...parsedData[index], ...{
+                            work_order: {
+                                general,
+                            }
+                        }
+                    };
+                    localStorage.setItem('defectTaskData', JSON.stringify(parsedData));
+                }
+            });
+        } catch (error) {
+            console.error('Error update data to localStorage:', error);
+        }
+
     };
 
     return (
@@ -661,7 +700,7 @@ const InspectionForm = (data: any) => {
                                 fontSize: '12px',
                                 fontWeight: 400,
                             }}>
-                            {data.item.aircraft === '' ? '-' : data.item.aircraft}
+                            {data.item.defect.aircraft === '' ? data.item.task.aircraft === '' ? '-' : data.item.task.aircraft : data.item.defect.aircraft}
                         </Typography>
                     </Box>
                 </Grid>
@@ -1666,16 +1705,38 @@ const InspectionForm = (data: any) => {
 
 const DefectTaskTableList = () => {
     const dispatch = useDispatch();
-    const [selected, setSelected] = React.useState<[]>([]);
+    const [selected, setSelected] = React.useState<(string | number)[]>([]);
     const [search, setSearch] = React.useState('');
-    const [selectedItem, setSelectedItem] = React.useState(null);
+    const [selectedItem, setSelectedItem] = React.useState<DefectTaskType[]>([]);
     const [isVisibleTask, setIsVisibleTask] = React.useState(false);
+    const getDefectTasks: DefectTaskType[] = useSelector((state) => state.defectTasksReducer.defectTasks);
+    const [rows, setRows] = React.useState<DefectTaskType[]>([]);
     const getAircraft: AircraftType[] = useSelector((state) => state.aircraftReducer.aircraft);
     const [aircraft, setAircraft] = React.useState<any>(getAircraft);
+    const getDefect: DefectType[] = useSelector((state) => state.DefectReducer.defect);
+    const getTasks: TaskType[] = useSelector((state) => state.taskReducer.tasks);
+
+    React.useEffect(() => {
+        dispatch(fetchAirCraft());
+    }, [dispatch]);
+
+    React.useEffect(() => {
+        dispatch(fetchTasks());
+    }, [dispatch]);
+
+    React.useEffect(() => {
+        dispatch(fetchDefect());
+    }, [dispatch]);
+
+    React.useEffect(() => {
+        dispatch(fetchDefectTasks());
+    }, [dispatch]);
+
 
     React.useEffect(() => {
         setAircraft(getAircraft);
     }, [getAircraft]);
+
 
 
     React.useEffect(() => {
@@ -1702,32 +1763,213 @@ const DefectTaskTableList = () => {
     }, [aircraft]);
 
     React.useEffect(() => {
-        dispatch(fetchAirCraft());
-    }, [dispatch]);
+        const cachedData = localStorage.getItem('defectTaskData');
+        const parsedData = cachedData ? JSON.parse(cachedData) : [];
 
+        if (getTasks.length > 0) {
+            getTasks.forEach((x) => {
+                const index = parsedData.findIndex((item: { task: { task_id: string } }) => item.task.task_id === x.general.taskId)
+                if (index === -1) {
+                    const payload = [...parsedData, ...[{
+                        id: crypto.randomUUID(),
+                        is_defect: false,
+                        is_task: true,
+                        is_work_order: false,
+                        is_selected: false,
+                        task: {
+                            task_id: x.general.taskId,
+                            category: x.general.category,
+                            sub_category: x.general.sub_category,
+                            classification: x.general.classification,
+                            description: x.general.description,
+                            status: x.general.status,
+                            repeat: 1,
+                            ata: '001 Engine',
+                            aircraft: 'A320',
+                            ground_time: '',
+                        },
+                        defect: {
+                            defect_id: '',
+                            defect_type: '',
+                            item: '',
+                            mddr: '',
+                            groundtime: '',
+                            capability_area: '',
+                            mel: '',
+                            gmm: '',
+                            aircraft: 'A320',
+                        },
+                        work_order: {
+                            general: {
+                                work_order_number: '',
+                                status: '',
+                                category: '',
+                                description: '',
+                                location: '',
+                                site: '',
+                                priority: '',
+                                aircraft: '',
+                                aircraft_serial_number: '',
+                                type_series1: '',
+                                type_series2: '',
+                                schedule_start_date: '',
+                                schedule_start_hours: '',
+                                schedule_start_minute: '',
+                                schedule_end_date: '',
+                                schedule_end_hours: '',
+                                schedule_end_minute: '',
+                                flight_number: '',
+                                actual_start_date: '',
+                                actual_start_hours: '',
+                                actual_start_minute: '',
+                                actual_end_date: '',
+                                actual_end_hours: '',
+                                actual_end_minute: '',
+                            }
+                        },
+                        position: '',
+                        initial_schedule: {
+                            hours: '975',
+                            days: '170',
+                            cycles: '744',
+                        },
+                        actual: {
+                            hours: '326:48',
+                            days: '53',
+                            cycles: '255',
+                        },
+                        remaining: {
+                            hours: '648:12',
+                            days: '117',
+                            cycles: '489',
+                        },
+                        totals: {
+                            aircraft_hours: '33018:15',
+                            aircraft_cycles: '24834',
+                            time_as_of: new Date().toUTCString(),
+                        },
+                        due_date: new Date().toUTCString(),
+                        created: new Date().toUTCString(),
+                    }]];
+                    localStorage.setItem('defectTaskData', JSON.stringify(payload));
+                }
+            });
+        }
+
+    }, [getTasks, getDefectTasks]);
 
     React.useEffect(() => {
-        dispatch(fetchDefectTasks());
-    }, [dispatch]);
+        const cachedData = localStorage.getItem('defectTaskData');
+        const parsedData = cachedData ? JSON.parse(cachedData) : [];
 
-    const getDefectTasks: TaskType[] = useSelector((state) => state.defectTasksReducer.defectTasks);
-    const [rows, setRows] = React.useState<any>(getDefectTasks);
+        if (getDefect.length > 0) {
+            getDefect.forEach((x) => {
+                const index = parsedData.findIndex((item: { defect: { defect_id: string } }) => item.defect.defect_id === x.general?.defect)
+                if (index === -1) {
+                    const payload = [...parsedData, ...[{
+                        id: crypto.randomUUID(),
+                        is_defect: false,
+                        is_task: true,
+                        is_work_order: false,
+                        is_selected: false,
+                        task: {
+                            task_id: '',
+                            category: '',
+                            sub_category: '',
+                            classification: '',
+                            description: '',
+                            status: '',
+                            repeat: '',
+                            ata: '001 Engine',
+                            aircraft: 'A320',
+                            ground_time: '',
+                        },
+                        defect: {
+                            defect_id: x.general?.defect ?? '',
+                            defect_type: x.general?.type ?? '',
+                            item: x.general?.item ?? '',
+                            mddr: '',
+                            groundtime: x.general?.groundtime ?? '',
+                            capability_area: x.general?.internal_capability ?? '',
+                            mel: '',
+                            gmm: '',
+                            aircraft: x.general?.aircraft ?? '',
+                        },
+                        work_order: {
+                            general: {
+                                work_order_number: '',
+                                status: '',
+                                category: '',
+                                description: '',
+                                location: '',
+                                site: '',
+                                priority: '',
+                                aircraft: '',
+                                aircraft_serial_number: '',
+                                type_series1: '',
+                                type_series2: '',
+                                schedule_start_date: '',
+                                schedule_start_hours: '',
+                                schedule_start_minute: '',
+                                schedule_end_date: '',
+                                schedule_end_hours: '',
+                                schedule_end_minute: '',
+                                flight_number: '',
+                                actual_start_date: '',
+                                actual_start_hours: '',
+                                actual_start_minute: '',
+                                actual_end_date: '',
+                                actual_end_hours: '',
+                                actual_end_minute: '',
+                            }
+                        },
+                        position: '',
+                        initial_schedule: {
+                            hours: '975',
+                            days: '170',
+                            cycles: '744',
+                        },
+                        actual: {
+                            hours: '326:48',
+                            days: '53',
+                            cycles: '255',
+                        },
+                        remaining: {
+                            hours: '648:12',
+                            days: '117',
+                            cycles: '489',
+                        },
+                        totals: {
+                            aircraft_hours: '33018:15',
+                            aircraft_cycles: '24834',
+                            time_as_of: new Date().toUTCString(),
+                        },
+                        due_date: new Date().toUTCString(),
+                        created: new Date().toUTCString(),
+                    }]];
+                    localStorage.setItem('defectTaskData', JSON.stringify(payload));
+                }
+            });
+        }
 
-    React.useEffect(() => {
-        setRows(getDefectTasks);
-    }, [getDefectTasks]);
+    }, [getDefect, getDefectTasks]);
 
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const filteredRows: TaskType[] = getDefectTasks.filter((row) => {
-            return String(row.id).toLowerCase().includes(event.target.value);
+        const filteredRows: DefectTaskType[] = getDefectTasks.filter((row) => {
+            return String(row.work_order.general.work_order_number).toLowerCase().includes(event.target.value);
         });
         setSearch(event.target.value);
         setRows(filteredRows);
     };
 
+    const handleRefresh = async () => {
+        await dispatch(fetchDefectTasks());
+        setRows(getDefectTasks);
+    };
+
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.checked) {
-            const newSelecteds = rows.map((n: any) => n.title);
+            const newSelecteds = rows.map((n: DefectTaskType) => n.id);
             setSelected(newSelecteds);
 
             return;
@@ -1736,11 +1978,10 @@ const DefectTaskTableList = () => {
     };
 
     const handleSelect = (item: any, checked: boolean) => {
-        console.log(checked);
         if (checked) {
-            setSelectedItem(item);
+            setSelectedItem([...selectedItem, item]);
         } else {
-            setSelectedItem(null);
+            setSelectedItem([]);
         }
     };
 
@@ -1751,6 +1992,7 @@ const DefectTaskTableList = () => {
                     numSelected={selected.length}
                     search={search}
                     handleSearch={(event: any) => handleSearch(event)}
+                    items={selectedItem}
                 />
             </BlankCard>
             <Box sx={{ margin: '8px' }} />
@@ -1759,7 +2001,7 @@ const DefectTaskTableList = () => {
                 footer={
                     <>
                         <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                            <Button variant="contained" color="primary">
+                            <Button variant="contained" color="primary" onClick={handleRefresh}>
                                 Search
                             </Button>
                         </Box>
@@ -1790,7 +2032,7 @@ const DefectTaskTableList = () => {
                     <Box sx={{ marginY: '24px', display: 'flex', justifyContent: 'space-between' }}>
                         <FormControlLabel
                             control={<CustomCheckbox />}
-                            label="DEFECT/NON ROUTINE TASK"
+                            label="DEFECT"
                         />
                         <FormControlLabel
                             control={<CustomCheckbox />}
@@ -1841,8 +2083,6 @@ const DefectTaskTableList = () => {
                             fullWidth
                             placeholder="Enter Work Order"
                             size="medium"
-                            onChange={handleSearch}
-                            value={search}
                         />
                     </Box>
                     <Grid container spacing={3} mb={3}>
@@ -1918,7 +2158,7 @@ const DefectTaskTableList = () => {
                         <>
                             <FormControlLabel
                                 control={<CustomCheckbox />}
-                                label={`${item.task.task_id}`}
+                                label={`${item.task.task_id === '' ? item.defect.defect_id : item.task.task_id}`}
                                 onChange={(_, checked) => handleSelect(item, checked)}
                                 sx={{
                                     "& .MuiFormControlLabel-label": {

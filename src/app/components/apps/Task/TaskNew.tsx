@@ -609,7 +609,7 @@ const TaskAddNew = () => {
         aircraft_effectivity: '',
         status: '',
     }
-    const [taskCard, setTaskCard] = React.useState({ ...initialTaskCard })
+    const [taskCard, setTaskCard] = React.useState({ ...initialTaskCard });
 
     const initialGeneral = {
         taskId: '',
@@ -619,11 +619,9 @@ const TaskAddNew = () => {
         description: '',
         status: '',
     }
-    const [general, setGeneral] = React.useState({ ...initialGeneral })
+    const [general, setGeneral] = React.useState({ ...initialGeneral });
 
-
-    const initialTaskCardControl = [initialTaskCard]
-    const [taskCardControls, setTaskCardControls] = React.useState({ ...initialTaskCardControl })
+    const [taskCardControls, setTaskCardControls] = React.useState([]);
 
     interface typeTasks {
         id: number;

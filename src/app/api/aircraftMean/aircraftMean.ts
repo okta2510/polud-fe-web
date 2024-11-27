@@ -28,7 +28,7 @@ const aircraftMean = [
   },
 ];
 
-mock.onGet('/api/data/defect').reply(() => {
+mock.onGet('/api/data/aircraft-mean').reply(() => {
   return [200, aircraftMean];
 });
 

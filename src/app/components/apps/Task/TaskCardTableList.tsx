@@ -183,7 +183,7 @@ interface EnhancedTableToolbarProps {
 }
 
 interface ChipStatusProps {
-    status: 'open' | 'cancel' | 'applicable' | 'not effective' | 'pending' | 'rejected' | 'terminated';
+    status: 'open' | 'cancel' | 'hold'  | 'pending' | 'rejected';
 }
 
 const ChipStatus = ({ status }: ChipStatusProps) => {
@@ -198,7 +198,7 @@ const ChipStatus = ({ status }: ChipStatusProps) => {
         case 'rejected':
             color = 'warning'
             break
-        case 'applicable':
+        case 'hold':
             color = 'primary'
             break
         case 'pending':

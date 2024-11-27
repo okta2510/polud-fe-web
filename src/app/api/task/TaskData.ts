@@ -6,7 +6,7 @@ const TaskData = [
     {
         id: 1,
         general: {
-            taskId: '738-Phase 16',
+            taskId: '139-Phase 16',
             category: 'Battery',
             sub_category: 'Battery',
             classification: 'Repair',
@@ -53,7 +53,7 @@ const TaskData = [
                 type: 'Routine',
                 category: 'Phase16',
                 description: 'CARGO FIRE EXTINGUISHING 60-MINUTE TIMER',
-                ata: '001',
+                ata: '002',
                 aircraft_effectivity: 'B',
                 status: 'open',
             },

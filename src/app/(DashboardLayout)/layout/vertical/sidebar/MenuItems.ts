@@ -128,7 +128,7 @@ const MainItems: MenuitemsType[] = [
       },
       {
         id: uniqueId(),
-        title: "Aircraft Mean",
+        title: "Average Time Utilization",
         icon: IconPoint,
         href: "/maintenance/aircraft-mean",
       },

@@ -33,7 +33,7 @@ import { fetchDefect } from '@/store/apps/defect/defectSlice';
 // import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
 // import CustomSwitch from '@/app/components/forms/theme-elements/CustomSwitch';
 import { IconSearch, IconTrash, IconEdit, IconReload, IconEye } from '@tabler/icons-react';
-import { ProductType } from '@/app/(DashboardLayout)/types/apps/eCommerce';
+import { DefectType } from '@/app/(DashboardLayout)/types/apps/defect';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: '#fff',
@@ -305,7 +305,7 @@ const DefectTableList = () => {
   }, [dispatch]);
 
   // const getData: ProductType[] = useSelector((state) => state.DefectReducer);
-  const getData: ProductType[] = useSelector((state) => state.DefectReducer.defect);
+  const getData: DefectType[] = useSelector((state) => state.DefectReducer.defect);
 
   const [rows, setRows] = React.useState<any>(getData);
   const [search, setSearch] = React.useState('');
@@ -315,8 +315,8 @@ const DefectTableList = () => {
   }, [getData]);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const filteredRows: ProductType[] = getData.filter((row) => {
-      return row.title.toLowerCase().includes(event.target.value);
+    const filteredRows: DefectType[] = getData.filter((row) => {
+      return row.general?.defect.toLowerCase().includes(event.target.value);
     });
     setSearch(event.target.value);
     setRows(filteredRows);
