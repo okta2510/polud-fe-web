@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { SyntheticEvent, useState } from 'react';
 import { Box, Button, Grid, MenuItem, Typography, InputAdornment, TableHead, TableRow, TableCell, TableSortLabel, IconButton, Stack, Table, TableBody, TableContainer, TablePagination, useTheme } from '@mui/material';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField'
 import CustomSelect from '@/app/components/forms/theme-elements/CustomSelect';
@@ -9,10 +9,13 @@ import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
-import Autocomplete from '@mui/material/Autocomplete';
+import Autocomplete, { AutocompleteInputChangeReason } from '@mui/material/Autocomplete';
 import { IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
 import { visuallyHidden } from '@mui/utils';
 import { useDispatch } from '@/store/hooks';
+import { TaskCardType } from '@/app/(DashboardLayout)/types/apps/task';
+
+
 
 const taskCardStatus = [
     {
@@ -51,6 +54,116 @@ const attaNumbering = [
     { label: '003 Engine', value: '003' },
     { label: '004 Engine', value: '004' },
     { label: '005 Engine', value: '005' },
+];
+
+const spareMaster = [
+    'Part',
+];
+
+const reserveMaster = [
+    'Booked',
+    'None',
+]
+
+const partNumbersMaster = [
+    {
+        partNumber: 'M83723/60-114AN',
+        description: 'CAP-PROTECTIVE',
+        category: 'EXPANDABLE',
+    },
+    {
+        partNumber: 'BAC27DPA5268',
+        description: 'DECAL',
+        category: 'EXPANDABLE',
+    },
+    {
+        partNumber: 'BAC27DPA5263',
+        description: 'DECAL',
+        category: 'EXPANDABLE',
+    },
+    {
+        partNumber: 'BAC27DHY412',
+        description: 'MARKER ALUMINUM FOIL',
+        category: 'EXPANDABLE',
+    },
+    {
+        partNumber: 'M0DREF101820',
+        description: 'MARKER ALUMINUM FOIL',
+        category: 'EXPANDABLE',
+    },
+    {
+        partNumber: 'HLA6424-300-M10',
+        description: 'DIGITAL PRESSURE GAUGE',
+        category: 'TOOL',
+    },
+    {
+        partNumber: 'HLA6424',
+        description: 'DIGITAL PRESSURE GAUGE',
+        category: 'TOOL',
+    },
+    {
+        partNumber: 'QDRIVER3A',
+        description: "ADJUSTABLE TORQUE SCREWDRIVER 1/4 DRIVE 3-15 IN-LB (34-169 N•CM)",
+        category: 'TOOL',
+    },
+    {
+        partNumber: '98S05505000-204',
+        description: "POSITION THE 100 MM (3.9 IN.) EXTENSION  SHAFTS",
+        category: 'TOOL',
+    },
+    {
+        partNumber: '98S05505000-200',
+        description: "POSITION THE 15 MM (0.6 IN.) EXTENSION SHAFT",
+        category: 'TOOL',
+    },
+    {
+        partNumber: '117',
+        description: 'MULTIMETER - DIGITAL/ANALOG',
+        category: 'TOOL',
+    },
+    {
+        partNumber: 'C26006-70',
+        description: 'TEST  BOX - CARGO FIRE EXTINGUISHER SYSTEM',
+        category: 'TOOL',
+    },
+    {
+        partNumber: 'STD-1079',
+        description: 'RESISTOR - 10K OHM OR GREATER',
+        category: 'TOOL',
+    },
+    {
+        partNumber: 'STD-1168',
+        description: 'CAP - SHORTING OR FARADAY CAP',
+        category: 'TOOL',
+    },
+];
+
+const uomMaster = [
+    {
+        code: 'EA',
+        description: 'EACH',
+        status: 'active',
+    },
+    {
+        code: 'KG',
+        description: 'KILOGRAM',
+        status: 'active',
+    },
+    {
+        code: 'LT',
+        description: 'LITER',
+        status: 'active',
+    },
+    {
+        code: 'LBS',
+        description: 'POUNDS',
+        status: 'active',
+    },
+    {
+        code: 'MTR',
+        description: 'METER',
+        status: 'active',
+    },
 ];
 
 const headPartNumberCells: HeadCell[] = [
@@ -370,7 +483,7 @@ const EnhancedTableList = (data: any) => {
                                                     </Typography>
                                                 </TableCell>
                                                 <TableCell align='center'>
-                                                    <Typography fontWeight={400} variant="subtitle2" color={row.reserve === 'Booked' ? 'primary': 'error'}>
+                                                    <Typography fontWeight={400} variant="subtitle2" color={row.reserve === 'Booked' ? 'primary' : 'error'}>
                                                         {row.reserve}
                                                     </Typography>
                                                 </TableCell>
@@ -493,6 +606,7 @@ const TaskCardAddNew = () => {
         spare: '',
         reserve: '',
     }
+    const [partNumber, setPartNumber] = React.useState({ ...initialPartNumber });
 
     const initialZone = {
         zone: '',
@@ -525,30 +639,6 @@ const TaskCardAddNew = () => {
     }
     const [informational, setInformational] = React.useState({ ...initialInformational })
 
-    interface typeTaskCards {
-        id: number;
-        general?: {
-            taskCard: string;
-            type: string;
-            category: string;
-            description: string;
-            ata: string;
-            aircraft_effectivity: string;
-            status: string;
-        },
-        material?: {
-            partNumbers: [];
-            zones: [];
-            panels: [];
-        };
-        informational?: {
-            createdBy: string;
-            createdDate: string;
-            lastEditedBy: string;
-            lastEditedDate: string;
-        }
-    }
-
 
     React.useEffect(() => {
         const cachedData = localStorage.getItem('taskCardData');
@@ -558,7 +648,7 @@ const TaskCardAddNew = () => {
         setDetailId(id)
 
         if (cachedData && match) {
-            const parsedData: typeTaskCards[] = JSON.parse(cachedData);
+            const parsedData: TaskCardType[] = JSON.parse(cachedData);
             const obj = parsedData.find(x => x.id === id)
             if (obj && obj.general) {
                 setGeneral(obj.general)
@@ -583,6 +673,55 @@ const TaskCardAddNew = () => {
         }));
     };
 
+    function handlePartNumberInputChange(value: any): void {
+        setPartNumber(value);
+    }
+
+    const handleReset = () => {
+        setGeneral({ ...initialGeneral })
+    }
+
+    const handleSave = () => {
+        const cachedData = localStorage.getItem('taskCardData');
+        const parsedData = cachedData ? JSON.parse(cachedData) : [];
+
+        try {
+            const payload = [...parsedData, ...[{
+                id: parsedData.length + 1,
+                general,
+                informational: {},
+                created: new Date(),
+            }]]
+            localStorage.setItem('taskCardData', JSON.stringify(payload));
+            handleReset()
+            alert('Task Card data saved successfully!');
+            window.location.href = '/maintenance/task-card';
+        } catch (error) {
+            console.error('Error saving data to localStorage:', error);
+            alert('Failed to save Task Card data.');
+        }
+    };
+
+    const handleEdit = () => {
+        const cachedData = localStorage.getItem('taskCardData');
+        const parsedData = cachedData ? JSON.parse(cachedData) : [];
+        const index = parsedData.findIndex((item: { id: number }) => item.id === detailId);
+        if (index !== -1) {
+            parsedData[index] = {
+                ...parsedData[index], ...{
+                    general,
+                    informational: {}
+                }
+            };
+
+            localStorage.setItem('taskCardData', JSON.stringify(parsedData));
+            alert('Data updated successfully');
+        } else {
+            alert('No matching data found');
+        }
+
+    };
+
     return (
         <div>
             <ParentCard
@@ -599,7 +738,7 @@ const TaskCardAddNew = () => {
                             >
                                 Cancel
                             </Button>
-                            <Button variant="contained" color="primary">
+                            <Button variant="contained" color="primary" onClick={detailId < 1 ? handleSave : handleEdit}>
                                 Save
                             </Button>
                         </Box>
@@ -628,12 +767,14 @@ const TaskCardAddNew = () => {
                                 <Grid container spacing={3} mb={3}>
                                     <Grid item lg={4} md={12} sm={12}>
                                         <CustomFormLabel htmlFor="fname-text">Task Card</CustomFormLabel>
-                                        <CustomTextField disabled
+                                        <CustomTextField
+                                            disabled={detailId > 0}
                                             id="fname-text"
                                             variant="outlined"
                                             fullWidth
                                             name="taskCard"
                                             value={general.taskCard}
+                                            onChange={handleGeneralChange}
                                         />
                                     </Grid>
                                 </Grid>
@@ -745,7 +886,10 @@ const TaskCardAddNew = () => {
                                             <Autocomplete
                                                 disablePortal
                                                 id="combo-box-search-task"
-                                                options={attaNumbering}
+                                                options={partNumbersMaster}
+                                                getOptionLabel={(option) => option.partNumber}
+                                                onChange={(_, value) => { handlePartNumberInputChange(value) }}
+                                                isOptionEqualToValue={(option, value) => option.partNumber === value.partNumber}
                                                 fullWidth
                                                 sx={{
                                                     "& .MuiInputBase-root": { paddingTop: "6px", paddingBottom: "6px", paddingLeft: "16px" },
@@ -771,7 +915,7 @@ const TaskCardAddNew = () => {
                                     <Grid container spacing={3} mb={3}>
                                         <Grid item lg={3} md={12} sm={12}>
                                             <CustomFormLabel htmlFor="fname-text">Description</CustomFormLabel>
-                                            <CustomTextField disabled id="fname-text" variant="outlined" fullWidth />
+                                            <CustomTextField value={partNumber.description} disabled id="fname-text" variant="outlined" fullWidth />
                                         </Grid>
                                         <Grid item lg={3} md={12} sm={12}>
                                             <CustomFormLabel htmlFor="fname-text">Item</CustomFormLabel>
@@ -779,7 +923,7 @@ const TaskCardAddNew = () => {
                                         </Grid>
                                         <Grid item lg={3} md={12} sm={12}>
                                             <CustomFormLabel htmlFor="fname-text">Category</CustomFormLabel>
-                                            <CustomTextField disabled id="fname-text" variant="outlined" fullWidth />
+                                            <CustomTextField disabled id="fname-text" value={partNumber.category} variant="outlined" fullWidth />
                                         </Grid>
                                         <Grid item lg={3} md={12} sm={12}>
                                             <CustomFormLabel htmlFor="fname-text">Quantity</CustomFormLabel>
@@ -791,7 +935,7 @@ const TaskCardAddNew = () => {
                                             <CustomFormLabel htmlFor="fname-text">Spare</CustomFormLabel>
                                             <Autocomplete
                                                 id="combo-box-search-task"
-                                                options={attaNumbering}
+                                                options={spareMaster}
                                                 fullWidth
                                                 sx={{
                                                     "& .MuiInputBase-root": { padding: "6px" },
@@ -805,7 +949,7 @@ const TaskCardAddNew = () => {
                                             <CustomFormLabel htmlFor="fname-text">Reserve</CustomFormLabel>
                                             <Autocomplete
                                                 id="combo-box-search-task"
-                                                options={attaNumbering}
+                                                options={reserveMaster}
                                                 fullWidth
                                                 sx={{
                                                     "& .MuiInputBase-root": { padding: "6px" },
@@ -1033,7 +1177,12 @@ const TaskCardAddNew = () => {
                                 <Grid container spacing={3} mb={3}>
                                     <Grid item lg={4} md={12} sm={12}>
                                         <CustomFormLabel htmlFor="fname-text">Created By</CustomFormLabel>
-                                        <CustomTextField value={formValues.createdBy} disabled id="fname-text" variant="outlined" fullWidth />
+                                        <CustomTextField
+                                            value={formValues.createdBy}
+                                            disabled id="fname-text"
+                                            variant="outlined"
+                                            fullWidth
+                                        />
                                     </Grid>
                                     <Grid item lg={4} md={12} sm={12}>
                                         <CustomFormLabel htmlFor="fname-text">Created Date</CustomFormLabel>
@@ -1054,7 +1203,12 @@ const TaskCardAddNew = () => {
                                 <Grid container spacing={3} mb={3}>
                                     <Grid item lg={4} md={12} sm={12}>
                                         <CustomFormLabel htmlFor="fname-text">Last Edited By</CustomFormLabel>
-                                        <CustomTextField disabled id="fname-text" value={formValues.lastEditedBy} variant="outlined" fullWidth />
+                                        <CustomTextField disabled
+                                            id="fname-text"
+                                            value={formValues.lastEditedBy}
+                                            variant="outlined"
+                                            fullWidth
+                                        />
                                     </Grid>
                                     <Grid item lg={4} md={12} sm={12}>
                                         <CustomFormLabel htmlFor="fname-text">Last Edited Date</CustomFormLabel>

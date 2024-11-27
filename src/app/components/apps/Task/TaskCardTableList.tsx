@@ -320,10 +320,21 @@ const TaskCardTableList = (data: any) => {
 
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
         const filteredRows: TaskCardType[] = getTaskCards.filter((row) => {
-            return row.taskCard.toLowerCase().includes(event.target.value);
+            return String(row.id).toLowerCase().includes(event.target.value);
         });
         setSearch(event.target.value);
         setRows(filteredRows);
+    };
+
+    interface dataTable {
+        id: number;
+    }
+    const handleDeleteRow = async (id: number) => {
+        if (window.confirm('Are you sure you want to delete this item?')) {
+            const updatedItems = rows.filter((item: dataTable) => item.id !== id);
+            await localStorage.setItem('taskCardData', JSON.stringify(updatedItems));
+            await dispatch(fetchTaskCards());
+        }
     };
 
     // This is for the sorting
@@ -479,7 +490,7 @@ const TaskCardTableList = (data: any) => {
                                                     {data.from === 'task-card' && <IconButton color="primary" href={`/maintenance/task-card/${row.id}`}>
                                                         <IconEye width={25} height={25} />
                                                     </IconButton>}
-                                                    <IconButton color="error">
+                                                    <IconButton color="error" onClick={() => handleDeleteRow(row.id)}>
                                                         <IconTrash width={25} height={25} />
                                                     </IconButton>
                                                     {data.from === 'task-card' && <IconButton color="primary">
