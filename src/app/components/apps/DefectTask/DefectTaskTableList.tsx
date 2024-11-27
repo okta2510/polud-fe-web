@@ -379,7 +379,7 @@ const AlertDialogCreateWO = () => {
                     }
                 >
                     <>
-                        {JSON.stringify(defectTasks)}
+
                         <Box sx={{ marginBottom: 3, display: 'flex', justifyContent: 'space-between' }}>
                             <Typography
                                 sx={{
