@@ -15,7 +15,7 @@ const BCrumb = [
     title: 'Defect',
   },
   {
-    title: 'Add New',
+    title: 'detail',
   },
 ];
 

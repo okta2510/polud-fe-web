@@ -74,7 +74,8 @@ import {
   // IconPlane,
   // IconPlaneTilt,
   // IconHelicopter,
-  IconTools
+  IconTools,
+  IconHome
 } from "@tabler/icons-react";
 
 
@@ -82,7 +83,7 @@ const MainItems:MenuitemsType[] = [
   {
     id: uniqueId(),
     title: "Dashboard",
-    icon: IconChartPie,
+    icon: IconHome,
     href: "/",
   },
   {

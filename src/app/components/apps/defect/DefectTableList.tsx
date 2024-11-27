@@ -29,7 +29,7 @@ import {
 } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
 import { useSelector, useDispatch } from '@/store/hooks';
-import { fetchAirCraft } from '@/store/apps/AirCraft/AirCraftSlice';
+import { fetchDefect } from '@/store/apps/defect/defectSlice';
 // import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
 // import CustomSwitch from '@/app/components/forms/theme-elements/CustomSwitch';
 import { IconSearch, IconTrash, IconEdit, IconReload, IconEye } from '@tabler/icons-react';
@@ -290,7 +290,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   );
 };
 
-const AirCraftSeriesTableList = () => {
+const DefectTableList = () => {
   const [order, setOrder] = React.useState<Order>('asc');
   const [orderBy, setOrderBy] = React.useState<any>('calories');
   const [selected, setSelected] = React.useState<readonly string[]>([]);
@@ -301,24 +301,36 @@ const AirCraftSeriesTableList = () => {
 
   //Fetch Products
   React.useEffect(() => {
-    dispatch(fetchAirCraft());
+    dispatch(fetchDefect());
   }, [dispatch]);
 
-  const getProducts: ProductType[] = useSelector((state) => state.ecommerceReducer.products);
+  // const getData: ProductType[] = useSelector((state) => state.DefectReducer);
+  const getData: ProductType[] = useSelector((state) => state.DefectReducer.defect);
 
-  const [rows, setRows] = React.useState<any>(getProducts);
+  const [rows, setRows] = React.useState<any>(getData);
   const [search, setSearch] = React.useState('');
 
   React.useEffect(() => {
-    setRows(getProducts);
-  }, [getProducts]);
+    setRows(getData);
+  }, [getData]);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const filteredRows: ProductType[] = getProducts.filter((row) => {
+    const filteredRows: ProductType[] = getData.filter((row) => {
       return row.title.toLowerCase().includes(event.target.value);
     });
     setSearch(event.target.value);
     setRows(filteredRows);
+  };
+
+  interface dataTable  {
+    id: number;
+  }
+  const handleDeleteRow = async (id: number) => {
+    if (window.confirm('Are you sure you want to delete this item?')) {
+      const updatedItems = rows.filter((item:dataTable) => item.id !== id);
+      await localStorage.setItem('defectdata', JSON.stringify(updatedItems));
+      await dispatch(fetchDefect());
+    }
   };
 
   // This is for the sorting
@@ -415,7 +427,7 @@ const AirCraftSeriesTableList = () => {
                         role="checkbox"
                         aria-checked={isItemSelected}
                         tabIndex={-1}
-                        key={row.title}
+                        key={row.id}
                         selected={isItemSelected}
                       >
                         {/* <TableCell padding="checkbox">
@@ -431,7 +443,7 @@ const AirCraftSeriesTableList = () => {
                         <TableCell   sx={{
                           width: '6%'
                         }}>
-                          <Typography>{row.id}</Typography>
+                          <Typography>{row.id || '-'}</Typography>
                         </TableCell>
                         
                         <TableCell sx={{
@@ -440,7 +452,7 @@ const AirCraftSeriesTableList = () => {
                           <Box display="flex" alignItems="center">
                             {/* <Avatar src={row.photo} alt="product" sx={{ width: 56, height: 56 }} /> */}
                             <Typography variant="subtitle2">
-                                {row.title}
+                                {row.general?.type}
                               </Typography>
                           </Box>
                         </TableCell>
@@ -458,7 +470,7 @@ const AirCraftSeriesTableList = () => {
                                 textTransform: 'uppercase'
                               }}
                             >
-                              Normal
+                              {row.general?.defect_category || '-'}
                             </Typography>
                           </Box>
                         </TableCell >
@@ -467,7 +479,7 @@ const AirCraftSeriesTableList = () => {
                           width: '10%'
                         }}>
                           <Typography fontWeight={400} variant="subtitle2">
-                          CG-PPQ
+                          {row.general?.aircraft || '-'}
                           </Typography>
                         </TableCell>
                         {/* description cell */}
@@ -477,7 +489,7 @@ const AirCraftSeriesTableList = () => {
                           <Typography fontWeight={400} variant="subtitle2">
                             {/* ${row.description}
                              */}
-                            Need maintain
+                            {row.general?.defect_description || '-'} 
                           </Typography>
                         </TableCell>
                         {/* action cell  */}
@@ -487,11 +499,11 @@ const AirCraftSeriesTableList = () => {
                             // divider={<Divider orientation="vertical" flexItem />}
                             spacing={1}
                           >
-                              <IconButton  color="primary">
+                              <IconButton  color="primary"  href={`/maintenance/defect/${row.id}`}>
                                 <IconEye width={25} height={25}  />
                               </IconButton>
                               <IconButton  color="error">
-                                <IconTrash width={25} height={25}  />
+                                <IconTrash width={25} height={25} onClick={() => handleDeleteRow(row.id)} />
                               </IconButton>
                           </Stack>
                         </TableCell>
@@ -522,4 +534,4 @@ const AirCraftSeriesTableList = () => {
   );
 };
 
-export default AirCraftSeriesTableList;
+export default DefectTableList;

@@ -802,7 +802,7 @@ const WorkOrderNew = () => {
                 <Grid container spacing={3} mb={3}>
                   <Grid item lg={8} md={12} sm={12}>
                     <CustomFormLabel htmlFor="fname-text">Temporary Revision</CustomFormLabel>
-                    <CustomTextField id="fname-text" variant="outlined"  value={optional.temporary_revision} name="date" onChange={handleOptionalChange} ullWidth />
+                    <CustomTextField id="fname-text" variant="outlined"  value={optional.temporary_revision} name="date" onChange={handleOptionalChange} fullWidth />
                   </Grid>
                 </Grid>
             </TabPanel>
