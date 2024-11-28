@@ -44,6 +44,7 @@ import { fetchTasks } from '@/store/apps/Task/TaskSlice';
 import { fetchDefect } from '@/store/apps/defect/defectSlice';
 import { get } from 'lodash';
 import { a } from 'react-spring';
+import { v4 as uuidv4 } from 'uuid';
 
 
 interface General {
@@ -1771,7 +1772,7 @@ const DefectTaskTableList = () => {
                 const index = parsedData.findIndex((item: { task: { task_id: string } }) => item.task.task_id === x.general.taskId)
                 if (index === -1) {
                     const payload = [...parsedData, ...[{
-                        id: crypto.randomUUID(),
+                        id: uuidv4(),
                         is_defect: false,
                         is_task: true,
                         is_work_order: false,
@@ -1867,7 +1868,7 @@ const DefectTaskTableList = () => {
                 const index = parsedData.findIndex((item: { defect: { defect_id: string } }) => item.defect.defect_id === x.general?.defect)
                 if (index === -1) {
                     const payload = [...parsedData, ...[{
-                        id: crypto.randomUUID(),
+                        id: uuidv4(),
                         is_defect: false,
                         is_task: true,
                         is_work_order: false,
